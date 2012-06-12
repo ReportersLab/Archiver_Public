@@ -41,8 +41,9 @@ package org.reporterslab.archiver.controllers.setup
 			injector.mapValue(TimedUpdaterService, updater);
 			
 			//And the Twitter Service.
-			injector.mapSingleton(TwitterService);
-			
+			var twitterService:TwitterService = injector.instantiate(TwitterService);
+			injector.mapValue(TwitterService, twitterService);
+			twitterService.loadLatestTimeline();
 			
 			
 			if(dbFile.exists){

@@ -1,4 +1,4 @@
-package org.reporterslab.archiver
+package org.reporterslab.archiver.controllers
 {
 	import org.reporterslab.archiver.events.ArchiverTwitterEvent;
 	import org.reporterslab.archiver.services.remote.TwitterService;

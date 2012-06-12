@@ -1,11 +1,17 @@
 package org.reporterslab.archiver.services.remote
 {
 	import com.dborisenko.api.twitter.TwitterAPI;
+	import com.dborisenko.api.twitter.commands.timeline.LoadHomeTimeline;
+	import com.dborisenko.api.twitter.events.TwitterEvent;
+	import com.dborisenko.api.twitter.net.TwitterOperation;
 	import com.dborisenko.api.twitter.oauth.events.OAuthTwitterEvent;
 	
 	import flash.events.Event;
 	
+	import mx.collections.ArrayCollection;
+	
 	import org.reporterslab.archiver.events.ArchiverTwitterEvent;
+	import org.reporterslab.archiver.events.ArchiverContentEvent;
 	import org.reporterslab.archiver.services.remote.configs.TwitterConfigs;
 	import org.robotlegs.mvcs.Actor;
 	
@@ -13,8 +19,9 @@ package org.reporterslab.archiver.services.remote
 	{
 		
 		private var _api:TwitterAPI = new TwitterAPI();
-		
 		private var _authorizationURL:String;
+		
+		public var latestData:ArrayCollection;
 		
 		public function TwitterService()
 		{
@@ -27,7 +34,33 @@ package org.reporterslab.archiver.services.remote
 		
 		
 		
-		
+		public function loadLatestTimeline():void
+		{
+			//load the timeline of authenticated user. We probably want to use the sinceId and maxId somehow.
+			var op:TwitterOperation = new LoadHomeTimeline();
+			//I worry this is a stupid way to do this. The examples of the Twitter API are all in this format,
+			//but it may be better to move the handler into a class method.
+			var handler:Function = function(event:TwitterEvent):void
+			{
+				//be sure to remove the listener so the op can be collected.
+				op.removeEventListener(TwitterEvent.COMPLETE, handler);
+				if(event.success){
+					//save the latest data.
+					latestData = event.data as ArrayCollection;
+					//and send it up the chain.
+					dispatch(new ArchiverContentEvent(ArchiverContentEvent.NEW_CONTENT, ArchiverContentEvent.TYPE_TWITTER, latestData));
+				}else{
+					//needs better error handling, probably.
+					trace("Error loading timeline: " + event.data.toString());
+					//send up the original event data as an error message.
+					dispatch(new ArchiverContentEvent(ArchiverContentEvent.ERROR_LOADING_CONTENT, ArchiverContentEvent.TYPE_TWITTER, event.data));
+				}
+			}
+			//tie handler to operation.
+			op.addEventListener(TwitterEvent.COMPLETE, handler);
+			//and post the op to the api.
+			_api.post(op);
+		}
 		
 		
 		
