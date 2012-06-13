@@ -1,6 +1,7 @@
 package org.reporterslab.archiver.controllers.setup
 {
 	import org.reporterslab.archiver.events.ArchiverConfigurationEvent;
+	import org.reporterslab.archiver.models.ArchiverModel;
 	import org.robotlegs.mvcs.Command;
 	
 	public class ConfigureModelCommand extends Command
@@ -12,7 +13,7 @@ package org.reporterslab.archiver.controllers.setup
 		{
 			trace("Configuring Model");
 			//set up the model.
-			//injector.mapSingleton(ArchiverModel);
+			injector.mapSingleton(ArchiverModel);
 			dispatch(new ArchiverConfigurationEvent(ArchiverConfigurationEvent.CONFIGURE_VIEW));
 		}
 		

@@ -28,7 +28,7 @@ package org.reporterslab.archiver.services
 			trace("Saving new statuses");
 			//actually save the data here.
 			
-			//get the latest data back out.
+			//get the latest data back out?
 			
 			
 			//and notify that stuff is saved. Stuff attached.

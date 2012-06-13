@@ -59,7 +59,7 @@ package org.reporterslab.archiver.services.remote
 					}
 					
 					//and send it up the chain.
-					dispatch(new ArchiverContentEvent(ArchiverContentEvent.NEW_CONTENT, ArchiverContentEvent.TYPE_TWITTER, latestData));
+					dispatch(new ArchiverContentEvent(ArchiverContentEvent.NEW_CONTENT, ArchiverContentEvent.TYPE_TWITTER, output));
 				}else{
 					//needs better error handling, probably.
 					trace("Error loading timeline: " + event.data.toString());

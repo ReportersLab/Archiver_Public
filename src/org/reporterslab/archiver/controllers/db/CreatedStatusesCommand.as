@@ -17,6 +17,7 @@ package org.reporterslab.archiver.controllers.db
 		{
 			trace("Statuses created in DB. Updating Model.");
 			//this should update the model after the content is created.
+			archiverModel.addStatuses(event.statuses);
 		}
 	}
 }
