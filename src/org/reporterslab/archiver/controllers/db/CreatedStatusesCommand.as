@@ -1,6 +1,7 @@
 package org.reporterslab.archiver.controllers.db
 {
 	import org.reporterslab.archiver.events.ArchiverDBEvent;
+	import org.reporterslab.archiver.models.ArchiverModel;
 	import org.robotlegs.mvcs.Command;
 	
 	public class CreatedStatusesCommand extends Command
@@ -8,6 +9,9 @@ package org.reporterslab.archiver.controllers.db
 		
 		[Inject]
 		public var event:ArchiverDBEvent;
+		
+		[Inject]
+		public var archiverModel:ArchiverModel;
 		
 		override public function execute():void
 		{

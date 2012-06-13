@@ -23,12 +23,15 @@ package org.reporterslab.archiver.services
 			trace("Archiver DB Service Created");
 		}
 		
-		public function saveStatuses(statuses:ArrayCollection):void
+		public function saveStatuses(statuses:Vector.<Status>):void
 		{
 			trace("Saving new statuses");
 			//actually save the data here.
 			
-			//and notify that stuff is saved.
+			//get the latest data back out.
+			
+			
+			//and notify that stuff is saved. Stuff attached.
 			dispatch(new ArchiverDBEvent(ArchiverDBEvent.STATUSES_CREATED, null, statuses));
 		}
 		

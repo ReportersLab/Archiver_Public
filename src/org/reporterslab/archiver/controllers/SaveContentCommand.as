@@ -26,8 +26,8 @@ package org.reporterslab.archiver.controllers
 			
 			trace("Have some new statuses");
 			//save the data.
-			if(event.data is ArrayCollection){
-				dataService.saveStatuses(event.data as ArrayCollection);
+			if(event.data is Vector.<Status>){
+				dataService.saveStatuses(event.data as Vector.<Status>);
 			}else if (event.data is Status){
 				dataService.saveStatus(event.data as Status);
 			}

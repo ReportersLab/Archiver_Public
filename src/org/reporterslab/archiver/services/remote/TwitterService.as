@@ -2,6 +2,7 @@ package org.reporterslab.archiver.services.remote
 {
 	import com.dborisenko.api.twitter.TwitterAPI;
 	import com.dborisenko.api.twitter.commands.timeline.LoadHomeTimeline;
+	import com.dborisenko.api.twitter.data.TwitterStatus;
 	import com.dborisenko.api.twitter.events.TwitterEvent;
 	import com.dborisenko.api.twitter.net.TwitterOperation;
 	import com.dborisenko.api.twitter.oauth.events.OAuthTwitterEvent;
@@ -10,8 +11,9 @@ package org.reporterslab.archiver.services.remote
 	
 	import mx.collections.ArrayCollection;
 	
-	import org.reporterslab.archiver.events.ArchiverTwitterEvent;
 	import org.reporterslab.archiver.events.ArchiverContentEvent;
+	import org.reporterslab.archiver.events.ArchiverTwitterEvent;
+	import org.reporterslab.archiver.models.vo.Status;
 	import org.reporterslab.archiver.services.remote.configs.TwitterConfigs;
 	import org.robotlegs.mvcs.Actor;
 	
@@ -47,6 +49,15 @@ package org.reporterslab.archiver.services.remote
 				if(event.success){
 					//save the latest data.
 					latestData = event.data as ArrayCollection;
+					//convert to our statuses.
+					var output:Vector.<Status> = new Vector.<Status>();
+					for each(var ts:TwitterStatus in latestData)
+					{
+						var s:Status = new Status();
+						s.parseTwitterStatus(ts);
+						output.push(s);
+					}
+					
 					//and send it up the chain.
 					dispatch(new ArchiverContentEvent(ArchiverContentEvent.NEW_CONTENT, ArchiverContentEvent.TYPE_TWITTER, latestData));
 				}else{

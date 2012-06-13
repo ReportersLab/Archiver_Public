@@ -2,8 +2,6 @@ package org.reporterslab.archiver.events
 {
 	import flash.events.Event;
 	
-	import mx.collections.ArrayCollection;
-	
 	import org.reporterslab.archiver.models.vo.Status;
 	
 	public class ArchiverDBEvent extends Event
@@ -20,9 +18,9 @@ package org.reporterslab.archiver.events
 		
 		
 		public var status:Status;
-		public var statuses:ArrayCollection;
+		public var statuses:Vector.<Status>;
 		
-		public function ArchiverDBEvent(type:String, status:Status = null, statuses:ArrayCollection = null, bubbles:Boolean=false, cancelable:Boolean=false)
+		public function ArchiverDBEvent(type:String, status:Status = null, statuses:Vector.<Status> = null, bubbles:Boolean=false, cancelable:Boolean=false)
 		{
 			super(type, bubbles, cancelable);
 			this.status = status;
