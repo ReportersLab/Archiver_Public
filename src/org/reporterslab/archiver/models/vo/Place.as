@@ -4,16 +4,18 @@ package org.reporterslab.archiver.models.vo
 
 	public class Place
 	{
+		public var id:int;
 		//should be generic enough for any place.
 		public var name:String;
 		public var countryCode:String;
 		public var country:String;
 		public var attributes:Object;
 		public var url:String;
-		public var id:String;
 		public var boundingBox:Object; //how to save to db?
 		public var fullName:String;
 		public var type:String;
+		
+		public var twitterId:String;
 		
 		
 		public function Place()
@@ -28,7 +30,7 @@ package org.reporterslab.archiver.models.vo
 			country = place.country;
 			attributes = place.attributes;
 			url = place.url;
-			id = place.id;
+			twitterId = place.id;
 			boundingBox = place.boundingBox; // contains coords and types. Not sure what's available here. Docs are laaaame.
 			fullName = place.fullName;
 			type = place.type;

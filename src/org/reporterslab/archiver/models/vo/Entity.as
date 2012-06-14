@@ -19,6 +19,9 @@ package org.reporterslab.archiver.models.vo
 		public static const ENTITY_TYPE_MENTION:String = "usermention";
 		
 		
+		public var id:int;
+		public var ownerId:int;
+		
 		public var type:String;
 		//url specific
 		public var expandedURL:String;
@@ -42,9 +45,10 @@ package org.reporterslab.archiver.models.vo
 			
 		}
 		
-		public function parseTwitterEntity(entity:TwitterEntity):Entity
+		public function parseTwitterEntity(entity:TwitterEntity, owner:Status):Entity
 		{
 			//twitter entity type strings are the same as our entity type strings.
+			this.ownerId = owner.id;
 			this.type = entity.type;
 			this.expandedURL = entity.expandedURL;
 			this.url = entity.url;

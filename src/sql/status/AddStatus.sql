@@ -1,0 +1,48 @@
+INSERT INTO Status
+(
+	createdAt,
+	text,
+	source,
+	twitterUser,
+	geo,
+	placeId,
+	latitude,
+	longitude,
+	coordinates,
+	twitterId,
+	truncated,
+	inReplyToStatusId,
+	inReplyToUserId,
+	contributors,
+	retweetCount,
+	possiblySensitive,
+	searchType,
+	isMention,
+	retweetedStatus,
+	statusType,
+	userId
+)
+VALUES
+(
+	:createdAt,
+	:text,
+	:source,
+	:twitterUser,
+	:geo,
+	:placeId,
+	:latitude,
+	:longitude,
+	:coordinates,
+	:twitterId,
+	:truncated,
+	:inReplyToStatusId,
+	:inReplyToUserId,
+	:contributors,
+	:retweetCount,
+	:possiblySensitive,
+	:searchType,
+	:isMention,
+	:retweetedStatus,
+	:statusType,
+	:userId
+)

@@ -1,0 +1,28 @@
+INSERT INTO Entity
+(
+	type,
+	expandedURL,
+	url,
+	displayURL,
+	hashText,
+	name,
+	mentionId,
+	screenName,
+	startIndex,
+	endIndex,
+	ownerId
+)
+VALUES
+(
+	:type,
+	:expandedURL,
+	:url,
+	:displayURL,
+	:hashText,
+	:name,
+	:mentionId,
+	:screenName,
+	:startIndex,
+	:endIndex,
+	:ownerId
+)

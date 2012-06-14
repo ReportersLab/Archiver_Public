@@ -6,7 +6,7 @@ package org.reporterslab.archiver.models.vo
 	{
 		
 		//generic
-		public var id:String;
+		public var id:int;
 		public var name:String;
 		public var screenName:String;
 		public var location:String;
@@ -17,6 +17,7 @@ package org.reporterslab.archiver.models.vo
 		public var lastName:String; // may never need.
 		
 		//twitter specific
+		public var twitterId:String;
 		public var isProtected:Boolean;
 		public var friendsCount:Number;
 		public var followersCount:Number;
@@ -60,7 +61,7 @@ package org.reporterslab.archiver.models.vo
 		public function parseTwitterUser(user:TwitterUser):User
 		{
 			
-			this.id = user.id;
+			this.twitterId = user.id;
 			this.name = user.name;
 			this.screenName = user.screenName;
 			this.location = user.location;
@@ -101,6 +102,7 @@ package org.reporterslab.archiver.models.vo
 			if(user.status){
 				this.status = new Status();
 				this.status.parseTwitterStatus(user.status);
+				this.status.user = this;
 			}
 			
 			return this;
