@@ -1,57 +1,3 @@
-
-
-CREATE TABLE "Entity" (
-	"id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL UNIQUE , 
-	"type" VARCHAR, 
-	"expandedURL" VARCHAR, 
-	"url" VARCHAR, 
-	"displayURL" VARCHAR, 
-	"hashText" VARCHAR, 
-	"name" VARCHAR, 
-	"mentionId" VARCHAR, 
-	"screenName" VARCHAR, 
-	"startIndex" INTEGER, 
-	"endIndex" INTEGER, 
-	"ownerId" INTEGER
-);
-
-CREATE TABLE "Place" (
-	"id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 
-	"name" VARCHAR, 
-	"countryCode" VARCHAR, 
-	"attributes" TEXT, 
-	"url" VARCHAR, 
-	"twitterId" VARCHAR, 
-	"boundingBox" TEXT, 
-	"fullName" VARCHAR, 
-	"type" VARCHAR
-);
-
-CREATE TABLE "Status" (
-	"id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 
-	"createdAt" DATETIME DEFAULT CURRENT_TIMESTAMP, 
-	"text" TEXT, 
-	"source" VARCHAR, 
-	"twitterUser" VARCHAR, 
-	"geo" VARCHAR, 
-	"latitude" FLOAT, 
-	"longitude" FLOAT, 
-	"coordinates" VARCHAR, 
-	"twitterId" VARCHAR, 
-	"truncated" BOOL, 
-	"inReplyToStatusId" VARCHAR, 
-	"inReplyToUserId" VARCHAR, 
-	"contributors" VARCHAR, 
-	"retweetCount" INTEGER, 
-	"possiblySensitive" BOOL, 
-	"searchType" VARCHAR, 
-	"isMention" BOOL, 
-	"retweetedStatus" VARCHAR, 
-	"statusType" VARCHAR, 
-	"placeId" INTEGER, 
-	"userId" INTEGER
-);
-
 CREATE TABLE "User" (
 	"id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 
 	"name" VARCHAR, 
@@ -62,7 +8,7 @@ CREATE TABLE "User" (
 	"url" VARCHAR, 
 	"firstName" VARCHAR, 
 	"lastName" VARCHAR, 
-	"twitterId" VARCHAR, 
+	"twitterId" VARCHAR UNIQUE, 
 	"isProtected" BOOL NOT NULL  DEFAULT -1, 
 	"friendCount" INTEGER NOT NULL  DEFAULT 0, 
 	"followersCount" INTEGER NOT NULL  DEFAULT 0, 
@@ -95,25 +41,4 @@ CREATE TABLE "User" (
 	"follower" BOOL NOT NULL  DEFAULT -1, 
 	"blocked" BOOL NOT NULL  DEFAULT -1
 );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

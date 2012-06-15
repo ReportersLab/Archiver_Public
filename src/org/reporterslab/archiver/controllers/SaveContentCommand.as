@@ -5,6 +5,7 @@ package org.reporterslab.archiver.controllers
 	import org.reporterslab.archiver.events.ArchiverContentEvent;
 	import org.reporterslab.archiver.models.vo.Status;
 	import org.reporterslab.archiver.services.ArchiverDBService;
+	import org.reporterslab.archiver.services.database.ArchiverDBStatusService;
 	import org.robotlegs.mvcs.Command;
 	
 	public class SaveContentCommand extends Command
@@ -14,7 +15,7 @@ package org.reporterslab.archiver.controllers
 		public var event:ArchiverContentEvent;
 		
 		[Inject]
-		public var dataService:ArchiverDBService;
+		public var statusService:ArchiverDBStatusService;
 		
 		override public function execute():void
 		{
@@ -27,9 +28,9 @@ package org.reporterslab.archiver.controllers
 			trace("Have some new statuses");
 			//save the data.
 			if(event.data is Vector.<Status>){
-				dataService.saveStatuses(event.data as Vector.<Status>);
+				statusService.saveStatuses(event.data as Vector.<Status>);
 			}else if (event.data is Status){
-				dataService.saveStatus(event.data as Status);
+				statusService.saveStatus(event.data as Status);
 			}
 			
 		}

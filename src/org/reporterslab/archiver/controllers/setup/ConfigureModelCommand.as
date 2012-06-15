@@ -14,7 +14,7 @@ package org.reporterslab.archiver.controllers.setup
 			trace("Configuring Model");
 			//set up the model.
 			injector.mapSingleton(ArchiverModel);
-			dispatch(new ArchiverConfigurationEvent(ArchiverConfigurationEvent.CONFIGURE_VIEW));
+			dispatch(new ArchiverConfigurationEvent(ArchiverConfigurationEvent.CONFIGURE_SERVICE));
 		}
 		
 	}

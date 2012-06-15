@@ -32,7 +32,7 @@ package org.reporterslab.archiver.controllers.setup
 			
 			
 			//Configure the Service
-			dispatch(new ArchiverConfigurationEvent(ArchiverConfigurationEvent.CONFIGURE_SERVICE));
+			dispatch(new ArchiverConfigurationEvent(ArchiverConfigurationEvent.CONFIGURE_DATABASE));
 		}
 		
 		
