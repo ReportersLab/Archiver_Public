@@ -3,7 +3,7 @@ package org.reporterslab.archiver.controllers.setup
 	import org.reporterslab.archiver.controllers.SaveContentCommand;
 	import org.reporterslab.archiver.controllers.TwitterLoginCommand;
 	import org.reporterslab.archiver.controllers.UpdateServicesCommand;
-	import org.reporterslab.archiver.controllers.db.CreatedStatusesCommand;
+	import org.reporterslab.archiver.controllers.db.LoadedStatusesCommand;
 	import org.reporterslab.archiver.events.ArchiverConfigurationEvent;
 	import org.reporterslab.archiver.events.ArchiverContentEvent;
 	import org.reporterslab.archiver.events.ArchiverDBEvent;
@@ -27,7 +27,7 @@ package org.reporterslab.archiver.controllers.setup
 			commandMap.mapEvent(ArchiverUpdaterEvent.UPDATE, UpdateServicesCommand, ArchiverUpdaterEvent);
 			
 			//database events
-			commandMap.mapEvent(ArchiverDBEvent.STATUSES_CREATED, CreatedStatusesCommand, ArchiverDBEvent); 
+			commandMap.mapEvent(ArchiverDBEvent.STATUSES_LOADED, LoadedStatusesCommand, ArchiverDBEvent); 
 			
 			
 			

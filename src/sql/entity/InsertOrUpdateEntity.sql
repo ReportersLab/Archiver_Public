@@ -11,7 +11,8 @@ INSERT OR IGNORE INTO Entity
 	screenName,
 	startIndex,
 	endIndex,
-	ownerId
+	ownerId,
+	twitterStatusId
 )
 VALUES
 (
@@ -26,7 +27,8 @@ VALUES
 	:screenName,
 	:startIndex,
 	:endIndex,
-	:ownerId
+	:ownerId,
+	:twitterStatusId
 );
 
 UPDATE OR IGNORE Entity
@@ -41,5 +43,6 @@ SET
 	screenName = :screenName,
 	startIndex = :startIndex,
 	endIndex = :endIndex,
-	ownerId = :ownerId
-WHERE id = :id 
+	ownerId = :ownerId,
+	twitterStatusId = :twitterStatusId
+WHERE id = :id ;

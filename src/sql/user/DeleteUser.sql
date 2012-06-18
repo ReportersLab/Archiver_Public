@@ -1,2 +1,2 @@
 DELETE FROM User
-WHERE id = :id
+WHERE id = :id;

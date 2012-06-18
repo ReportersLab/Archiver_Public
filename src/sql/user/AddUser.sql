@@ -26,7 +26,7 @@ INSERT INTO User
 	profileBackgroundImageUrl, 
 	profileBackgroundTile, 
 	statusId, 
-	profileUserBackgroundImage, 
+	profileUseBackgroundImage, 
 	defaultProfileImage, 
 	isTranslator, 
 	followRequestSent, 
@@ -69,7 +69,7 @@ VALUES
 	:profileBackgroundImageUrl, 
 	:profileBackgroundTile, 
 	:statusId, 
-	:profileUserBackgroundImage, 
+	:profileUseBackgroundImage, 
 	:defaultProfileImage, 
 	:isTranslator, 
 	:followRequestSent, 
@@ -83,4 +83,4 @@ VALUES
 	:following, 
 	:follower, 
 	:blocked
-)
+);

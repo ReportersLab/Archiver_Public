@@ -21,4 +21,4 @@ VALUES
 	:boundingBox,
 	:fullName,
 	:type
-)
+);

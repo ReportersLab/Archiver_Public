@@ -26,7 +26,7 @@ SET
 	profileBackgroundImageUrl = :profileBackgroundImageUrl, 
 	profileBackgroundTile = :profileBackgroundTile, 
 	statusId = :statusId, 
-	profileUserBackgroundImage = :profileUserBackgroundImage, 
+	profileUseBackgroundImage = :profileUseBackgroundImage, 
 	defaultProfileImage = :defaultProfileImage, 
 	isTranslator = :isTranslator, 
 	followRequestSent = :followRequestSent, 
@@ -40,4 +40,4 @@ SET
 	following = :following, 
 	follower = :follower, 
 	blocked = :blocked
-WHERE id = :id
+WHERE id = :id;

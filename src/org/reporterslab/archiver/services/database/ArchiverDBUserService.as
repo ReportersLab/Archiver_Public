@@ -1,5 +1,6 @@
 package org.reporterslab.archiver.services.database
 {
+	import com.probertson.data.QueuedStatement;
 	import com.probertson.data.SQLRunner;
 	
 	import org.reporterslab.archiver.models.vo.Status;
@@ -18,6 +19,48 @@ package org.reporterslab.archiver.services.database
 		}
 		
 		
+		
+		/**
+		 * @param user     The User to insert if it doesn't exist (based on unique identifiers like id or twitterId) 
+		 *                    or update if it does.
+		 **/
+		public function getInsertOrUpdateStatement(user:User):QueuedStatement
+		{
+			var statement:QueuedStatement = new QueuedStatement(INSERT_OR_UPDATE_USER_SQL, user.toParams());
+			return statement;
+		}
+		
+		/**
+		 * @param user     The User to insert.
+		 **/
+		public function getInsertStatement(user:User):QueuedStatement
+		{
+			var statement:QueuedStatement = new QueuedStatement(ADD_USER_SQL, user.toParams());
+			return statement;
+		}
+		
+		/**
+		 * @param user     The User to update.
+		 **/
+		public function getUpdateStatement(user:User):QueuedStatement
+		{
+			var statement:QueuedStatement = new QueuedStatement(UPDATE_USER_SQL, user.toParams());
+			return statement;
+		}
+		
+		/**
+		 * @param user     The User to delete.
+		 **/
+		public function getDeleteStatement(user:User):QueuedStatement
+		{
+			var statement:QueuedStatement = new QueuedStatement(DELETE_USER_SQL, user.toParams());
+			return statement;
+		}
+		
+		
+		
+		
+		
 		[Embed(source="sql/user/AddUser.sql", mimeType="application/octet-stream")]
 		private static const AddUserStatement:Class;
 		private static const ADD_USER_SQL:String = new AddUserStatement();
@@ -29,7 +72,6 @@ package org.reporterslab.archiver.services.database
 		[Embed(source="sql/user/UpdateUser.sql", mimeType="application/octet-stream")]
 		private static const UpdateUserStatement:Class;
 		private static const UPDATE_USER_SQL:String = new UpdateUserStatement();
-		
 		
 		[Embed(source="sql/user/InsertOrUpdateUser.sql", mimeType="application/octet-stream")]
 		private static const InsertOrUpdateUserStatement:Class;

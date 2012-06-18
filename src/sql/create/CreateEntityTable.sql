@@ -1,5 +1,7 @@
 CREATE TABLE "Entity" (
-	"id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL UNIQUE , 
+	"id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL UNIQUE ,
+	"ownerId" INTEGER, 
+	"twitterStatusId" VARCHAR,
 	"type" VARCHAR, 
 	"expandedURL" VARCHAR, 
 	"url" VARCHAR, 
@@ -9,6 +11,5 @@ CREATE TABLE "Entity" (
 	"mentionId" VARCHAR, 
 	"screenName" VARCHAR, 
 	"startIndex" INTEGER, 
-	"endIndex" INTEGER, 
-	"ownerId" INTEGER
+	"endIndex" INTEGER
 );

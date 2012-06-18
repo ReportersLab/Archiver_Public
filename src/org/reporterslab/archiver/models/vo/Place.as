@@ -4,7 +4,7 @@ package org.reporterslab.archiver.models.vo
 
 	public class Place
 	{
-		public var id:int;
+		public var id:int = -1;
 		//should be generic enough for any place.
 		public var name:String;
 		public var countryCode:String;
@@ -36,6 +36,23 @@ package org.reporterslab.archiver.models.vo
 			type = place.type;
 			
 			return this;
+		}
+		
+		
+		public function toParams():Object
+		{
+			var params:Object = {};
+			params['id'] = this.id == -1 ? null : this.id;
+			params['name'] = this.name;
+			params['countryCode'] = this.countryCode;
+			params['country'] = this.country;
+			params['attributes'] = JSON.stringify(this.attributes);
+			params['url'] = this.url;
+			params['boundingBox'] = JSON.stringify(this.boundingBox); 
+			params['fullName'] = this.fullName;
+			params['type'] = this.type;
+			params['twitterId'] = this.twitterId;
+			return params;	
 		}
 		
 	}

@@ -9,4 +9,4 @@ SET
 	boundingBox = :boundingBox,
 	fullName = :fullName,
 	type = :type
-WHERE id = :id
+WHERE id = :id;

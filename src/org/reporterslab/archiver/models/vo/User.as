@@ -6,7 +6,7 @@ package org.reporterslab.archiver.models.vo
 	{
 		
 		//generic
-		public var id:int;
+		public var id:int = -1;
 		public var name:String;
 		public var screenName:String;
 		public var location:String;
@@ -19,7 +19,7 @@ package org.reporterslab.archiver.models.vo
 		//twitter specific
 		public var twitterId:String;
 		public var isProtected:Boolean;
-		public var friendsCount:Number;
+		public var friendCount:Number;
 		public var followersCount:Number;
 		public var createdAt:Date;
 		public var favouritesCount:Number;
@@ -69,7 +69,7 @@ package org.reporterslab.archiver.models.vo
 			this.profileImageUrl = user.profileImageUrl;
 			this.url = user.url;
 			this.isProtected = user.isProtected;
-			this.friendsCount = user.friendsCount;
+			this.friendCount = user.friendsCount;
 			this.followersCount = user.followersCount;
 			this.createdAt = user.createdAt;
 			this.favouritesCount = user.favouritesCount;
@@ -107,5 +107,57 @@ package org.reporterslab.archiver.models.vo
 			
 			return this;
 		}
+		
+		
+		public function toParams():Object
+		{
+			var params:Object = {};
+			
+			params['id'] = this.id == -1 ? null : this.id;
+			params['name'] = this.name;
+			params['screenName'] = this.screenName;
+			params['location'] = this.location;
+			params['description'] = this.description;
+			params['profileImageUrl'] = this.profileImageUrl;
+			params['url'] = this.url;
+			params['firstName'] = this.firstName;
+			params['lastName'] = this.lastName;
+			params['twitterId'] = this.twitterId;
+			params['isProtected'] = this.isProtected;
+			params['friendCount'] = this.friendCount;
+			params['followersCount'] = this.followersCount;
+			params['createdAt'] = this.createdAt;
+			params['favouritesCount'] = this.favouritesCount;
+			params['utcOffset'] = this.utcOffset;
+			params['timeZone'] = this.timeZone;
+			params['notifications'] = this.notifications;
+			params['statusesCount'] = this.statusesCount;
+			params['profileBackgroundColor'] = this.profileBackgroundColor;
+			params['profileTextColor'] = this.profileTextColor;
+			params['profileLinkColor'] = this.profileLinkColor;
+			params['profileSidebarFillColor'] = this.profileSidebarFillColor;
+			params['profileSidebarBorderColor'] = this.profileSidebarBorderColor;
+			params['profileBackgroundImageUrl'] = this.profileBackgroundImageUrl;
+			params['profileBackgroundTile'] = this.profileBackgroundTile;
+			params['profileUseBackgroundImage'] = this.profileUseBackgroundImage;
+			params['defaultProfileImage'] = this.defaultProfileImage;
+			params['isTranslator'] = this.isTranslator;
+			params['followRequestSent'] = this.followRequestSent;
+			params['contributorsEnabled'] = this.contributorsEnabled;
+			params['defaultProfile'] = this.defaultProfile;
+			params['listedCount'] = this.listedCount;
+			params['language'] = this.language;
+			params['geoEnabled'] = this.geoEnabled;
+			params['verified'] = this.verified;
+			params['showAllInlineMedia'] = this.showAllInlineMedia;
+			params['following'] = this.following;
+			params['follower'] = this.follower;
+			params['blocked'] = this.blocked;
+			params['statusId'] = this.status != null ? this.status.id : null;
+			return params;
+			
+		}
+		
+		
 	}
 }

@@ -1,2 +1,2 @@
 DELETE FROM Status
-WHERE id = :id
+WHERE id = :id;

@@ -9,12 +9,12 @@ package org.reporterslab.archiver.events
 		
 		public static const STATUSES_CREATED:String = "statusesCreated";
 		public static const STATUSES_DELETED:String = "statusesDeleted";
-		public static const STATUSES_SELCTED:String = "statusesSelected";
+		public static const STATUSES_LOADED:String = "statusesLoaded";
 		
 		public static const STATUS_CREATED:String = "statusCreated";
 		public static const STATUS_DELETED:String = "statusDeleted";
 		public static const STATUS_UPDATED:String = "statusUpdated";
-		public static const STATUS_SELECTED:String = "statusSelected";
+		public static const STATUS_LOADED:String = "statusLoaded";
 		
 		
 		public var status:Status;

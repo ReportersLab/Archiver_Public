@@ -10,5 +10,6 @@ SET
 	screenName = :screenName,
 	startIndex = :startIndex,
 	endIndex = :endIndex,
-	ownerId = :ownerId
-WHERE id = :id
+	ownerId = :ownerId,
+	twitterStatusId = :twitterStatusId
+WHERE id = :id;

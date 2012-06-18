@@ -28,7 +28,13 @@ package org.reporterslab.archiver.controllers
 			trace("Have some new statuses");
 			//save the data.
 			if(event.data is Vector.<Status>){
-				statusService.saveStatuses(event.data as Vector.<Status>);
+				var statuses:Vector.<Status> = event.data as Vector.<Status>;
+				if(event.contentType == ArchiverContentEvent.TYPE_TWITTER){
+					statusService.saveTwitterStatuses(statuses);
+				}else{
+					statusService.saveStatuses(statuses);	
+				}
+				
 			}else if (event.data is Status){
 				statusService.saveStatus(event.data as Status);
 			}

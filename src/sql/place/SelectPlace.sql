@@ -9,4 +9,4 @@ SELECT
 	fullName,
 	type
 FROM Place
-WHERE id = :id
+WHERE id = :id;

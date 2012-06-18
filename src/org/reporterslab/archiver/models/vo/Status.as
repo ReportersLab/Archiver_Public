@@ -14,21 +14,22 @@ package org.reporterslab.archiver.models.vo
 		
 		//generic
 		public var createdAt:Date;
-		public var id:int;
+		public var id:int = -1;
 		public var text:String;
 		public var source:String; // as in, what posted the status. In Twitter this may be something like "Web" or "Instagram"
 		
 		public var user:User; // the system user id
-		public var userId:int;
+		public var userId:int = -1;
 		
 		//these may have to be converted into strings or pulled apart or put into separate tables or something.
 		public var geo:Object = null; //Twitter JSON renders as: "geo": { "type":"Point", "coordinates":[37.78029, -122.39697] }
 		public var coordinates:Object = null; //not defined in the API
 		public var place:Place = null; //Twitter Specific for now, but may be generic. Have to look at other APIs
-		public var placeId:int; // system id of the place.
+		public var placeId:int = -1; // system id of the place.
+		public var twitterPlaceId:String = null; //place id from twitter.
 		
 		//twitter specific
-		public var twitterId:String; // hmmmm. Probably want a unique DB id if we're mixing different status types (ie. Facebook + Twitter).
+		public var twitterId:String = null; // hmmmm. Probably want a unique DB id if we're mixing different status types (ie. Facebook + Twitter).
 		public var truncated:Boolean;
 		public var inReplyToStatusId:String;
 		public var inReplyToUserId:String;
@@ -52,6 +53,8 @@ package org.reporterslab.archiver.models.vo
 		public var isMention:Boolean = false;
 		//if this is a retweet, there's an entire other status here. Probably save it as just the ID and link two.
 		public var retweetedStatus:Status;
+		public var retweetedStatusTwitterId:String;
+		public var retweetedStatusId:int = -1;
 		
 		
 		public function Status()
@@ -90,12 +93,13 @@ package org.reporterslab.archiver.models.vo
 			if(status.place){
 				this.place = new Place();
 				this.place.parseTwitterPlace(status.place);
-				this.placeId = place.id;
+				this.twitterPlaceId = this.place.twitterId;
 			}
 			
 			if(status.retweetedStatus){
 				this.retweetedStatus = new Status();
 				this.retweetedStatus.parseTwitterStatus(status.retweetedStatus);
+				this.retweetedStatusTwitterId = this.retweetedStatus.twitterId;
 			}
 	
 			if(status.urls){
@@ -142,6 +146,54 @@ package org.reporterslab.archiver.models.vo
 			}		
 			return this;
 		}
+		
+		
+		
+		public function toParams():Object
+		{
+			var params:Object = {};
+			
+			params['statusType'] = this.statusType; 
+			params['createdAt'] = this.createdAt;
+			params['id'] = this.id == -1 ? null : this.id;
+			params['text'] = this.text;
+			params['source'] = this.source;
+			params['userId'] = this.userId == -1 ? null : this.userId;
+			params['geo'] = JSON.stringify(this.geo);
+			params['coordinates'] =  JSON.stringify(this.coordinates);
+			params['placeId'] = this.placeId == -1 ? null : this.placeId;
+			params['twitterPlaceId'] = this.twitterPlaceId;
+			params['twitterId'] = this.twitterId;
+			params['truncated'] = this.truncated;
+			params['inReplyToStatusId'] = this.inReplyToStatusId;
+			params['inReplyToUserId'] = this.inReplyToUserId;
+			params['favorited'] = this.favorited;
+			params['inReplyToScreenName'] = this.inReplyToScreenName;
+			params['contributors'] = this.contributors;
+			params['retweeted'] = this.retweeted;
+			params['retweetCount'] = this.retweetCount;
+			params['retweetedStatusTwitterId'] = this.retweetedStatusTwitterId;
+			params['retweetedStatusId'] = this.retweetedStatusId == -1 ? null : this.retweetedStatusId;
+			params['possiblySensitive'] = this.possiblySensitive;
+			params['searchType'] = this.searchType;
+			params['twitterUserId'] = this.twitterUserId;
+			params['annotations'] = this.annotations;
+			params['isMention'] = this.isMention;
+			
+			return params;
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 	}

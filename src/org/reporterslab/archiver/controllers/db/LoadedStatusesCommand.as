@@ -4,7 +4,7 @@ package org.reporterslab.archiver.controllers.db
 	import org.reporterslab.archiver.models.ArchiverModel;
 	import org.robotlegs.mvcs.Command;
 	
-	public class CreatedStatusesCommand extends Command
+	public class LoadedStatusesCommand extends Command
 	{
 		
 		[Inject]

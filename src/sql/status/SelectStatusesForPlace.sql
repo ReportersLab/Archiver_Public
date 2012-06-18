@@ -2,23 +2,27 @@ SELECT
 	createdAt,
 	text,
 	source,
-	twitterUser,
+	twitterUserId,
 	geo,
 	placeId,
-	latitude,
-	longitude,
+	twitterPlaceId,
 	coordinates,
 	twitterId,
 	truncated,
 	inReplyToStatusId,
 	inReplyToUserId,
+	inReplyToScreenName,
 	contributors,
+	retweeted,
 	retweetCount,
+	retweetedStatusTwitterId,
+	retweetedStatusId,
 	possiblySensitive,
 	searchType,
 	isMention,
-	retweetedStatus,
 	statusType,
-	userId
+	userId,
+	favorited,
+	annotations
 FROM Status
-WHERE placeId = :placeId
+WHERE placeId = :placeId;

@@ -25,7 +25,7 @@ SELECT
 	profileBackgroundImageUrl, 
 	profileBackgroundTile, 
 	statusId, 
-	profileUserBackgroundImage, 
+	profileUseBackgroundImage, 
 	defaultProfileImage, 
 	isTranslator, 
 	followRequestSent, 
@@ -40,4 +40,4 @@ SELECT
 	follower, 
 	blocked
 FROM User
-WHERE screenName = :screenName
+WHERE screenName = :screenName;

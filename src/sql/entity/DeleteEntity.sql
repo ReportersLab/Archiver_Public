@@ -1,2 +1,2 @@
 DELETE FROM Entity
-WHERE id = :id
+WHERE id = :id;

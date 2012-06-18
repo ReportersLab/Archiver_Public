@@ -1,5 +1,6 @@
 CREATE TABLE "User" (
 	"id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 
+	"twitterId" VARCHAR UNIQUE, 
 	"name" VARCHAR, 
 	"screenName" VARCHAR, 
 	"location" TEXT, 
@@ -8,7 +9,6 @@ CREATE TABLE "User" (
 	"url" VARCHAR, 
 	"firstName" VARCHAR, 
 	"lastName" VARCHAR, 
-	"twitterId" VARCHAR UNIQUE, 
 	"isProtected" BOOL NOT NULL  DEFAULT -1, 
 	"friendCount" INTEGER NOT NULL  DEFAULT 0, 
 	"followersCount" INTEGER NOT NULL  DEFAULT 0, 
@@ -26,7 +26,7 @@ CREATE TABLE "User" (
 	"profileBackgroundImageUrl" VARCHAR, 
 	"profileBackgroundTile" VARCHAR, 
 	"statusId" INTEGER, 
-	"profileUserBackgroundImage" VARCHAR, 
+	"profileUseBackgroundImage" VARCHAR, 
 	"defaultProfileImage" VARCHAR, 
 	"isTranslator" BOOL NOT NULL  DEFAULT -1, 
 	"followRequestSent" BOOL NOT NULL  DEFAULT -1, 

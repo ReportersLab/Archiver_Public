@@ -9,6 +9,7 @@ SELECT
 	screenName,
 	startIndex,
 	endIndex,
-	ownerId
+	ownerId,
+	twitterStatusId
 FROM Entity
-WHERE id = :id
+WHERE id = :id;

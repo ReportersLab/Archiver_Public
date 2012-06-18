@@ -10,7 +10,8 @@ INSERT INTO Entity
 	screenName,
 	startIndex,
 	endIndex,
-	ownerId
+	ownerId,
+	twitterStatusId
 )
 VALUES
 (
@@ -24,5 +25,6 @@ VALUES
 	:screenName,
 	:startIndex,
 	:endIndex,
-	:ownerId
-)
+	:ownerId,
+	:twitterStatusId
+);
