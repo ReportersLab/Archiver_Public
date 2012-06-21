@@ -19,7 +19,7 @@ package org.reporterslab.archiver.models.vo
 		public static const ENTITY_TYPE_MENTION:String = "usermention";
 		
 		
-		public var id:int = -1;
+		public var id:String = null;
 		public var ownerId:int = -1;
 		
 		public var twitterStatusId:String;
@@ -69,7 +69,6 @@ package org.reporterslab.archiver.models.vo
 		public function toParams():Object
 		{
 			var params:Object = {};
-			params['id'] = this.id == -1 ? null : this.id;
 			params['ownerId'] = this.ownerId;
 			params['twitterStatusId'] = this.twitterStatusId;
 			params['type'] = this.type;
@@ -82,6 +81,22 @@ package org.reporterslab.archiver.models.vo
 			params['screenName'] = this.screenName;
 			params['startIndex'] = this.startIndex;
 			params['endIndex'] = this.endIndex;
+			params['id'] = this.id;
+			
+			//we need to make sure the ID is unique for this entity. Twitter doesn't send an ID withi it.
+			if(this.id == null){
+				if(this.twitterStatusId != null){
+					//a Twitter Entity should probably be unique by the statusId and the start and end indexes.
+					params['id'] = this.twitterStatusId + "_" + this.type + "_" + this.startIndex.toString() + "_" + this.endIndex.toString();
+				}else if (this.ownerId != -1){
+					//we can probably do the same for a non twitter entity
+					params['id'] = this.ownerId + "_" + this.type + "_" + this.startIndex.toString() + "_" + this.endIndex.toString();
+				}else{
+					//and if we have no id at all -- probably on an import from a non-Twitter service, make something up.
+					params['id'] = this.type + "_" + this.startIndex.toString() + "_" + this.endIndex.toString();
+				}
+			}
+						
 			return params;	
 		}
 		

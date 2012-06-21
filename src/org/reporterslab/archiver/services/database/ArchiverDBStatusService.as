@@ -26,12 +26,15 @@ package org.reporterslab.archiver.services.database
 		[Inject]
 		public var entityService:ArchiverDBEntityService;
 		
+		private var _savingStatuses:Vector.<Status>
+		
 		public function ArchiverDBStatusService()
 		{
 			super();
 		}
 		
-		
+
+//=========================================== STATUS SAVING =======================================================
 		
 		/**
 		 * Not sure of the best way to link up twitterIds and system ids. If we start mixing content types (ie Twitter & Facebook)
@@ -66,10 +69,15 @@ package org.reporterslab.archiver.services.database
 				//and finally, update the status itself with the proper place and user id
 				statements.push(this.getUpdateTwitterStatement(status));
 			}
-			
+			trace("Number of Statuses: " + statuses.length);
+			trace("Statements to Execute: " + statements.length);
+			//for access later... So this method shouldn't be called twice per frame.
+			//I can't find a hook anywhere to tie the statuses with the operation. executeModify returns void or I'd use a Dictionary.
+			_savingStatuses = statuses;
 			//and execute the statements.
-			sqlRunner.executeModify(statements, onSaveStatuses, onSaveStatusesError);
-			
+			if(statements.length > 0){
+				sqlRunner.executeModify(statements, onSaveStatuses, onSaveStatusesError, onSaveStatusesProgress);
+			}
 		}
 		
 		/**
@@ -109,7 +117,14 @@ package org.reporterslab.archiver.services.database
 		{
 			trace("Statuses saved");
 			dispatch(new ArchiverDBEvent(ArchiverDBEvent.STATUSES_CREATED, null, null));
-			this.loadAllStatuses();
+			//this.loadAllStatuses();
+			if(_savingStatuses.length > 0){
+				if((_savingStatuses[0].statusType == Status.TYPE_TWITTER) || (_savingStatuses[0].statusType == Status.TYPE_TWITTER_SEARCH)){
+					this.loadTwitterStatuses(_savingStatuses);
+				}else{
+					this.loadAllStatuses();
+				}
+			}
 		}
 		
 		public function onSaveStatusesError(e:SQLError):void
@@ -118,8 +133,34 @@ package org.reporterslab.archiver.services.database
 			trace(e);
 		}
 		
+		public function onSaveStatusesProgress(numStepsComplete:uint, totalSteps:uint):void
+		{
+			//trace("Complete: " + numStepsComplete + " of " + totalSteps);
+		}
 		
 		
+//============================================= STATUS LOADING ===========================================
+		
+		
+		/**
+		 * This should take a vector of Status objects generated from a Twitter service (as in, they have Twitter IDs, but not
+		 * System IDs and query their appropriate objects from the database. Most likely called immediately after adding
+		 * Twitter objects into the DB.
+		 * 
+		 * @param statuses         A Vector of Status objects to fill out data for.
+		 **/
+		public function loadTwitterStatuses(statuses:Vector.<Status>):void
+		{
+			var inClause:String = "(";
+			var query:String = DYNAMIC_SELECT_STATUS_SQL;
+			for each(var s:Status in statuses){
+				inClause += "'" + s.twitterId + "',";
+			}
+			inClause = inClause.substr(0, inClause.length - 1) + ")"; // remove last comma.
+			query = query.replace(":values", inClause);
+			query = query.replace(":field", "twitterId");
+			sqlRunner.execute(query, null, onLoadStatuses, Status, onLoadStatusesError);
+		}
 		
 		public function loadAllStatuses():void
 		{
@@ -129,7 +170,7 @@ package org.reporterslab.archiver.services.database
 		public function onLoadStatuses(result:SQLResult):void
 		{
 			trace("statuses loaded");
-			var statuses:Vector.<Status> = new Vector.<Status>(result.data);
+			var statuses:Vector.<Status> = Vector.<Status>(result.data as Array);
 			dispatch(new ArchiverDBEvent(ArchiverDBEvent.STATUSES_LOADED, null, statuses));
 		}
 		
@@ -221,6 +262,10 @@ package org.reporterslab.archiver.services.database
 		[Embed(source="sql/status/SelectStatus.sql", mimeType="application/octet-stream")]
 		private static const SelectStatusStatement:Class;
 		private static const SELECT_STATUS_SQL:String = new SelectStatusStatement();
+		
+		[Embed(source="sql/status/DynamicSelectStatus.sql", mimeType="application/octet-stream")]
+		private static const DynamicSelectStatusStatement:Class;
+		private static const DYNAMIC_SELECT_STATUS_SQL:String = new DynamicSelectStatusStatement();
 		
 		[Embed(source="sql/status/SelectAllStatuses.sql", mimeType="application/octet-stream")]
 		private static const SelectAllStatusesStatement:Class;

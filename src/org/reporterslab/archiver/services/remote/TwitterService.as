@@ -22,6 +22,10 @@ package org.reporterslab.archiver.services.remote
 		
 		private var _api:TwitterAPI = new TwitterAPI();
 		private var _authorizationURL:String;
+		private var _latestTimelineOp:TwitterOperation;
+		
+		public var newestId:String;
+		public var oldestId:String;
 		
 		public var latestData:ArrayCollection;
 		
@@ -38,43 +42,46 @@ package org.reporterslab.archiver.services.remote
 		
 		public function loadLatestTimeline():void
 		{
-			//load the timeline of authenticated user. We probably want to use the sinceId and maxId somehow.
-			var op:TwitterOperation = new LoadHomeTimeline();
-			//I worry this is a stupid way to do this. The examples of the Twitter API are all in this format,
-			//but it may be better to move the handler into a class method.
-			var handler:Function = function(event:TwitterEvent):void
-			{
-				//be sure to remove the listener so the op can be collected.
-				op.removeEventListener(TwitterEvent.COMPLETE, handler);
-				if(event.success){
-					//save the latest data.
-					latestData = event.data as ArrayCollection;
-					//convert to our statuses.
-					var output:Vector.<Status> = new Vector.<Status>();
-					for each(var ts:TwitterStatus in latestData)
-					{
-						var s:Status = new Status();
-						s.parseTwitterStatus(ts);
-						output.push(s);
-					}
-					
-					//and send it up the chain.
-					dispatch(new ArchiverContentEvent(ArchiverContentEvent.NEW_CONTENT, ArchiverContentEvent.TYPE_TWITTER, output));
-				}else{
-					//needs better error handling, probably.
-					trace("Error loading timeline: " + event.data.toString());
-					//send up the original event data as an error message.
-					dispatch(new ArchiverContentEvent(ArchiverContentEvent.ERROR_LOADING_CONTENT, ArchiverContentEvent.TYPE_TWITTER, event.data));
-				}
+			if(_latestTimelineOp){
+				_latestTimelineOp.removeEventListener(TwitterEvent.COMPLETE, onLatestTimeline);
 			}
+			//load the timeline of authenticated user. We probably want to use the sinceId and maxId somehow.
+			_latestTimelineOp = new LoadHomeTimeline(this.newestId, null, 200);
 			//tie handler to operation.
-			op.addEventListener(TwitterEvent.COMPLETE, handler);
+			_latestTimelineOp.addEventListener(TwitterEvent.COMPLETE, this.onLatestTimeline);
 			//and post the op to the api.
-			_api.post(op);
+			_api.post(_latestTimelineOp);
 		}
 		
 		
-		
+		public function onLatestTimeline(event:TwitterEvent):void
+		{
+			if(event.success){
+				//save the latest data.
+				latestData = event.data as ArrayCollection;
+				//convert to our statuses.
+				var output:Vector.<Status> = new Vector.<Status>();
+				for each(var ts:TwitterStatus in latestData)
+				{
+					var s:Status = new Status();
+					s.parseTwitterStatus(ts);
+					output.push(s);
+				}
+				if(output.length > 0){
+					this.newestId = output[0].twitterId;
+					this.oldestId = output[output.length - 1].twitterId;
+					//and send it up the chain.
+					dispatch(new ArchiverContentEvent(ArchiverContentEvent.NEW_CONTENT, ArchiverContentEvent.TYPE_TWITTER, output));	
+				}else{
+					trace("No New Tweets");
+				}
+			}else{
+				//needs better error handling, probably.
+				trace("Error loading timeline: " + event.data.toString());
+				//send up the original event data as an error message.
+				dispatch(new ArchiverContentEvent(ArchiverContentEvent.ERROR_LOADING_CONTENT, ArchiverContentEvent.TYPE_TWITTER, event.data));
+			}
+		}
 		
 		
 		

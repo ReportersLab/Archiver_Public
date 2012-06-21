@@ -73,8 +73,12 @@ package org.reporterslab.archiver.models
 		{
 			for each(var s:Status in statuses)
 			{
-				this.statuses.addItem(s);
-				trace("Have Status:" + s.text);
+				if(this.statuses.contains(s)){
+					continue;
+				}else{
+					this.statuses.addItem(s);
+					trace("Have Status:" + s.text);
+				}
 			}
 			
 			dispatch(new ArchiverModelEvent(ArchiverModelEvent.STATUS_ADDED, this.statuses));

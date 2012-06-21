@@ -2,6 +2,7 @@ SELECT
 	id,
 	name,
 	countryCode,
+	country,
 	attributes,
 	url,
 	twitterId,

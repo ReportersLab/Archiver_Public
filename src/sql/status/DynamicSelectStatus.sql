@@ -25,4 +25,4 @@ SELECT
 	favorited,
 	annotations
 FROM Status
-WHERE id IN :id;
+WHERE :field IN :values;
