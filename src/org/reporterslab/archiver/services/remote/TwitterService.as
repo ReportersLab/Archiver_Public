@@ -7,7 +7,9 @@ package org.reporterslab.archiver.services.remote
 	import com.dborisenko.api.twitter.net.TwitterOperation;
 	import com.dborisenko.api.twitter.oauth.events.OAuthTwitterEvent;
 	
+	import flash.data.EncryptedLocalStore;
 	import flash.events.Event;
+	import flash.utils.ByteArray;
 	
 	import mx.collections.ArrayCollection;
 	
@@ -15,6 +17,7 @@ package org.reporterslab.archiver.services.remote
 	import org.reporterslab.archiver.events.ArchiverTwitterEvent;
 	import org.reporterslab.archiver.models.vo.Status;
 	import org.reporterslab.archiver.services.remote.configs.TwitterConfigs;
+	import org.reporterslab.archiver.services.remote.twitter.StatusCatchUpLoader;
 	import org.robotlegs.mvcs.Actor;
 	
 	public class TwitterService extends Actor
@@ -23,6 +26,7 @@ package org.reporterslab.archiver.services.remote
 		private var _api:TwitterAPI = new TwitterAPI();
 		private var _authorizationURL:String;
 		private var _latestTimelineOp:TwitterOperation;
+		private var _catchUpLoader:StatusCatchUpLoader;
 		
 		public var newestId:String;
 		public var oldestId:String;
@@ -33,9 +37,9 @@ package org.reporterslab.archiver.services.remote
 		{
 			super();
 			trace("Twitter Service Created");
-			
+			newestId = getLatestStoredId();
 			initializeApi();
-			
+			catchUp();
 		}
 		
 		
@@ -54,27 +58,18 @@ package org.reporterslab.archiver.services.remote
 		}
 		
 		
-		public function onLatestTimeline(event:TwitterEvent):void
+		private function onLatestTimeline(event:TwitterEvent):void
 		{
 			if(event.success){
-				//save the latest data.
-				latestData = event.data as ArrayCollection;
-				//convert to our statuses.
-				var output:Vector.<Status> = new Vector.<Status>();
-				for each(var ts:TwitterStatus in latestData)
-				{
-					var s:Status = new Status();
-					s.parseTwitterStatus(ts);
-					output.push(s);
-				}
+				storeLatestId(event.data);
+				var output:Vector.<Status> = parseStatuses(event.data);
 				if(output.length > 0){
 					this.newestId = output[0].twitterId;
-					this.oldestId = output[output.length - 1].twitterId;
-					//and send it up the chain.
-					dispatch(new ArchiverContentEvent(ArchiverContentEvent.NEW_CONTENT, ArchiverContentEvent.TYPE_TWITTER, output));	
+					this.oldestId = output[output.length - 1].twitterId;	
 				}else{
 					trace("No New Tweets");
 				}
+				dispatch(new ArchiverContentEvent(ArchiverContentEvent.NEW_CONTENT, ArchiverContentEvent.TYPE_TWITTER, output));
 			}else{
 				//needs better error handling, probably.
 				trace("Error loading timeline: " + event.data.toString());
@@ -84,6 +79,53 @@ package org.reporterslab.archiver.services.remote
 		}
 		
 		
+		/**
+		 * Takes a twitter post result and converts it into a vector of status objects.
+		 * 
+		 * @param data       The object (should be an array collection) containing the statuses.
+		 **/
+		public function parseStatuses(data:Object):Vector.<Status>
+		{
+			//save the latest data.
+			latestData = data as ArrayCollection;
+			//convert to our statuses.
+			var output:Vector.<Status> = new Vector.<Status>();
+			for each(var ts:TwitterStatus in latestData)
+			{
+				var s:Status = new Status();
+				s.parseTwitterStatus(ts);
+				output.push(s);
+			}
+			
+			return output;
+		}
+		
+		
+		
+		/**
+		 * This should catch up the Timeline from wherever it last stopped until now. Note that the Twitter API will only
+		 * send the most recent 800 statuses back at maximum (in 200-status chunks). This could prove to be the downfall
+		 * of the entire application. Imagine someone turning on the PC after a weekend, it couldn't catch up...
+		 **/
+		
+		public function catchUp():void
+		{
+			var sinceId:String = getLatestStoredId();
+			trace("Launching the catch up. Id from Local Store: " + sinceId);
+			//I think maxId is always going to be null here?
+			this._catchUpLoader = new StatusCatchUpLoader(this._api, sinceId, null);
+			this._catchUpLoader.addEventListener(TwitterEvent.COMPLETE, onCatchUp);
+		}
+		
+		private function onCatchUp(event:TwitterEvent):void
+		{
+			if(event.success){
+				var output:Vector.<Status> = parseStatuses(event.data);
+				dispatch(new ArchiverContentEvent(ArchiverContentEvent.NEW_CONTENT, ArchiverContentEvent.TYPE_TWITTER, output));
+			}else{
+				dispatch(new ArchiverContentEvent(ArchiverContentEvent.ERROR_LOADING_CONTENT, ArchiverContentEvent.TYPE_TWITTER, event.data));
+			}
+		}
 		
 		
 		/**
@@ -161,6 +203,38 @@ package org.reporterslab.archiver.services.remote
 			_api.connection.grantAccess(code);
 		}
 		
+		
+		
+		/**
+		 * Takes a Twitter API result and saves the latest Id to the local store for later use.
+		 * 
+		 * @param data             A result from the Twitter API. This will almost certainly be an ArrayCollection. If it isn't,
+		 * 							no data is saved.
+		 **/
+		protected function storeLatestId(data:Object):void
+		{
+			if (data is ArrayCollection && ArrayCollection(data).length > 0)
+			{
+				var item:TwitterStatus = ArrayCollection(data).getItemAt(0) as TwitterStatus;
+				if (item){
+					trace("Saving id to the local store: " + item.id);
+					var bytes:ByteArray = new ByteArray();
+					bytes.writeObject(item.id);
+					EncryptedLocalStore.setItem("latestTwitterId", bytes);
+				}
+			}
+		}
+		
+		public function getLatestStoredId():String
+		{
+			var idBytes:ByteArray = EncryptedLocalStore.getItem("latestTwitterId");
+			var id:String = null;
+			if(idBytes){
+				//bytes are a string.
+				id = idBytes.readObject() as String;
+			}
+			return id;
+		}
 		
 	}
 }
