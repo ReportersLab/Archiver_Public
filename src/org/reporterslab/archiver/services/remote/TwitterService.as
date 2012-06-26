@@ -1,6 +1,7 @@
 package org.reporterslab.archiver.services.remote
 {
 	import com.dborisenko.api.twitter.TwitterAPI;
+	import com.dborisenko.api.twitter.commands.streaming.UserStream;
 	import com.dborisenko.api.twitter.commands.timeline.LoadHomeTimeline;
 	import com.dborisenko.api.twitter.data.TwitterStatus;
 	import com.dborisenko.api.twitter.events.TwitterEvent;
@@ -27,6 +28,7 @@ package org.reporterslab.archiver.services.remote
 		private var _authorizationURL:String;
 		private var _latestTimelineOp:TwitterOperation;
 		private var _catchUpLoader:StatusCatchUpLoader;
+		private var _stream:UserStream;
 		
 		public var newestId:String;
 		public var oldestId:String;
@@ -125,6 +127,21 @@ package org.reporterslab.archiver.services.remote
 			}else{
 				dispatch(new ArchiverContentEvent(ArchiverContentEvent.ERROR_LOADING_CONTENT, ArchiverContentEvent.TYPE_TWITTER, event.data));
 			}
+			//we're caught up, start the stream.
+			startStream();
+		}
+		
+		
+		public function startStream():void
+		{
+			_stream = new UserStream(); // all defaults.
+			_stream.addEventListener(TwitterEvent.COMPLETE, onStreamingData);
+			_api.post(_stream);
+		}
+		
+		private function onStreamingData(event:TwitterEvent):void
+		{
+			
 		}
 		
 		
