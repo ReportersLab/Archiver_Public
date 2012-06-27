@@ -170,6 +170,8 @@ package org.reporterslab.archiver.services.database
 		public function onLoadStatuses(result:SQLResult):void
 		{
 			trace("statuses loaded");
+			if(result.data == null)
+				return;
 			var statuses:Vector.<Status> = Vector.<Status>(result.data as Array);
 			dispatch(new ArchiverDBEvent(ArchiverDBEvent.STATUSES_LOADED, null, statuses));
 		}

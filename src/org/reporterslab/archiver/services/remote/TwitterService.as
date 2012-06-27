@@ -3,8 +3,10 @@ package org.reporterslab.archiver.services.remote
 	import com.dborisenko.api.twitter.TwitterAPI;
 	import com.dborisenko.api.twitter.commands.streaming.UserStream;
 	import com.dborisenko.api.twitter.commands.timeline.LoadHomeTimeline;
+	import com.dborisenko.api.twitter.data.StreamingObject;
 	import com.dborisenko.api.twitter.data.TwitterStatus;
 	import com.dborisenko.api.twitter.events.TwitterEvent;
+	import com.dborisenko.api.twitter.events.TwitterStreamingEvent;
 	import com.dborisenko.api.twitter.net.TwitterOperation;
 	import com.dborisenko.api.twitter.oauth.events.OAuthTwitterEvent;
 	
@@ -135,13 +137,29 @@ package org.reporterslab.archiver.services.remote
 		public function startStream():void
 		{
 			_stream = new UserStream(); // all defaults.
-			_stream.addEventListener(TwitterEvent.COMPLETE, onStreamingData);
+			_stream.addEventListener(TwitterStreamingEvent.PROGRESS, onStreamingData);
+			_stream.addEventListener(TwitterStreamingEvent.STREAM_ERROR, onStreamingError);
 			_api.post(_stream);
 		}
 		
-		private function onStreamingData(event:TwitterEvent):void
+		private function onStreamingData(event:TwitterStreamingEvent):void
 		{
+			var data:StreamingObject = event.streamObject;
 			
+			if(data.type == StreamingObject.TYPE_STATUS){
+				storeLatestId(data.data as TwitterStatus);
+				var statuses:Vector.<Status> = new Vector.<Status>();
+				var newStatus:Status = new Status();
+				statuses.push(newStatus.parseTwitterStatus(data.data as TwitterStatus));
+				dispatch(new ArchiverContentEvent(ArchiverContentEvent.NEW_CONTENT, ArchiverContentEvent.TYPE_TWITTER, statuses));
+			}
+			//ideally we'd handle all the other content types. For now this should work.
+			
+		}
+		
+		private function onStreamingError(event:TwitterStreamingEvent):void
+		{
+			trace("Twitter Stream Error. Should handle a restart or switch to polling here.");
 		}
 		
 		
