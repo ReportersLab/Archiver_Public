@@ -1,6 +1,9 @@
 package org.reporterslab.archiver.models
 {
 	import mx.collections.ArrayCollection;
+	import mx.collections.IViewCursor;
+	import mx.collections.Sort;
+	import mx.collections.SortField;
 	
 	import org.reporterslab.archiver.events.ArchiverModelEvent;
 	import org.reporterslab.archiver.models.vo.Status;
@@ -12,6 +15,7 @@ package org.reporterslab.archiver.models
 		private var _statuses:ArrayCollection = new ArrayCollection();
 		private var _selectedStatus:Status;
 		private var _searchedStatuses:ArrayCollection;
+		
 		
 		/**
 		 * Holds the current list of statuses for display. This is probably going to be the most recent X number of statuses,
@@ -25,6 +29,7 @@ package org.reporterslab.archiver.models
 		public function set statuses(value:ArrayCollection):void
 		{
 			this._statuses = statuses;
+			sortStatuses();
 			dispatch(new ArchiverModelEvent(ArchiverModelEvent.STATUSES_CHANGED, this.statuses));
 		}
 		
@@ -71,17 +76,38 @@ package org.reporterslab.archiver.models
 		 **/
 		public function addStatuses(statuses:Vector.<Status>):void
 		{
+			//first sort the statuses
+			sortStatuses();
+			//generate a cursor based off of the sort (the field is 'id' in this case) so we can find if a status already exists.
+			var cursor:IViewCursor = _statuses.createCursor();
+		
 			for each(var s:Status in statuses)
 			{
-				if(this.statuses.contains(s)){
+				//if the status does exist, on to the next and on to the next and on to the next		
+				if(cursor.findAny({"id" : s.id})){
 					continue;
 				}else{
-					this.statuses.addItem(s);
+					//otherwise, add it to our statuses
+					_statuses.addItem(s);
 					trace("Have Status:" + s.text);
 				}
 			}
-			
-			dispatch(new ArchiverModelEvent(ArchiverModelEvent.STATUS_ADDED, this.statuses));
+			//sort them again, just to be sure everything is in order.
+			sortStatuses();
+			//and tell our listeners.
+			dispatch(new ArchiverModelEvent(ArchiverModelEvent.STATUS_ADDED, _statuses));
+		}
+		
+		/**
+		 * Sorts our statuses based on the id field. This is so we can use our cursor later as we add items to the statuses collection.
+		 **/
+		private function sortStatuses():void
+		{
+			var sort:Sort = new Sort();
+			var field:SortField = new SortField("id", true, false, true);
+			sort.fields = [field];
+			_statuses.sort = sort;
+			_statuses.refresh();		
 		}
 		
 	}

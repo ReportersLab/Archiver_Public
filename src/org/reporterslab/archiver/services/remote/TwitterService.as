@@ -145,7 +145,7 @@ package org.reporterslab.archiver.services.remote
 		private function onStreamingData(event:TwitterStreamingEvent):void
 		{
 			var data:StreamingObject = event.streamObject;
-			
+			trace("Streaming Content Type: " + data.type);
 			if(data.type == StreamingObject.TYPE_STATUS){
 				storeLatestId(data.data as TwitterStatus);
 				var statuses:Vector.<Status> = new Vector.<Status>();
@@ -248,16 +248,21 @@ package org.reporterslab.archiver.services.remote
 		 **/
 		protected function storeLatestId(data:Object):void
 		{
+			var item:TwitterStatus;
 			if (data is ArrayCollection && ArrayCollection(data).length > 0)
 			{
-				var item:TwitterStatus = ArrayCollection(data).getItemAt(0) as TwitterStatus;
-				if (item){
-					trace("Saving id to the local store: " + item.id);
-					var bytes:ByteArray = new ByteArray();
-					bytes.writeObject(item.id);
-					EncryptedLocalStore.setItem("latestTwitterId", bytes);
-				}
+				item = ArrayCollection(data).getItemAt(0) as TwitterStatus;
+			}else if (data is TwitterStatus){
+				item = data as TwitterStatus;
 			}
+			
+			if (item){
+				trace("Saving id to the local store: " + item.id);
+				var bytes:ByteArray = new ByteArray();
+				bytes.writeObject(item.id);
+				EncryptedLocalStore.setItem("latestTwitterId", bytes);
+			}
+		
 		}
 		
 		public function getLatestStoredId():String

@@ -87,7 +87,7 @@ package org.reporterslab.archiver.services.remote.twitter
 					
 					//if we've found our last id, we're done and can return.
 					for each(var tweet:TwitterStatus in ac){
-						if(tweet.id == _sinceId){
+						if(parseFloat(tweet.id) >= parseFloat(_sinceId)){
 							notifyListeners();
 							return;
 						}

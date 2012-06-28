@@ -1,4 +1,5 @@
 SELECT
+	id,
 	createdAt,
 	text,
 	source,
