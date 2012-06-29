@@ -89,7 +89,7 @@ package org.reporterslab.archiver.models
 				}else{
 					//otherwise, add it to our statuses
 					_statuses.addItem(s);
-					trace("Have Status:" + s.text);
+					//trace("Have Status:" + s.text);
 				}
 			}
 			//sort them again, just to be sure everything is in order.

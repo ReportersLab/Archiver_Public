@@ -17,7 +17,7 @@ package org.reporterslab.archiver.controllers
 		{
 			trace("Loading new data for our services.");
 			//normally we'd do something more intelligent here.
-			//twitterService.loadLatestTimeline();
+			twitterService.fetchLatestData();
 		}
 		
 	}

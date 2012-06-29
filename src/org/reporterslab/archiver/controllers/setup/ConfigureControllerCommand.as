@@ -1,9 +1,14 @@
 package org.reporterslab.archiver.controllers.setup
 {
+	import flash.events.Event;
+	
+	import mx.core.Application;
+	
 	import org.reporterslab.archiver.controllers.SaveContentCommand;
 	import org.reporterslab.archiver.controllers.TwitterLoginCommand;
 	import org.reporterslab.archiver.controllers.UpdateServicesCommand;
 	import org.reporterslab.archiver.controllers.db.LoadedStatusesCommand;
+	import org.reporterslab.archiver.controllers.system.ApplicationExitingCommand;
 	import org.reporterslab.archiver.events.ArchiverConfigurationEvent;
 	import org.reporterslab.archiver.events.ArchiverContentEvent;
 	import org.reporterslab.archiver.events.ArchiverDBEvent;
@@ -29,7 +34,8 @@ package org.reporterslab.archiver.controllers.setup
 			//database events
 			commandMap.mapEvent(ArchiverDBEvent.STATUSES_LOADED, LoadedStatusesCommand, ArchiverDBEvent); 
 			
-			
+			//system wide events
+			commandMap.mapEvent(Event.EXITING, ApplicationExitingCommand, Event);
 			
 			//Configure the Service
 			dispatch(new ArchiverConfigurationEvent(ArchiverConfigurationEvent.CONFIGURE_DATABASE));

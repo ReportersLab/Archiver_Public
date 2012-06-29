@@ -12,7 +12,9 @@ package org.reporterslab.archiver.services.remote
 	
 	import flash.data.EncryptedLocalStore;
 	import flash.events.Event;
+	import flash.events.TimerEvent;
 	import flash.utils.ByteArray;
+	import flash.utils.Timer;
 	
 	import mx.collections.ArrayCollection;
 	
@@ -31,6 +33,8 @@ package org.reporterslab.archiver.services.remote
 		private var _latestTimelineOp:TwitterOperation;
 		private var _catchUpLoader:StatusCatchUpLoader;
 		private var _stream:UserStream;
+		private var _isStreaming:Boolean = false;
+		private var _streamRestartTimer:Timer;
 		
 		public var newestId:String;
 		public var oldestId:String;
@@ -46,6 +50,16 @@ package org.reporterslab.archiver.services.remote
 			catchUp();
 		}
 		
+		
+		/**
+		 * Only fires if not streaming
+		 **/
+		public function fetchLatestData():void
+		{
+			if(!_isStreaming){
+				this.loadLatestTimeline();
+			}
+		}
 		
 		
 		public function loadLatestTimeline():void
@@ -136,6 +150,7 @@ package org.reporterslab.archiver.services.remote
 		
 		public function startStream():void
 		{
+			_isStreaming = true;
 			_stream = new UserStream(); // all defaults.
 			_stream.addEventListener(TwitterStreamingEvent.PROGRESS, onStreamingData);
 			_stream.addEventListener(TwitterStreamingEvent.STREAM_ERROR, onStreamingError);
@@ -159,9 +174,20 @@ package org.reporterslab.archiver.services.remote
 		
 		private function onStreamingError(event:TwitterStreamingEvent):void
 		{
+			_isStreaming = false;
+			_streamRestartTimer = new Timer(5000, 1);
+			_streamRestartTimer.addEventListener(TimerEvent.TIMER, onStreamRestartTimer);
+			_streamRestartTimer.start();
 			trace("Twitter Stream Error. Should handle a restart or switch to polling here.");
 		}
 		
+		
+		private function onStreamRestartTimer(event:TimerEvent):void
+		{
+			_streamRestartTimer.stop();
+			_streamRestartTimer.removeEventListener(TimerEvent.TIMER, onStreamRestartTimer);
+			startStream();
+		}
 		
 		/**
 		 * Here is where we would run the OAUTH process. First we'd have to test if we hvae a User's Token in the
@@ -274,6 +300,16 @@ package org.reporterslab.archiver.services.remote
 				id = idBytes.readObject() as String;
 			}
 			return id;
+		}
+		
+		
+		/**
+		 * Closes the stream
+		 **/
+		
+		public function destroy():void
+		{
+			this._stream.closeStream();
 		}
 		
 	}
