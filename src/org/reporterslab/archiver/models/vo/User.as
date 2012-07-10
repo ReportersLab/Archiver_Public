@@ -6,52 +6,52 @@ package org.reporterslab.archiver.models.vo
 	{
 		
 		//generic
-		public var id:int = -1;
-		public var name:String;
-		public var screenName:String;
-		public var location:String;
-		public var description:String;
-		public var profileImageUrl:String;
-		public var url:String;
-		public var firstName:String; // may never need.
-		public var lastName:String; // may never need.
+		[Bindable] public var id:int = -1;
+		[Bindable] public var name:String;
+		[Bindable] public var screenName:String;
+		[Bindable] public var location:String;
+		[Bindable] public var description:String;
+		[Bindable] public var profileImageUrl:String;
+		[Bindable] public var url:String;
+		[Bindable] public var firstName:String; // may never need.
+		[Bindable] public var lastName:String; // may never need.
 		
 		//twitter specific
-		public var twitterId:String;
-		public var isProtected:Boolean;
-		public var friendCount:Number;
-		public var followersCount:Number;
-		public var createdAt:Date;
-		public var favouritesCount:Number;
-		public var utcOffset:int;
-		public var timeZone:String;
-		public var notifications:Boolean;
-		public var statusesCount:Number;
-		public var profileBackgroundColor:String;
-		public var profileTextColor:String;
-		public var profileLinkColor:String;
-		public var profileSidebarFillColor:String;
-		public var profileSidebarBorderColor:String;
-		public var profileBackgroundImageUrl:String;
-		public var profileBackgroundTile:String;
-		public var status:Status;
-		public var profileUseBackgroundImage:Boolean = false;
-		public var defaultProfileImage:Boolean = false;
-		public var isTranslator:Boolean = false;
-		public var followRequestSent:Boolean = false;
-		public var contributorsEnabled:Boolean = false;
-		public var defaultProfile:Boolean = false;
-		public var listedCount:int = 0;
-		public var language:String = "en";
-		public var geoEnabled:Boolean = false;
-		public var verified:Boolean = false;
-		public var showAllInlineMedia:Boolean = false;
+		[Bindable] public var twitterId:String;
+		[Bindable] public var isProtected:Boolean;
+		[Bindable] public var friendCount:Number;
+		[Bindable] public var followersCount:Number;
+		[Bindable] public var createdAt:Date;
+		[Bindable] public var favouritesCount:Number;
+		[Bindable] public var utcOffset:int;
+		[Bindable] public var timeZone:String;
+		[Bindable] public var notifications:Boolean;
+		[Bindable] public var statusesCount:Number;
+		[Bindable] public var profileBackgroundColor:String;
+		[Bindable] public var profileTextColor:String;
+		[Bindable] public var profileLinkColor:String;
+		[Bindable] public var profileSidebarFillColor:String;
+		[Bindable] public var profileSidebarBorderColor:String;
+		[Bindable] public var profileBackgroundImageUrl:String;
+		[Bindable] public var profileBackgroundTile:String;
+		[Bindable] public var profileUseBackgroundImage:Boolean = false;
+		[Bindable] public var defaultProfileImage:Boolean = false;
+		[Bindable] public var isTranslator:Boolean = false;
+		[Bindable] public var followRequestSent:Boolean = false;
+		[Bindable] public var contributorsEnabled:Boolean = false;
+		[Bindable] public var defaultProfile:Boolean = false;
+		[Bindable] public var listedCount:int = 0;
+		[Bindable] public var language:String = "en";
+		[Bindable] public var geoEnabled:Boolean = false;
+		[Bindable] public var verified:Boolean = false;
+		[Bindable] public var showAllInlineMedia:Boolean = false;
 		
-		public var following:Boolean;
-		public var follower:Boolean;
-		public var blocked:Boolean;
+		[Bindable] public var following:Boolean;
+		[Bindable] public var follower:Boolean;
+		[Bindable] public var blocked:Boolean;
 		
-		
+		[Bindable] public var statusId:String;
+		[Bindable] public var status:Status;
 		
 		public function User()
 		{

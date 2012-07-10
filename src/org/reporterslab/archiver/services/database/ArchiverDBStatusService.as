@@ -11,6 +11,19 @@ package org.reporterslab.archiver.services.database
 	import org.reporterslab.archiver.models.vo.Status;
 	import org.robotlegs.mvcs.Actor;
 	
+	
+	
+	
+	[Event(name="statusesCreated",type="org.reporterslab.archiver.events.ArchiverDBEvent")]
+	[Event(name="statusesDeleted",type="org.reporterslab.archiver.events.ArchiverDBEvent")]
+	[Event(name="statusesLoaded",type="org.reporterslab.archiver.events.ArchiverDBEvent")]
+	
+	[Event(name="statusCreated",type="org.reporterslab.archiver.events.ArchiverDBEvent")]
+	[Event(name="statusDeleted",type="org.reporterslab.archiver.events.ArchiverDBEvent")]
+	[Event(name="statusUpdated",type="org.reporterslab.archiver.events.ArchiverDBEvent")]
+	[Event(name="statusLoaded",type="org.reporterslab.archiver.events.ArchiverDBEvent")]
+	
+	
 	public class ArchiverDBStatusService extends Actor
 	{
 		
@@ -173,6 +186,13 @@ package org.reporterslab.archiver.services.database
 			if(result.data == null)
 				return;
 			var statuses:Vector.<Status> = Vector.<Status>(result.data as Array);
+			
+			//flesh out statuses with related data.... ????? Can't decide if this is sane or not.
+			//alternative is to load only small pieces of whate we need and then flesh out on demand. That's a little harder.
+			for each(var s:Status in statuses){
+				this.userService.loadUserForStatus(s);
+			}
+			
 			dispatch(new ArchiverDBEvent(ArchiverDBEvent.STATUSES_LOADED, null, statuses));
 		}
 		

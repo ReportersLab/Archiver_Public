@@ -25,6 +25,14 @@ package org.reporterslab.archiver.services.remote
 	import org.reporterslab.archiver.services.remote.twitter.StatusCatchUpLoader;
 	import org.robotlegs.mvcs.Actor;
 	
+	
+	[Event(name="login",type="org.reporterslab.archiver.events.ArchiverTwitterEvent")]
+	[Event(name="logout",type="org.reporterslab.archiver.events.ArchiverTwitterEvent")]
+
+	[Event(name="newContent",type="org.reporterslab.archiver.events.ArchiverContentEvent")]
+	[Event(name="errorLoadingContent",type="org.reporterslab.archiver.events.ArchiverContentEvent")]
+
+	
 	public class TwitterService extends Actor
 	{
 		
@@ -174,8 +182,9 @@ package org.reporterslab.archiver.services.remote
 		
 		private function onStreamingError(event:TwitterStreamingEvent):void
 		{
+			_stream.closeStream();
 			_isStreaming = false;
-			_streamRestartTimer = new Timer(5000, 1);
+			_streamRestartTimer = new Timer(1000*60*5, 1); // five minute restart
 			_streamRestartTimer.addEventListener(TimerEvent.TIMER, onStreamRestartTimer);
 			_streamRestartTimer.start();
 			trace("Twitter Stream Error. Should handle a restart or switch to polling here.");
@@ -309,6 +318,7 @@ package org.reporterslab.archiver.services.remote
 		
 		public function destroy():void
 		{
+			trace("Killing Twitter User Stream");
 			this._stream.closeStream();
 		}
 		

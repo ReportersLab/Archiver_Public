@@ -80,7 +80,7 @@ package org.reporterslab.archiver.models
 			sortStatuses();
 			//generate a cursor based off of the sort (the field is 'id' in this case) so we can find if a status already exists.
 			var cursor:IViewCursor = _statuses.createCursor();
-		
+			var newStatuses:ArrayCollection = new ArrayCollection();
 			for each(var s:Status in statuses)
 			{
 				//if the status does exist, on to the next and on to the next and on to the next		
@@ -89,13 +89,14 @@ package org.reporterslab.archiver.models
 				}else{
 					//otherwise, add it to our statuses
 					_statuses.addItem(s);
+					newStatuses.addItem(s);
 					//trace("Have Status:" + s.text);
 				}
 			}
 			//sort them again, just to be sure everything is in order.
 			sortStatuses();
 			//and tell our listeners.
-			dispatch(new ArchiverModelEvent(ArchiverModelEvent.STATUS_ADDED, _statuses));
+			dispatch(new ArchiverModelEvent(ArchiverModelEvent.STATUSES_ADDED, newStatuses));
 		}
 		
 		/**

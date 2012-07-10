@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx">
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.listClasses.ListItemRenderer;
+			
+			import org.reporterslab.archiver.events.ArchiverStatusEvent;
+			import org.reporterslab.archiver.models.vo.Status;
+			import org.reporterslab.archiver.views.renderers.StatusListTweetRenderer;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.skins.spark.DefaultItemRenderer;
+			
+			
+			[Event(name="statusEventStatusSelected",type="org.reporterslab.archiver.events.ArchiverStatusEvent")]
+			
+			
+			//holds the statuses.
+			[Bindable]
+			public var statuses:ArrayCollection = new ArrayCollection();
+			
+			/**
+			 * Tests the status item to see how to render. This may not be necessary, as we may want to just render all statuses
+			 * with the same class and have it add visual elements based on type. I think we want to at least make Tweets look different
+			 * somehow from other things like Facebook posts or RSS items.
+			 **/
+			private function _getListRenderer(item:Object):IFactory
+			{
+				var status:Status = item as Status; // should always be the case.
+				var type:Class = DefaultItemRenderer;
+				switch(status.statusType)
+				{
+					case Status.TYPE_TWITTER:
+					case Status.TYPE_TWITTER_SEARCH:
+					{
+						type = StatusListTweetRenderer;
+						break;
+					}
+						
+					default:
+					{
+						break;	
+					}
+				}
+				return new ClassFactory(type);
+			}
+			
+			
+			public function get selectedItem():Status
+			{
+				return list.selectedItem as Status;
+			}
+			
+			public function set selectedItem(value:Status):void
+			{
+				if(statuses.contains(value))
+					list.selectedItem = value;
+			}
+			
+			protected function list_changeHandler(event:IndexChangeEvent):void
+			{
+				dispatchEvent(new ArchiverStatusEvent(ArchiverStatusEvent.STATUS_SELECTED, selectedItem));
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	<s:List id="list" width="100%" height="100%" horizontalScrollPolicy="off" borderVisible="false" 
+			itemRendererFunction="_getListRenderer" dataProvider="{statuses}" change="list_changeHandler(event)">
+		
+		<s:layout>
+			<s:VerticalLayout gap="10" useVirtualLayout="true" />
+		</s:layout>
+	</s:List>
+</s:Group>
+
+
+
+
+
+

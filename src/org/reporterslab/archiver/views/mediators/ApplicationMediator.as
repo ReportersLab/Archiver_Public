@@ -1,5 +1,7 @@
 package org.reporterslab.archiver.views.mediators
 {
+	import flash.events.Event;
+	
 	import org.reporterslab.archiver.models.ArchiverModel;
 	import org.robotlegs.mvcs.Mediator;
 	
@@ -15,7 +17,7 @@ package org.reporterslab.archiver.views.mediators
 		
 		override public function onRegister():void
 		{
-			
+			eventMap.mapListener(view, Event.EXITING, dispatch);
 		}
 		
 		

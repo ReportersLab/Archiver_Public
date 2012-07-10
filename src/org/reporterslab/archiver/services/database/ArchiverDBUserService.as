@@ -3,6 +3,10 @@ package org.reporterslab.archiver.services.database
 	import com.probertson.data.QueuedStatement;
 	import com.probertson.data.SQLRunner;
 	
+	import flash.data.SQLResult;
+	import flash.errors.SQLError;
+	import flash.utils.Dictionary;
+	
 	import org.reporterslab.archiver.models.vo.Status;
 	import org.reporterslab.archiver.models.vo.User;
 	import org.robotlegs.mvcs.Actor;
@@ -13,11 +17,46 @@ package org.reporterslab.archiver.services.database
 		[Inject]
 		public var sqlRunner:SQLRunner;
 		
+		
+		private var userIdsToStatuses:Dictionary = new Dictionary(true);
+		
 		public function ArchiverDBUserService()
 		{
 			super();
 		}
 		
+		public function loadUserForStatus(status:Status):void
+		{
+			//no user, we can't do anything. Shouldn't really happen.
+			if(status.userId == -1)
+				return;
+			
+			//if the user id doesn't exist in our hash yet, add a new array.
+			if(userIdsToStatuses[status.userId] == null){
+				userIdsToStatuses[status.userId] = new Vector.<Status>();
+			}
+			userIdsToStatuses[status.userId].push(status);
+			var query:String = SELECT_USER_SQL;
+			var params:Object = {id: status.userId};
+			sqlRunner.execute(query, params, onUserLoaded, User, onUserLoadedError);
+		}
+		
+		
+		private function onUserLoaded(result:SQLResult):void
+		{
+			var user:User = result.data[0] as User; // should only be one.
+			var statuses:Vector.<Status> = userIdsToStatuses[user.id];
+			for each(var status:Status in statuses){
+				status.user = user;
+			}
+			userIdsToStatuses[user.id] = null;
+		}
+		
+		private function onUserLoadedError(error:SQLError):void
+		{
+			trace("Error loading user");
+			trace(error);
+		}
 		
 		
 		/**

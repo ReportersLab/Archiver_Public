@@ -5,6 +5,7 @@ package org.reporterslab.archiver.controllers.setup
 	import mx.core.Application;
 	
 	import org.reporterslab.archiver.controllers.SaveContentCommand;
+	import org.reporterslab.archiver.controllers.SelectStatusCommand;
 	import org.reporterslab.archiver.controllers.TwitterLoginCommand;
 	import org.reporterslab.archiver.controllers.UpdateServicesCommand;
 	import org.reporterslab.archiver.controllers.db.LoadedStatusesCommand;
@@ -12,6 +13,7 @@ package org.reporterslab.archiver.controllers.setup
 	import org.reporterslab.archiver.events.ArchiverConfigurationEvent;
 	import org.reporterslab.archiver.events.ArchiverContentEvent;
 	import org.reporterslab.archiver.events.ArchiverDBEvent;
+	import org.reporterslab.archiver.events.ArchiverStatusEvent;
 	import org.reporterslab.archiver.events.ArchiverTwitterEvent;
 	import org.reporterslab.archiver.events.ArchiverUpdaterEvent;
 	import org.robotlegs.mvcs.Command;
@@ -36,6 +38,10 @@ package org.reporterslab.archiver.controllers.setup
 			
 			//system wide events
 			commandMap.mapEvent(Event.EXITING, ApplicationExitingCommand, Event);
+			
+			
+			//commands triggered from view interactions.
+			commandMap.mapEvent(ArchiverStatusEvent.STATUS_SELECTED, SelectStatusCommand, ArchiverStatusEvent);
 			
 			//Configure the Service
 			dispatch(new ArchiverConfigurationEvent(ArchiverConfigurationEvent.CONFIGURE_DATABASE));

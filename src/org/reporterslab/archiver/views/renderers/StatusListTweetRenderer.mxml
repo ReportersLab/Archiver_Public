@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="true">
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import org.reporterslab.archiver.models.vo.Status;
+			
+			[Bindable]
+			public var status:Status;
+			
+			override public function set data(value:Object):void
+			{
+				super.data = value;
+				if(data)
+					this.status = value as Status;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	<s:HGroup>
+		<s:Image id="avatar" width="48" height="48" source="{status.user.profileImageUrl}" />
+		<s:VGroup height="100%">
+			<s:Label id="userName" text="\@{status.user.screenName} ({status.user.name})" fontWeight="bold" />
+			<s:RichEditableText id="text" text="{status.text}" width="370" />
+		</s:VGroup>
+	</s:HGroup>
+	
+</s:ItemRenderer>

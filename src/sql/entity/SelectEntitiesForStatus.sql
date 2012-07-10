@@ -1,4 +1,5 @@
 SELECT
+	id,
 	type,
 	expandedURL,
 	url,

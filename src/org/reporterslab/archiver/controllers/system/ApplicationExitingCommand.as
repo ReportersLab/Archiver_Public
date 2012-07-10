@@ -12,6 +12,7 @@ package org.reporterslab.archiver.controllers.system
 		
 		override public function execute():void
 		{
+			trace("System Exiting.");
 			//ensure the urlstream gets closed -- Twitter seems to be picky about the thing being actually closed.
 			twitterService.destroy();
 		}

@@ -10,51 +10,51 @@ package org.reporterslab.archiver.models.vo
 		public static const TYPE_TWITTER_SEARCH:String = "twitterSearch";
 		
 		
-		public var statusType:String; // Twitter, Twitter Search, Facebook(?), RSS(?), etc. 
+		[Bindable] public var statusType:String; // Twitter, Twitter Search, Facebook(?), RSS(?), etc. 
 		
 		//generic
-		public var createdAt:Date;
-		public var id:int = -1;
-		public var text:String;
-		public var source:String; // as in, what posted the status. In Twitter this may be something like "Web" or "Instagram"
+		[Bindable] public var createdAt:Date;
+		[Bindable] public var id:int = -1;
+		[Bindable] public var text:String;
+		[Bindable] public var source:String; // as in, what posted the status. In Twitter this may be something like "Web" or "Instagram"
 		
-		public var user:User; // the system user id
-		public var userId:int = -1;
+		[Bindable] public var user:User; // the system user id
+		[Bindable] public var userId:int = -1;
 		
 		//these may have to be converted into strings or pulled apart or put into separate tables or something.
-		public var geo:Object = null; //Twitter JSON renders as: "geo": { "type":"Point", "coordinates":[37.78029, -122.39697] }
-		public var coordinates:Object = null; //not defined in the API
-		public var place:Place = null; //Twitter Specific for now, but may be generic. Have to look at other APIs
-		public var placeId:int = -1; // system id of the place.
-		public var twitterPlaceId:String = null; //place id from twitter.
+		[Bindable] public var geo:Object = null; //Twitter JSON renders as: "geo": { "type":"Point", "coordinates":[37.78029, -122.39697] }
+		[Bindable] public var coordinates:Object = null; //not defined in the API
+		[Bindable] public var place:Place = null; //Twitter Specific for now, but may be generic. Have to look at other APIs
+		[Bindable] public var placeId:int = -1; // system id of the place.
+		[Bindable] public var twitterPlaceId:String = null; //place id from twitter.
 		
 		//twitter specific
-		public var twitterId:String = null; // hmmmm. Probably want a unique DB id if we're mixing different status types (ie. Facebook + Twitter).
-		public var truncated:Boolean;
-		public var inReplyToStatusId:String;
-		public var inReplyToUserId:String;
-		public var favorited:Boolean;
-		public var inReplyToScreenName:String;
-		public var contributors:Array = null;
-		public var retweeted:Boolean = false;
-		public var retweetCount:int = 0;
-		public var possiblySensitive:Boolean = false;
-		public var searchType:String;
-		public var twitterUserId:String; // the twitter user
+		[Bindable] public var twitterId:String = null; // hmmmm. Probably want a unique DB id if we're mixing different status types (ie. Facebook + Twitter).
+		[Bindable] public var truncated:Boolean;
+		[Bindable] public var inReplyToStatusId:String;
+		[Bindable] public var inReplyToUserId:String;
+		[Bindable] public var favorited:Boolean;
+		[Bindable] public var inReplyToScreenName:String;
+		[Bindable] public var contributors:Array = null;
+		[Bindable] public var retweeted:Boolean = false;
+		[Bindable] public var retweetCount:int = 0;
+		[Bindable] public var possiblySensitive:Boolean = false;
+		[Bindable] public var searchType:String;
+		[Bindable] public var twitterUserId:String; // the twitter user
 		
 		
 		//entities -- may not be Twitter specific. Go into separate tables.
-		public var urls:Vector.<Entity> = null;
-		public var hashtags:Vector.<Entity> = null;
-		public var userMentions:Vector.<Entity> = null;
-		public var entities:Vector.<Entity> = null; // This would be a collection of the 3 above.
+		[Bindable] public var urls:Vector.<Entity> = null;
+		[Bindable] public var hashtags:Vector.<Entity> = null;
+		[Bindable] public var userMentions:Vector.<Entity> = null;
+		[Bindable] public var entities:Vector.<Entity> = null; // This would be a collection of the 3 above.
 		
-		public var annotations:Object = null; // no idea what this is.
-		public var isMention:Boolean = false;
+		[Bindable] public var annotations:Object = null; // no idea what this is.
+		[Bindable] public var isMention:Boolean = false;
 		//if this is a retweet, there's an entire other status here. Probably save it as just the ID and link two.
-		public var retweetedStatus:Status;
-		public var retweetedStatusTwitterId:String;
-		public var retweetedStatusId:int = -1;
+		[Bindable] public var retweetedStatus:Status;
+		[Bindable] public var retweetedStatusTwitterId:String;
+		[Bindable] public var retweetedStatusId:int = -1;
 		
 		
 		public function Status()

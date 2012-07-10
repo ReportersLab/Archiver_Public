@@ -8,7 +8,7 @@ package org.reporterslab.archiver.services
 	import org.reporterslab.archiver.models.vo.Status;
 	import org.robotlegs.mvcs.Actor;
 	
-	
+
 	
 	public class ArchiverDBService extends Actor
 	{

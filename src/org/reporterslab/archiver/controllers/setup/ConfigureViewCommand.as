@@ -1,7 +1,9 @@
 package org.reporterslab.archiver.controllers.setup
 {
 	import org.reporterslab.archiver.events.ArchiverConfigurationEvent;
+	import org.reporterslab.archiver.views.components.StatusList;
 	import org.reporterslab.archiver.views.mediators.ApplicationMediator;
+	import org.reporterslab.archiver.views.mediators.StatusListMediator;
 	import org.robotlegs.mvcs.Command;
 	
 	public class ConfigureViewCommand extends Command
@@ -15,6 +17,7 @@ package org.reporterslab.archiver.controllers.setup
 			trace("Configuring Views");
 			//configure the views. Basically linking Mediators to Views.
 			mediatorMap.mapView(Archiver, ApplicationMediator);
+			mediatorMap.mapView(StatusList, StatusListMediator);
 		}
 		
 	}
