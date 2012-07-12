@@ -5,14 +5,20 @@ package org.reporterslab.archiver.controllers.setup
 	import mx.core.Application;
 	
 	import org.reporterslab.archiver.controllers.SaveContentCommand;
+	import org.reporterslab.archiver.controllers.SearchCommand;
 	import org.reporterslab.archiver.controllers.SelectStatusCommand;
-	import org.reporterslab.archiver.controllers.TwitterLoginCommand;
 	import org.reporterslab.archiver.controllers.UpdateServicesCommand;
 	import org.reporterslab.archiver.controllers.db.LoadedStatusesCommand;
+	import org.reporterslab.archiver.controllers.db.PlacesSearchedCommand;
+	import org.reporterslab.archiver.controllers.db.StatusesSearchedCommand;
+	import org.reporterslab.archiver.controllers.db.UsersSearchedCommand;
 	import org.reporterslab.archiver.controllers.system.ApplicationExitingCommand;
 	import org.reporterslab.archiver.events.ArchiverConfigurationEvent;
 	import org.reporterslab.archiver.events.ArchiverContentEvent;
-	import org.reporterslab.archiver.events.ArchiverDBEvent;
+	import org.reporterslab.archiver.events.ArchiverDBPlaceEvent;
+	import org.reporterslab.archiver.events.ArchiverDBStatusEvent;
+	import org.reporterslab.archiver.events.ArchiverDBUserEvent;
+	import org.reporterslab.archiver.events.ArchiverSearchEvent;
 	import org.reporterslab.archiver.events.ArchiverStatusEvent;
 	import org.reporterslab.archiver.events.ArchiverTwitterEvent;
 	import org.reporterslab.archiver.events.ArchiverUpdaterEvent;
@@ -29,12 +35,14 @@ package org.reporterslab.archiver.controllers.setup
 			//configure the controllers.
 			trace("Configuring the Controller.");
 		
-			commandMap.mapEvent(ArchiverTwitterEvent.LOGIN, TwitterLoginCommand, ArchiverTwitterEvent);
 			commandMap.mapEvent(ArchiverContentEvent.NEW_CONTENT, SaveContentCommand, ArchiverContentEvent);
 			commandMap.mapEvent(ArchiverUpdaterEvent.UPDATE, UpdateServicesCommand, ArchiverUpdaterEvent);
 			
 			//database events
-			commandMap.mapEvent(ArchiverDBEvent.STATUSES_LOADED, LoadedStatusesCommand, ArchiverDBEvent); 
+			commandMap.mapEvent(ArchiverDBStatusEvent.STATUSES_LOADED, LoadedStatusesCommand, ArchiverDBStatusEvent); 
+			commandMap.mapEvent(ArchiverDBStatusEvent.STATUSES_SEARCHED, StatusesSearchedCommand, ArchiverDBStatusEvent);
+			commandMap.mapEvent(ArchiverDBUserEvent.USERS_SEARCHED, UsersSearchedCommand, ArchiverDBUserEvent);
+			commandMap.mapEvent(ArchiverDBPlaceEvent.PLACES_SEARCHED, PlacesSearchedCommand, ArchiverDBPlaceEvent);
 			
 			//system wide events
 			commandMap.mapEvent(Event.EXITING, ApplicationExitingCommand, Event);
@@ -42,6 +50,8 @@ package org.reporterslab.archiver.controllers.setup
 			
 			//commands triggered from view interactions.
 			commandMap.mapEvent(ArchiverStatusEvent.STATUS_SELECTED, SelectStatusCommand, ArchiverStatusEvent);
+			commandMap.mapEvent(ArchiverSearchEvent.SEARCH, SearchCommand, ArchiverSearchEvent);
+			
 			
 			//Configure the Service
 			dispatch(new ArchiverConfigurationEvent(ArchiverConfigurationEvent.CONFIGURE_DATABASE));

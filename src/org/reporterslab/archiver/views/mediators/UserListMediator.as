@@ -1,26 +1,22 @@
 package org.reporterslab.archiver.views.mediators
 {
-	import flash.events.Event;
-	
-	import org.reporterslab.archiver.events.ArchiverTwitterEvent;
+	import org.reporterslab.archiver.events.ArchiverUserEvent;
 	import org.reporterslab.archiver.models.ArchiverModel;
+	import org.reporterslab.archiver.views.components.UserList;
 	import org.robotlegs.mvcs.Mediator;
 	
-	public class ApplicationMediator extends Mediator
+	public class UserListMediator extends Mediator
 	{
 		
 		[Inject]
-		public var view:Archiver;
+		public var view:UserList;
 		
 		[Inject]
 		public var model:ArchiverModel;
 		
-		
 		override public function onRegister():void
 		{
-			eventMap.mapListener(view, Event.EXITING, dispatch);
+			eventMap.mapListener(view, ArchiverUserEvent.USER_SELECTED, dispatch);
 		}
-		
-		
 	}
 }

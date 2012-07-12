@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx">
+	<s:layout>
+		<s:VerticalLayout />
+	</s:layout>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			
+			import org.reporterslab.archiver.events.ArchiverPlaceEvent;
+			import org.reporterslab.archiver.models.vo.Place;
+			
+			import spark.events.IndexChangeEvent;
+			
+			
+			[Event(name="placeSelected",type="org.reporterslab.archiver.events.ArchiverPlaceEvent")]
+			
+			[Bindable]
+			public var places:ArrayCollection = new ArrayCollection();
+			public var live:Boolean = true;
+			
+			
+			
+			public function get selectedItem():Place
+			{
+				return list.selectedItem as Place;
+			}
+			
+			public function set selectedItem(value:Place):void
+			{
+				if(places.contains(value))
+					list.selectedItem = value;
+			}
+			
+			protected function list_changeHandler(event:IndexChangeEvent):void
+			{
+				dispatchEvent(new ArchiverPlaceEvent(ArchiverPlaceEvent.PLACE_SELECTED, selectedItem));
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	
+	<s:List id="list" width="100%" height="100%" horizontalScrollPolicy="off" borderVisible="false" dataProvider="{places}" 
+			itemRenderer="org.reporterslab.archiver.views.renderers.PlaceListRenderer" change="list_changeHandler(event)">
+		<s:layout>
+			<s:VerticalLayout gap="10" useVirtualLayout="true" />
+		</s:layout>
+	</s:List>
+	
+	
+</s:Group>

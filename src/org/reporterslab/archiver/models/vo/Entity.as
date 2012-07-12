@@ -19,26 +19,26 @@ package org.reporterslab.archiver.models.vo
 		public static const ENTITY_TYPE_MENTION:String = "usermention";
 		
 		
-		public var id:String = null;
-		public var ownerId:int = -1;
+		[Bindable] public var id:String = null;
+		[Bindable] public var ownerId:int = -1;
 		
-		public var twitterStatusId:String;
-		public var type:String;
+		[Bindable] public var twitterStatusId:String;
+		[Bindable] public var type:String;
 		//url specific
-		public var expandedURL:String;
-		public var url:String;
-		public var displayURL:String;
+		[Bindable] public var expandedURL:String;
+		[Bindable] public var url:String;
+		[Bindable] public var displayURL:String;
 		//hashtag
-		public var hashText:String;
+		[Bindable] public var hashText:String;
 		//user
-		public var name:String;
-		public var mentionId:String; // int also available.
-		public var screenName:String;
+		[Bindable] public var name:String;
+		[Bindable] public var mentionId:String; // int also available.
+		[Bindable] public var screenName:String;
 		// general
-		public var indices:Array;
+		[Bindable] public var indices:Array;
 		//derived
-		public var startIndex:int;
-		public var endIndex:int;
+		[Bindable] public var startIndex:int;
+		[Bindable] public var endIndex:int;
 		
 		
 		public function Entity()

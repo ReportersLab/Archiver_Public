@@ -6,7 +6,9 @@ package org.reporterslab.archiver.models
 	import mx.collections.SortField;
 	
 	import org.reporterslab.archiver.events.ArchiverModelEvent;
+	import org.reporterslab.archiver.models.vo.Place;
 	import org.reporterslab.archiver.models.vo.Status;
+	import org.reporterslab.archiver.models.vo.User;
 	import org.robotlegs.mvcs.Actor;
 	
 	public class ArchiverModel extends Actor
@@ -15,6 +17,12 @@ package org.reporterslab.archiver.models
 		private var _statuses:ArrayCollection = new ArrayCollection();
 		private var _selectedStatus:Status;
 		private var _searchedStatuses:ArrayCollection;
+		
+		private var _selectedUser:User;
+		private var _searchedUsers:ArrayCollection;
+		
+		private var _selectedPlace:Place;
+		private var _searchedPlaces:ArrayCollection;
 		
 		
 		/**
@@ -48,6 +56,31 @@ package org.reporterslab.archiver.models
 			dispatch(new ArchiverModelEvent(ArchiverModelEvent.STATUS_SELECTED, null, this.selectedStatus));
 		}
 		
+		//and selecting a place
+		public function get selectedPlace():Place
+		{
+			return _selectedPlace;
+		}
+		
+		public function set selectedPlace(value:Place):void
+		{
+			this._selectedPlace = value;
+			dispatch(new ArchiverModelEvent(ArchiverModelEvent.PLACE_SELECTED, null, this.selectedPlace));
+		}
+		
+		//and selecting a user
+		public function get selectedUser():User
+		{
+			return _selectedUser;
+		}
+		
+		public function set selectedUser(value:User):void
+		{
+			this._selectedUser = value;
+			dispatch(new ArchiverModelEvent(ArchiverModelEvent.USER_SELECTED, null, this.selectedUser));
+		}
+		
+		
 		/**
 		 * The latest search results. I feel like searching for data is different enough from just loading new data that
 		 * we may want to keep the lists of statuses separate. This may be changed.
@@ -59,9 +92,42 @@ package org.reporterslab.archiver.models
 		
 		public function set searchedStatuses(value:ArrayCollection):void
 		{
+			
 			this._searchedStatuses = value;
 			dispatch(new ArchiverModelEvent(ArchiverModelEvent.STATUSES_SEARCHED, this.searchedStatuses));
 		}
+		
+		
+		/**
+		 * Same for users
+		 **/
+		public function get searchedUsers():ArrayCollection
+		{
+			return this._searchedUsers;
+		}
+		
+		public function set searchedUsers(value:ArrayCollection):void
+		{
+			this._searchedUsers = value
+			dispatch(new ArchiverModelEvent(ArchiverModelEvent.USERS_SEARCHED, this.searchedStatuses));
+		}
+		
+		/**
+		 * and places
+		 **/
+		
+		public function get searchedPlaces():ArrayCollection
+		{
+			return this._searchedPlaces;
+		}
+		
+		public function set searchedPlaces(value:ArrayCollection):void
+		{
+			this._searchedPlaces = value;
+			dispatch(new ArchiverModelEvent(ArchiverModelEvent.PLACES_SEARCHED, this.searchedStatuses));
+		}
+		
+		
 		
 		public function ArchiverModel()
 		{

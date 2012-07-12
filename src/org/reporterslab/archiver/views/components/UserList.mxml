@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx">
+	<s:layout>
+		<s:VerticalLayout />
+	</s:layout>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			
+			import org.reporterslab.archiver.events.ArchiverUserEvent;
+			import org.reporterslab.archiver.models.vo.User;
+			
+			import spark.events.IndexChangeEvent;
+			
+			
+			[Event(name="userSelected",type="org.reporterslab.archiver.events.ArchiverUserEvent")]
+			
+			[Bindable]
+			public var users:ArrayCollection = new ArrayCollection();
+			public var live:Boolean = true;
+			
+			
+			
+			public function get selectedItem():User
+			{
+				return list.selectedItem as User;
+			}
+			
+			public function set selectedItem(value:User):void
+			{
+				if(users.contains(value))
+					list.selectedItem = value;
+			}
+			
+			protected function list_changeHandler(event:IndexChangeEvent):void
+			{
+				dispatchEvent(new ArchiverUserEvent(ArchiverUserEvent.USER_SELECTED, selectedItem));
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	
+	<s:List id="list" width="100%" height="100%" horizontalScrollPolicy="off" borderVisible="false" dataProvider="{users}" 
+			itemRenderer="org.reporterslab.archiver.views.renderers.UserListRenderer" change="list_changeHandler(event)">
+		<s:layout>
+			<s:VerticalLayout gap="10" useVirtualLayout="true" />
+		</s:layout>
+	</s:List>
+	
+	
+</s:Group>

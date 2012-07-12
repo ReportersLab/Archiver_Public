@@ -6,7 +6,7 @@ package org.reporterslab.archiver.services.database
 	import flash.data.SQLResult;
 	import flash.errors.SQLError;
 	
-	import org.reporterslab.archiver.events.ArchiverDBEvent;
+	import org.reporterslab.archiver.events.ArchiverDBStatusEvent;
 	import org.reporterslab.archiver.models.vo.Entity;
 	import org.reporterslab.archiver.models.vo.Status;
 	import org.robotlegs.mvcs.Actor;
@@ -14,14 +14,14 @@ package org.reporterslab.archiver.services.database
 	
 	
 	
-	[Event(name="statusesCreated",type="org.reporterslab.archiver.events.ArchiverDBEvent")]
-	[Event(name="statusesDeleted",type="org.reporterslab.archiver.events.ArchiverDBEvent")]
-	[Event(name="statusesLoaded",type="org.reporterslab.archiver.events.ArchiverDBEvent")]
+	[Event(name="statusesCreated",type="org.reporterslab.archiver.events.ArchiverDBStatusEvent")]
+	[Event(name="statusesDeleted",type="org.reporterslab.archiver.events.ArchiverDBStatusEvent")]
+	[Event(name="statusesLoaded",type="org.reporterslab.archiver.events.ArchiverDBStatusEvent")]
 	
-	[Event(name="statusCreated",type="org.reporterslab.archiver.events.ArchiverDBEvent")]
-	[Event(name="statusDeleted",type="org.reporterslab.archiver.events.ArchiverDBEvent")]
-	[Event(name="statusUpdated",type="org.reporterslab.archiver.events.ArchiverDBEvent")]
-	[Event(name="statusLoaded",type="org.reporterslab.archiver.events.ArchiverDBEvent")]
+	[Event(name="statusCreated",type="org.reporterslab.archiver.events.ArchiverDBStatusEvent")]
+	[Event(name="statusDeleted",type="org.reporterslab.archiver.events.ArchiverDBStatusEvent")]
+	[Event(name="statusUpdated",type="org.reporterslab.archiver.events.ArchiverDBStatusEvent")]
+	[Event(name="statusLoaded",type="org.reporterslab.archiver.events.ArchiverDBStatusEvent")]
 	
 	
 	public class ArchiverDBStatusService extends Actor
@@ -129,7 +129,7 @@ package org.reporterslab.archiver.services.database
 		public function onSaveStatuses(result:Vector.<SQLResult>):void
 		{
 			trace("Statuses saved");
-			dispatch(new ArchiverDBEvent(ArchiverDBEvent.STATUSES_CREATED, null, null));
+			dispatch(new ArchiverDBStatusEvent(ArchiverDBStatusEvent.STATUSES_CREATED, null, null));
 			//this.loadAllStatuses();
 			if(_savingStatuses.length > 0){
 				if((_savingStatuses[0].statusType == Status.TYPE_TWITTER) || (_savingStatuses[0].statusType == Status.TYPE_TWITTER_SEARCH)){
@@ -180,31 +180,68 @@ package org.reporterslab.archiver.services.database
 			sqlRunner.execute(SELECT_ALL_STATUSES_SQL, null, onLoadStatuses, Status, onLoadStatusesError);
 		}
 		
-		public function onLoadStatuses(result:SQLResult):void
+		protected function onLoadStatuses(result:SQLResult):void
 		{
-			trace("statuses loaded");
-			if(result.data == null)
-				return;
-			var statuses:Vector.<Status> = Vector.<Status>(result.data as Array);
-			
-			//flesh out statuses with related data.... ????? Can't decide if this is sane or not.
-			//alternative is to load only small pieces of whate we need and then flesh out on demand. That's a little harder.
-			for each(var s:Status in statuses){
-				this.userService.loadUserForStatus(s);
-			}
-			
-			dispatch(new ArchiverDBEvent(ArchiverDBEvent.STATUSES_LOADED, null, statuses));
+			var statuses:Vector.<Status> = genResultVector(result.data);
+			dispatch(new ArchiverDBStatusEvent(ArchiverDBStatusEvent.STATUSES_LOADED, null, statuses));
 		}
 		
-		public function onLoadStatusesError(e:SQLError):void
+		protected function onLoadStatusesError(e:SQLError):void
 		{
 			trace("Error loading statuses");
+			trace(e);
+		}
+		
+
+		
+		
+		
+		
+		
+//================================================= SEARCHING  ==============================================================		
+	
+		public function search(query:String):void
+		{
+			query = "%" + query + "%"; // add wildcards.
+			var params:Object = {'query': query};
+			sqlRunner.execute(SEARCH_STATUSES_SQL, params, onSearch, Status, onSearchError);
+		}
+
+		protected function onSearch(result:SQLResult):void
+		{
+			var statuses:Vector.<Status> = genResultVector(result.data);
+			dispatch(new ArchiverDBStatusEvent(ArchiverDBStatusEvent.STATUSES_SEARCHED, null, statuses));
+		}
+		
+		protected function onSearchError(e:SQLError):void
+		{
+			trace("Error Searching Statuses");
 			trace(e);
 		}
 		
 		
 		
 		
+		
+		
+		private function genResultVector(data:Object):Vector.<Status>
+		{
+			var statuses:Vector.<Status> = new Vector.<Status>();
+			
+			if(data is Array)
+				statuses = Vector.<Status>(data as Array);
+			
+			if(data is Status)
+				statuses.push(data as Status);
+			
+			//flesh out statuses with related data.... ????? Can't decide if this is sane or not.
+			//alternative is to load only small pieces of whate we need and then flesh out on demand. That's a little harder.
+			for each(var s:Status in statuses){
+				this.userService.loadUserForStatus(s);
+			}
+
+			return statuses;
+		}
 		
 //================================================== STATEMENT RETRIEVAL ====================================================		
 		
@@ -301,6 +338,9 @@ package org.reporterslab.archiver.services.database
 		private static const SelectStatusesForUserStatement:Class;
 		private static const SELECT_STATUSES_FOR_USER_SQL:String = new SelectStatusesForUserStatement();
 		
+		[Embed(source="sql/status/SearchStatuses.sql", mimeType="application/octet-stream")]
+		private static const SearchStatusesStatement:Class;
+		private static const SEARCH_STATUSES_SQL:String = new SearchStatusesStatement();
 		
 	}
 }

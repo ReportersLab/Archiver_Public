@@ -1,6 +1,6 @@
 package org.reporterslab.archiver.controllers.db
 {
-	import org.reporterslab.archiver.events.ArchiverDBEvent;
+	import org.reporterslab.archiver.events.ArchiverDBStatusEvent;
 	import org.reporterslab.archiver.models.ArchiverModel;
 	import org.robotlegs.mvcs.Command;
 	
@@ -8,7 +8,7 @@ package org.reporterslab.archiver.controllers.db
 	{
 		
 		[Inject]
-		public var event:ArchiverDBEvent;
+		public var event:ArchiverDBStatusEvent;
 		
 		[Inject]
 		public var archiverModel:ArchiverModel;

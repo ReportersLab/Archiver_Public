@@ -29,6 +29,13 @@
 			[Bindable]
 			public var statuses:ArrayCollection = new ArrayCollection();
 			
+			//if we're showing live statuses or not. this may not be best practice,
+			//essentially I want to use the same view for both Search and realtime updates. In a search situation I want to
+			//ignore the model updates, but the mediator will blithely go ahead and update. It needs to check the view to see
+			//if it should or not.
+			public var live:Boolean = true;
+			
+			
 			/**
 			 * Tests the status item to see how to render. This may not be necessary, as we may want to just render all statuses
 			 * with the same class and have it add visual elements based on type. I think we want to at least make Tweets look different

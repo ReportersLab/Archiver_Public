@@ -3,6 +3,7 @@ package org.reporterslab.archiver.views.mediators
 	import org.reporterslab.archiver.events.ArchiverModelEvent;
 	import org.reporterslab.archiver.events.ArchiverStatusEvent;
 	import org.reporterslab.archiver.models.ArchiverModel;
+	import org.reporterslab.archiver.models.vo.Status;
 	import org.reporterslab.archiver.views.components.StatusList;
 	import org.robotlegs.mvcs.Mediator;
 	
@@ -26,19 +27,21 @@ package org.reporterslab.archiver.views.mediators
 		
 		private function onStatusesAdded(event:ArchiverModelEvent):void
 		{
-			this.view.statuses.addAllAt(event.statuses, 0);
-			this.view.selectedItem = this.view.selectedItem;
+			if(view.live)
+				this.view.statuses.addAllAt(event.objects, 0);
+			this.view.selectedItem = model.selectedStatus;
 		}
 		
 		private function onStatusesChanged(event:ArchiverModelEvent):void
 		{
-			this.view.statuses = event.statuses;
-			this.view.selectedItem = this.view.selectedItem;
+			if(view.live)
+				this.view.statuses = event.objects;
+			this.view.selectedItem = model.selectedStatus;
 		}
 		
 		private function onStatusSelected(event:ArchiverModelEvent):void
 		{
-			this.view.selectedItem = event.status;
+			this.view.selectedItem = event.object as Status;
 		}
 		
 	}

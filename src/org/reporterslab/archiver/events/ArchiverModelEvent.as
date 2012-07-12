@@ -9,30 +9,37 @@ package org.reporterslab.archiver.events
 	public class ArchiverModelEvent extends Event
 	{
 		
-		public static const STATUSES_ADDED:String = "statusesAdded";
-		public static const STATUSES_SEARCHED:String = "statusesSearched";
-		public static const STATUSES_CHANGED:String = "statusesChanged";
-		public static const STATUS_ADDED:String = "statusAdded";
-		public static const STATUS_SELECTED:String = "statusSelected";
+		public static const STATUSES_ADDED:String = "ModelstatusesAdded";
+		public static const STATUSES_SEARCHED:String = "ModelstatusesSearched";
+		public static const STATUSES_CHANGED:String = "ModelstatusesChanged";
+		public static const STATUS_ADDED:String = "ModelstatusAdded";
 		
-		public var statuses:ArrayCollection;
-		public var status:Status;
 		
-		public function ArchiverModelEvent(type:String, statuses:ArrayCollection = null, status:Status = null, bubbles:Boolean=false, cancelable:Boolean=false)
+		public static const STATUS_SELECTED:String = "ModelstatusSelected";
+		public static const USER_SELECTED:String = "ModeluserSelected";
+		public static const PLACE_SELECTED:String = "ModelplaceSelected";
+		
+		public static const USERS_SEARCHED:String = "ModelusersSearched";
+		public static const PLACES_SEARCHED:String = "ModelplacesSearched";
+		
+		public var objects:ArrayCollection;
+		public var object:Object;
+		
+		public function ArchiverModelEvent(type:String, objects:ArrayCollection = null, object:Object = null, bubbles:Boolean=false, cancelable:Boolean=false)
 		{
 			super(type, bubbles, cancelable);
-			this.statuses = statuses;
-			this.status = status;
+			this.objects = objects;
+			this.object = object;
 		}
 		
 		override public function clone():Event
 		{
-			return new ArchiverModelEvent(type, statuses, status, bubbles, cancelable);
+			return new ArchiverModelEvent(type, objects, object, bubbles, cancelable);
 		}
 		
 		override public function toString():String
 		{
-			return formatToString("ArchiverModelEvent", "type", "bubbles", "cancelable", "eventPhase", "statuses", "status");
+			return formatToString("ArchiverModelEvent", "type", "bubbles", "cancelable", "eventPhase", "objects", "object");
 		}
 		
 	}

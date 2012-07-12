@@ -25,7 +25,7 @@ package org.reporterslab.archiver.controllers.setup
 			//And the Twitter Service.
 			var twitterService:TwitterService = injector.instantiate(TwitterService);
 			injector.mapValue(TwitterService, twitterService);
-			//twitterService.loadLatestTimeline();
+			twitterService.initialize();
 			
 			dispatch(new ArchiverConfigurationEvent(ArchiverConfigurationEvent.CONFIGURE_VIEW));
 		}

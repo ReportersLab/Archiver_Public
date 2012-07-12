@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 xmlns:components="org.reporterslab.archiver.views.components.*">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<s:states>
+		<s:State name="login" />
+		<s:State name="logout" />
+		<s:State name="requestURL" />
+		<s:State name="authorize" />
+		<s:State name="authorizing" />
+		<s:State name="authorized" />
+	</s:states>
+	
+	<fx:Script>
+		<![CDATA[
+			import org.reporterslab.archiver.events.ArchiverTwitterEvent;
+			
+			
+			[Bindable] public var authorizationUrl:String;
+			
+			public function get code():String
+			{
+				return codeInput.text;
+			}
+			
+			public function get url():String
+			{
+				return webView.url;
+			}
+			
+			public function set url(value:String):void
+			{
+				webView.url = value;
+				this.currentState = "authorize";
+			}
+			
+			protected function submitCodeButton_clickHandler(event:MouseEvent):void
+			{
+				dispatchEvent(new ArchiverTwitterEvent(ArchiverTwitterEvent.LOGIN, codeInput.text));
+			}
+			
+			protected function logoutButton_clickHandler(event:MouseEvent):void
+			{
+				dispatchEvent(new ArchiverTwitterEvent(ArchiverTwitterEvent.LOGOUT, codeInput.text));
+			}
+			
+			protected function loginButton_clickHandler(event:MouseEvent):void
+			{
+				dispatchEvent(new ArchiverTwitterEvent(ArchiverTwitterEvent.REQUIRES_LOGIN));
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	<s:VGroup width="100%" height="100%">
+		
+		<!-- to login -->
+		<s:Group width="100%" height="100%" horizontalCenter="0" verticalCenter="0" includeIn="login">
+			<s:Button id="loginButton" label="login" click="loginButton_clickHandler(event)"  horizontalCenter="0" verticalCenter="0" />
+		</s:Group>
+		
+		<!-- to logut -->
+		<s:Group width="100%" height="100%" horizontalCenter="0" verticalCenter="0" includeIn="logout">
+			<s:Button id="logoutButton" label="logout" click="logoutButton_clickHandler(event)" horizontalCenter="0" verticalCenter="0" />
+		</s:Group>
+		
+		<!-- pre authorize url -->
+		<s:Group verticalCenter="0" horizontalCenter="0" includeIn="requestURL">
+			<s:Label fontWeight="bold" fontSize="32" text="REQUESTING LOGIN URL...." horizontalCenter="0" verticalCenter="0" />
+		</s:Group>
+		
+		<!-- have authorize url, must login -->
+		<components:StageWebViewUIComponent id="webView" width="100%" height="100%" alpha="0" alpha.authorize="1" includeInLayout="false" includeInLayout.authorize="true" />
+		<s:HGroup width="100%" height="50" horizontalAlign="center" includeIn="authorize">
+			<s:TextInput id="codeInput" prompt="Enter The Code Displayed Here..." width="300" height="40" fontSize="24" />
+			<s:Button id="submitCodeButton" label="Submit Code" click="submitCodeButton_clickHandler(event)" />
+		</s:HGroup>
+		
+		<!-- authorizing -->
+		<s:Group  horizontalCenter="0" verticalCenter="0" includeIn="authorizing">
+			<s:Label fontWeight="bold" fontSize="32" text="AUTHORIZING..." horizontalCenter="0" verticalCenter="0" />
+		</s:Group>
+		
+		<!-- post authorization -->
+		<s:Group  horizontalCenter="0" verticalCenter="0" includeIn="authorized">
+			<s:Label fontWeight="bold" fontSize="32" text="LOGGED IN." horizontalCenter="0" verticalCenter="0" />
+		</s:Group>
+		
+	</s:VGroup>
+	
+</s:Group>

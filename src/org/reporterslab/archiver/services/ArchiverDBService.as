@@ -4,7 +4,7 @@ package org.reporterslab.archiver.services
 	
 	import mx.collections.ArrayCollection;
 	
-	import org.reporterslab.archiver.events.ArchiverDBEvent;
+	import org.reporterslab.archiver.events.ArchiverDBStatusEvent;
 	import org.reporterslab.archiver.models.vo.Status;
 	import org.robotlegs.mvcs.Actor;
 	
@@ -32,7 +32,7 @@ package org.reporterslab.archiver.services
 			
 			
 			//and notify that stuff is saved. Stuff attached.
-			dispatch(new ArchiverDBEvent(ArchiverDBEvent.STATUSES_CREATED, null, statuses));
+			dispatch(new ArchiverDBStatusEvent(ArchiverDBStatusEvent.STATUSES_CREATED, null, statuses));
 		}
 		
 		public function saveStatus(status:Status, suppressNotification:Boolean = false):void
@@ -42,7 +42,7 @@ package org.reporterslab.archiver.services
 			//not really sure if this is going to work this way in the end.
 			//if this is a batch, don't dispatch event.
 			if(!suppressNotification){
-				dispatch(new ArchiverDBEvent(ArchiverDBEvent.STATUS_CREATED, status));
+				dispatch(new ArchiverDBStatusEvent(ArchiverDBStatusEvent.STATUS_CREATED, status));
 			}
 		}
 		

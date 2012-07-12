@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="true">
+	
+	<fx:Script>
+		<![CDATA[
+			import org.reporterslab.archiver.models.vo.User;
+			
+			[Bindable]
+			public var user:User;
+			
+			override public function set data(value:Object):void
+			{
+				super.data = value;
+				if(data)
+					this.user = data as User;
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:HGroup>
+		<s:Image id="avatar" width="48" height="48" source="{user.profileImageUrl}" />
+		<s:VGroup height="100%">
+			<s:Label id="userName" text="\@{user.screenName} ({user.name})" fontWeight="bold" />
+			<s:RichEditableText id="text" text="{user.description}" width="200" />
+		</s:VGroup>
+	</s:HGroup>
+	
+</s:ItemRenderer>

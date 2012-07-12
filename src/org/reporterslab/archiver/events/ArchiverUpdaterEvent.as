@@ -5,7 +5,7 @@ package org.reporterslab.archiver.events
 	public class ArchiverUpdaterEvent extends Event
 	{
 		
-		public static const UPDATE:String = "update"; //fired when the timer goes off. Servies should listen.
+		public static const UPDATE:String = "archiverUpdate"; //fired when the timer goes off. Servies should listen.
 		
 		public function ArchiverUpdaterEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
 		{

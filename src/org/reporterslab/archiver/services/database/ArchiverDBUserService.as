@@ -7,6 +7,7 @@ package org.reporterslab.archiver.services.database
 	import flash.errors.SQLError;
 	import flash.utils.Dictionary;
 	
+	import org.reporterslab.archiver.events.ArchiverDBUserEvent;
 	import org.reporterslab.archiver.models.vo.Status;
 	import org.reporterslab.archiver.models.vo.User;
 	import org.robotlegs.mvcs.Actor;
@@ -25,6 +26,9 @@ package org.reporterslab.archiver.services.database
 			super();
 		}
 		
+		
+//========================== FOR FLESHING OUT STATUSES WITH USER DETAILS =================================
+		
 		public function loadUserForStatus(status:Status):void
 		{
 			//no user, we can't do anything. Shouldn't really happen.
@@ -38,11 +42,11 @@ package org.reporterslab.archiver.services.database
 			userIdsToStatuses[status.userId].push(status);
 			var query:String = SELECT_USER_SQL;
 			var params:Object = {id: status.userId};
-			sqlRunner.execute(query, params, onUserLoaded, User, onUserLoadedError);
+			sqlRunner.execute(query, params, onUserForStatusLoaded, User, onUserForStatusLoadedError);
 		}
 		
 		
-		private function onUserLoaded(result:SQLResult):void
+		private function onUserForStatusLoaded(result:SQLResult):void
 		{
 			var user:User = result.data[0] as User; // should only be one.
 			var statuses:Vector.<Status> = userIdsToStatuses[user.id];
@@ -52,12 +56,65 @@ package org.reporterslab.archiver.services.database
 			userIdsToStatuses[user.id] = null;
 		}
 		
-		private function onUserLoadedError(error:SQLError):void
+		private function onUserForStatusLoadedError(error:SQLError):void
 		{
 			trace("Error loading user");
 			trace(error);
 		}
 		
+		
+		
+		
+//================================== FOR SEARCHING USERS ==========================================		
+		
+		
+		public function search(query:String):void
+		{
+			query = "%" + query + "%";
+			var params:Object = {'query':query};
+			
+			sqlRunner.execute(SEARCH_USERS_SQL, params, onSearchUsers, User, onSearchUsersError);
+		}
+		
+		
+		protected function onSearchUsers(result:SQLResult):void
+		{
+			var users:Vector.<User> = genUserVector(result.data);
+			dispatch(new ArchiverDBUserEvent(ArchiverDBUserEvent.USERS_SEARCHED, null, users));
+		}
+		
+		protected function onSearchUsersError(e:SQLError):void
+		{
+			trace("Error Searching Users");
+			trace(e);
+		}
+		
+		
+		
+		
+		
+		
+//================================== UTILS ========================================================
+		
+		protected function genUserVector(data:Object):Vector.<User>
+		{
+			var users:Vector.<User> = new Vector.<User>();
+			if(data == null)
+				return users;
+			
+			if(data is Array)
+				users = Vector.<User>(data as Array);
+			
+			if(data is User)
+				users.push(data as User);
+			
+			return users;
+		}
+		
+		
+		
+		
+//================================== STATMENT GENERATION ==========================================
 		
 		/**
 		 * @param user     The User to insert if it doesn't exist (based on unique identifiers like id or twitterId) 
@@ -128,6 +185,10 @@ package org.reporterslab.archiver.services.database
 		private static const SelectUserForTwitterIdStatement:Class;
 		private static const SELECT_USER_FOR_TWITTER_ID_SQL:String = new SelectUserForTwitterIdStatement();
 		
+		[Embed(source="sql/user/SearchUsers.sql", mimeType="application/octet-stream")]
+		private static const SearchUsersStatement:Class;
+		private static const SEARCH_USERS_SQL:String = new SearchUsersStatement();
+
 		
 	}
 }

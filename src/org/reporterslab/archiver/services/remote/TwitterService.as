@@ -18,6 +18,7 @@ package org.reporterslab.archiver.services.remote
 	
 	import mx.collections.ArrayCollection;
 	
+	import org.iotashan.oauth.OAuthToken;
 	import org.reporterslab.archiver.events.ArchiverContentEvent;
 	import org.reporterslab.archiver.events.ArchiverTwitterEvent;
 	import org.reporterslab.archiver.models.vo.Status;
@@ -43,21 +44,39 @@ package org.reporterslab.archiver.services.remote
 		private var _stream:UserStream;
 		private var _isStreaming:Boolean = false;
 		private var _streamRestartTimer:Timer;
+		private var _authorized:Boolean = false;
 		
 		public var newestId:String;
 		public var oldestId:String;
 		
 		public var latestData:ArrayCollection;
 		
+		
+		public function get authorized():Boolean
+		{
+			return _authorized;
+		}
+		
+		public function get authorizationURL():String
+		{
+			return _authorizationURL;
+		}
+		
 		public function TwitterService()
 		{
 			super();
-			trace("Twitter Service Created");
-			newestId = getLatestStoredId();
-			initializeApi();
-			catchUp();
 		}
 		
+		public function initialize():void
+		{
+			//this.logout();
+			trace("Twitter Service Created");
+			newestId = getLatestStoredId();
+			_authorized = initializeApi();
+			if(_authorized){
+				catchUpAndStartStream();
+			}
+		}
 		
 		/**
 		 * Only fires if not streaming
@@ -72,6 +91,8 @@ package org.reporterslab.archiver.services.remote
 		
 		public function loadLatestTimeline():void
 		{
+			if(!_authorized) return;
+			
 			if(_latestTimelineOp){
 				_latestTimelineOp.removeEventListener(TwitterEvent.COMPLETE, onLatestTimeline);
 			}
@@ -134,7 +155,7 @@ package org.reporterslab.archiver.services.remote
 		 * of the entire application. Imagine someone turning on the PC after a weekend, it couldn't catch up...
 		 **/
 		
-		public function catchUp():void
+		public function catchUpAndStartStream():void
 		{
 			var sinceId:String = getLatestStoredId();
 			trace("Launching the catch up. Id from Local Store: " + sinceId);
@@ -221,58 +242,101 @@ package org.reporterslab.archiver.services.remote
 		 * 8) Otherwise dispatch failure event and view handles.
 		 * 
 		 **/ 
-		private function initializeApi():void
+		private function initializeApi():Boolean
 		{
-			
-			//
-			//;
-			//_api.connection.addEventListener(OAuthTwitterEvent.REQUEST_TOKEN_RECEIVED, onRequestTokenReceived);
-			//_api.connection.addEventListener(OAuthTwitterEvent.REQUEST_TOKEN_ERROR, onRequestTokenError);
-			//_api.connection.addEventListener(OAuthTwitterEvent.ACCESS_TOKEN_ERROR, onAccessTokenError);
-			//_api.connection.addEventListener(OAuthTwitterEvent.AUTHORIZED, onAuthorized);
+			//_api.connection.setConsumer(TwitterConfigs.TWITTER_CONSUMER_KEY, TwitterConfigs.TWITTER_CONSUMER_SECRET);
+			//_api.connection.setAccessToken(TwitterConfigs.TWITTER_ACCESS_TOKEN, TwitterConfigs.TWITTER_TOKEN_SECRET);
+			//return true;
 			
 			
-			//_api.connection.authorize(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET);
-			
-			
-			//for now, let's just hardcode these. We can worry about the OAuth stuff later.
-			_api.connection.setConsumer(TwitterConfigs.TWITTER_CONSUMER_KEY, TwitterConfigs.TWITTER_CONSUMER_SECRET);
-			_api.connection.setAccessToken(TwitterConfigs.TWITTER_ACCESS_TOKEN, TwitterConfigs.TWITTER_TOKEN_SECRET);
-			
+			trace("Initializing The Twitter API");
+			var accessToken:Object = getAccessToken();
+			if(accessToken != null){
+				//_api.connection.setConsumer(TwitterConfigs.TWITTER_CONSUMER_KEY, TwitterConfigs.TWITTER_CONSUMER_SECRET);
+				_api.connection.setAccessToken(accessToken['key'], accessToken['secret']);
+				return true;
+			}
+			//let everyone know we're not logged in.
+			dispatch(new ArchiverTwitterEvent(ArchiverTwitterEvent.REQUIRES_LOGIN));
+			return false;			
 		}
 		
 		
+		/**
+		 * Request a login URL for the user.
+		 **/
+		public function requestAuthURL():void
+		{
+			trace("Requesting an authorization url");
+			_api.connection.addEventListener(OAuthTwitterEvent.REQUEST_TOKEN_RECEIVED, onRequestTokenReceived);
+			_api.connection.addEventListener(OAuthTwitterEvent.REQUEST_TOKEN_ERROR, onRequestTokenError);
+			_api.connection.authorize(TwitterConfigs.TWITTER_CONSUMER_KEY, TwitterConfigs.TWITTER_CONSUMER_SECRET);
+		}
+	
 		private function onRequestTokenReceived(event:OAuthTwitterEvent):void
 		{
+			_api.connection.removeEventListener(OAuthTwitterEvent.REQUEST_TOKEN_RECEIVED, onRequestTokenReceived);
+			_api.connection.removeEventListener(OAuthTwitterEvent.REQUEST_TOKEN_ERROR, onRequestTokenError);
 			//returns after an 'authorize' call.
 			trace("Twitter Service: Can request a user token");	
 			_authorizationURL = _api.connection.authorizeURL;
-			
+			dispatch(new ArchiverTwitterEvent(ArchiverTwitterEvent.CONSUMER_AUTHORIZED, _authorizationURL));
 		}
 		
 		private function onRequestTokenError(event:OAuthTwitterEvent):void
 		{
-			//happens if the application keys are wrong or there's a connectino error.
+			_api.connection.removeEventListener(OAuthTwitterEvent.REQUEST_TOKEN_RECEIVED, onRequestTokenReceived);
+			_api.connection.removeEventListener(OAuthTwitterEvent.REQUEST_TOKEN_ERROR, onRequestTokenError);
+			//happens if the application keys are wrong or there's a connection error.
 			trace("Twitter Service: Connection error");
+			trace(event);
+			dispatch(new ArchiverTwitterEvent(ArchiverTwitterEvent.KEY_ERROR, event));
+		}
+		
+		
+		/**
+		 * Authorize a user with a code
+		 **/
+		public function authorizeUser(code:String):void
+		{
+			trace("Authoring user");
+			_api.connection.addEventListener(OAuthTwitterEvent.ACCESS_TOKEN_ERROR, onAccessTokenError);
+			_api.connection.addEventListener(OAuthTwitterEvent.AUTHORIZED, onAuthorized);
+			_api.connection.grantAccess(code);
 		}
 		
 		private function onAccessTokenError(event:OAuthTwitterEvent):void
 		{
+			_api.connection.removeEventListener(OAuthTwitterEvent.ACCESS_TOKEN_ERROR, onAccessTokenError);
+			_api.connection.removeEventListener(OAuthTwitterEvent.AUTHORIZED, onAuthorized);
 			//somehow getting the access token failed. Probably because the user put the code in wrong.
 			trace("Twitter Service: Error receiving access token");
+			dispatch(new ArchiverTwitterEvent(ArchiverTwitterEvent.KEY_ERROR, event));
 		}
 		
 		private function onAuthorized(event:OAuthTwitterEvent):void
 		{
+			_api.connection.removeEventListener(OAuthTwitterEvent.ACCESS_TOKEN_ERROR, onAccessTokenError);
+			_api.connection.removeEventListener(OAuthTwitterEvent.AUTHORIZED, onAuthorized);
 			//we have the user tokens and they're in the API.
 			trace("Twitter Service: Good to Go");
+			storeAccessToken();
+			initializeApi();
+			catchUpAndStartStream();
+			dispatch(new ArchiverTwitterEvent(ArchiverTwitterEvent.USER_AUTHORIZED));
 		}
 		
-		public function authorizeUser(code:String):void
+		
+		
+		public function logout():void
 		{
-			_api.connection.grantAccess(code);
+			if(this._stream)
+				this._stream.closeStream();
+			if(this._api)
+				_api.connection.accessToken = null;
+			_authorized = false;
+			EncryptedLocalStore.removeItem("twitterAccessToken");
 		}
-		
 		
 		
 		/**
@@ -311,6 +375,27 @@ package org.reporterslab.archiver.services.remote
 			return id;
 		}
 		
+		
+		protected function storeAccessToken():void
+		{
+			var accessToken:OAuthToken = _api.connection.accessToken;
+			var token:String = accessToken.key;
+			var secret:String = accessToken.secret;
+			var bytes:ByteArray = new ByteArray();
+			bytes.writeObject({'key':token, 'secret':secret});
+			EncryptedLocalStore.setItem("twitterAccessToken", bytes);
+		}
+		
+		public function getAccessToken():Object
+		{
+			var bytes:ByteArray = EncryptedLocalStore.getItem("twitterAccessToken");
+			var accessToken:Object;
+			if(bytes){
+				accessToken = bytes.readObject() as Object;
+			}
+			return accessToken;
+				
+		}
 		
 		/**
 		 * Closes the stream

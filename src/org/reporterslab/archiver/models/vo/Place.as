@@ -4,18 +4,18 @@ package org.reporterslab.archiver.models.vo
 
 	public class Place
 	{
-		public var id:int = -1;
+		[Bindable] public var id:int = -1;
 		//should be generic enough for any place.
-		public var name:String;
-		public var countryCode:String;
-		public var country:String;
-		public var attributes:Object;
-		public var url:String;
-		public var boundingBox:Object; //how to save to db?
-		public var fullName:String;
-		public var type:String;
+		[Bindable] public var name:String;
+		[Bindable] public var countryCode:String;
+		[Bindable] public var country:String;
+		[Bindable] public var attributes:Object;
+		[Bindable] public var url:String;
+		[Bindable] public var boundingBox:Object; //how to save to db?
+		[Bindable] public var fullName:String;
+		[Bindable] public var type:String;
 		
-		public var twitterId:String;
+		[Bindable] public var twitterId:String;
 		
 		
 		public function Place()
