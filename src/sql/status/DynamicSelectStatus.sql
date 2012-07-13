@@ -26,4 +26,5 @@ SELECT
 	favorited,
 	annotations
 FROM Status
-WHERE :field IN :values;
+WHERE :field IN :values
+ORDER BY createdAt DESC;

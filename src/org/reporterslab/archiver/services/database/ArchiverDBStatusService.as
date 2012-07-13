@@ -180,6 +180,11 @@ package org.reporterslab.archiver.services.database
 			sqlRunner.execute(SELECT_ALL_STATUSES_SQL, null, onLoadStatuses, Status, onLoadStatusesError);
 		}
 		
+		public function loadRecentStatuses():void
+		{
+			sqlRunner.execute(SELECT_RECENT_STATUSES_SQL, null, onLoadStatuses, Status, onLoadStatusesError);
+		}
+		
 		protected function onLoadStatuses(result:SQLResult):void
 		{
 			var statuses:Vector.<Status> = genResultVector(result.data);
@@ -329,6 +334,10 @@ package org.reporterslab.archiver.services.database
 		[Embed(source="sql/status/SelectAllStatuses.sql", mimeType="application/octet-stream")]
 		private static const SelectAllStatusesStatement:Class;
 		private static const SELECT_ALL_STATUSES_SQL:String = new SelectAllStatusesStatement();
+		
+		[Embed(source="sql/status/SelectRecentStatuses.sql", mimeType="application/octet-stream")]
+		private static const SelectRecentStatusesStatement:Class;
+		private static const SELECT_RECENT_STATUSES_SQL:String = new SelectRecentStatusesStatement();
 		
 		[Embed(source="sql/status/SelectStatusesForPlace.sql", mimeType="application/octet-stream")]
 		private static const SelectStatusesForPlaceStatement:Class;

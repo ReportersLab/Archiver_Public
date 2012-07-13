@@ -26,6 +26,5 @@ SELECT
 	favorited,
 	annotations
 FROM Status
-WHERE text LIKE :query
-ORDER BY createdAt DESC, favorited
-LIMIT 200;
+ORDER BY createdAt DESC
+LIMIT 500;

@@ -26,4 +26,5 @@ SELECT
 	favorited,
 	annotations
 FROM Status
-WHERE placeId = :placeId;
+WHERE placeId = :placeId
+ORDER BY createdAt DESC;

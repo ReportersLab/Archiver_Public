@@ -25,4 +25,5 @@ SELECT
 	userId,
 	favorited,
 	annotations
-FROM Status;
+FROM Status
+ORDER BY createdAt DESC;

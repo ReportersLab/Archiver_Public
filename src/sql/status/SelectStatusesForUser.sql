@@ -26,4 +26,5 @@ SELECT
 	favorited,
 	annotations
 FROM Status
-WHERE userId = :userId;
+WHERE userId = :userId
+ORDER BY createdAt DESC;

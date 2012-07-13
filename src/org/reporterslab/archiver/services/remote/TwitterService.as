@@ -49,6 +49,8 @@ package org.reporterslab.archiver.services.remote
 		public var newestId:String;
 		public var oldestId:String;
 		
+		private var _emptyStreamCount:uint = 0;
+		
 		public var latestData:ArrayCollection;
 		
 		
@@ -179,8 +181,12 @@ package org.reporterslab.archiver.services.remote
 		
 		public function startStream():void
 		{
+			if(_stream){
+				_stream.closeStream();
+			}
 			_isStreaming = true;
-			_stream = new UserStream(); // all defaults.
+			//_stream = new UserStream(); // all defaults.
+			_stream = new UserStream(null, true, "followings", null);
 			_stream.addEventListener(TwitterStreamingEvent.PROGRESS, onStreamingData);
 			_stream.addEventListener(TwitterStreamingEvent.STREAM_ERROR, onStreamingError);
 			_api.post(_stream);
@@ -189,6 +195,10 @@ package org.reporterslab.archiver.services.remote
 		private function onStreamingData(event:TwitterStreamingEvent):void
 		{
 			var data:StreamingObject = event.streamObject;
+			if(data.type != StreamingObject.TYPE_EMPTY){
+				_emptyStreamCount = 0;
+			}
+			
 			trace("Streaming Content Type: " + data.type);
 			if(data.type == StreamingObject.TYPE_STATUS){
 				storeLatestId(data.data as TwitterStatus);
@@ -197,17 +207,23 @@ package org.reporterslab.archiver.services.remote
 				statuses.push(newStatus.parseTwitterStatus(data.data as TwitterStatus));
 				dispatch(new ArchiverContentEvent(ArchiverContentEvent.NEW_CONTENT, ArchiverContentEvent.TYPE_TWITTER, statuses));
 			}
+			
+			//if we get a bunch of empty blocks in a row, the stream may be busted, let's restart it.
+			if(data.type == StreamingObject.TYPE_EMPTY){
+				_emptyStreamCount++;
+				if(_emptyStreamCount >= 15){
+					this.catchUpAndStartStream();
+					_emptyStreamCount = 0;
+				}
+			}
+			
 			//ideally we'd handle all the other content types. For now this should work.
 			
 		}
 		
 		private function onStreamingError(event:TwitterStreamingEvent):void
 		{
-			_stream.closeStream();
-			_isStreaming = false;
-			_streamRestartTimer = new Timer(1000*60*5, 1); // five minute restart
-			_streamRestartTimer.addEventListener(TimerEvent.TIMER, onStreamRestartTimer);
-			_streamRestartTimer.start();
+			deferRestartStream();
 			trace("Twitter Stream Error. Should handle a restart or switch to polling here.");
 		}
 		
@@ -217,6 +233,16 @@ package org.reporterslab.archiver.services.remote
 			_streamRestartTimer.stop();
 			_streamRestartTimer.removeEventListener(TimerEvent.TIMER, onStreamRestartTimer);
 			startStream();
+		}
+		
+		
+		public function deferRestartStream():void
+		{
+			_stream.closeStream();
+			_isStreaming = false;
+			_streamRestartTimer = new Timer(1000*60*5, 1); // five minute restart
+			_streamRestartTimer.addEventListener(TimerEvent.TIMER, onStreamRestartTimer);
+			_streamRestartTimer.start();
 		}
 		
 		/**
@@ -244,7 +270,7 @@ package org.reporterslab.archiver.services.remote
 		 **/ 
 		private function initializeApi():Boolean
 		{
-			//_api.connection.setConsumer(TwitterConfigs.TWITTER_CONSUMER_KEY, TwitterConfigs.TWITTER_CONSUMER_SECRET);
+			_api.connection.setConsumer(TwitterConfigs.TWITTER_CONSUMER_KEY, TwitterConfigs.TWITTER_CONSUMER_SECRET);
 			//_api.connection.setAccessToken(TwitterConfigs.TWITTER_ACCESS_TOKEN, TwitterConfigs.TWITTER_TOKEN_SECRET);
 			//return true;
 			
