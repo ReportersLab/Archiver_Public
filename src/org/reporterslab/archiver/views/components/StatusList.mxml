@@ -70,6 +70,8 @@
 			
 			public function set selectedItem(value:Status):void
 			{
+				if(statuses == null)
+					return;
 				if(statuses.contains(value))
 					list.selectedItem = value;
 			}

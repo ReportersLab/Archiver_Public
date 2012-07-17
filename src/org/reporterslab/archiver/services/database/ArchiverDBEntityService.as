@@ -3,6 +3,9 @@ package org.reporterslab.archiver.services.database
 	import com.probertson.data.QueuedStatement;
 	import com.probertson.data.SQLRunner;
 	
+	import flash.data.SQLResult;
+	import flash.errors.SQLError;
+	
 	import org.reporterslab.archiver.models.vo.Entity;
 	import org.reporterslab.archiver.models.vo.Status;
 	import org.robotlegs.mvcs.Actor;
@@ -13,6 +16,7 @@ package org.reporterslab.archiver.services.database
 		[Inject]
 		public var sqlRunner:SQLRunner;
 		
+		private var statusIdsToStatus:Object = {};
 		
 		
 		public function ArchiverDBEntityService()
@@ -21,6 +25,34 @@ package org.reporterslab.archiver.services.database
 		}
 		
 		
+
+//===================================== FOR FLESHING OUT STATUSES WITH THEIR ENTITIES =========================
+		
+		public function loadEntitiesForStatus(status:Status):void
+		{
+			statusIdsToStatus[status.id] = status;
+			var query:String = SELECT_ENTITIES_FOR_STATUS_SQL;
+			var params:Object = {statusId:status.id};
+			sqlRunner.execute(query, params, onLoadEntitiesForStatus, Entity, onLoadEntitiesForStatusError);
+			
+		}
+		
+		private function onLoadEntitiesForStatus(result:SQLResult):void
+		{
+			var entities:Array = result.data as Array;
+			if((entities == null) || (entities.length == 0)){
+				return
+			}
+			var status:Status = statusIdsToStatus[entities[0].ownerId];
+			status.addEntities(entities);
+			statusIdsToStatus[entities[0].ownerId] = null;			
+		}
+		
+		private function onLoadEntitiesForStatusError(error:SQLError):void
+		{
+			trace("Error loading entities for status");
+			trace(error);
+		}
 		
 		
 		/**

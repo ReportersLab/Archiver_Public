@@ -34,7 +34,7 @@ package org.reporterslab.archiver.controllers.setup
 			var dbFile:File = File.documentsDirectory.resolvePath(DB_FULL_PATH);
 			
 			
-			var sqlRunner:SQLRunner = new SQLRunner(dbFile);
+			var sqlRunner:SQLRunner = new SQLRunner(dbFile, 10);
 			//create an instance of the SQLRunner to run SQL Commands, and an instance of the Database Service. 
 			injector.mapValue(SQLRunner, sqlRunner);
 			injector.mapSingleton(ArchiverDBService); // the database service -- may remove

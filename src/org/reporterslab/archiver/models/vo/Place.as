@@ -1,6 +1,8 @@
 package org.reporterslab.archiver.models.vo
 {
 	import com.dborisenko.api.twitter.data.TwitterPlace;
+	
+	import mx.collections.ArrayCollection;
 
 	public class Place
 	{
@@ -16,7 +18,25 @@ package org.reporterslab.archiver.models.vo
 		[Bindable] public var type:String;
 		
 		[Bindable] public var twitterId:String;
+		//if we want to load statuses from this place.
+		private var _statuses:Vector.<Status>;
+		[Bindable] public var statusesAC:ArrayCollection;
 		
+		
+		public function set statuses(value:Vector.<Status>):void
+		{
+			this._statuses = value;
+			this.statusesAC = new ArrayCollection();
+			for each(var s:Status in statuses){
+				statusesAC.addItem(s);
+			}
+		}
+		public function get statuses():Vector.<Status>
+		{
+			return _statuses;
+		}
+		
+
 		
 		public function Place()
 		{

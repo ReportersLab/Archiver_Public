@@ -6,7 +6,10 @@ package org.reporterslab.archiver.controllers.setup
 	
 	import org.reporterslab.archiver.controllers.SaveContentCommand;
 	import org.reporterslab.archiver.controllers.SearchCommand;
+	import org.reporterslab.archiver.controllers.SelectEntityCommand;
+	import org.reporterslab.archiver.controllers.SelectPlaceCommand;
 	import org.reporterslab.archiver.controllers.SelectStatusCommand;
+	import org.reporterslab.archiver.controllers.SelectUserCommand;
 	import org.reporterslab.archiver.controllers.UpdateServicesCommand;
 	import org.reporterslab.archiver.controllers.db.LoadedStatusesCommand;
 	import org.reporterslab.archiver.controllers.db.PlacesSearchedCommand;
@@ -18,10 +21,13 @@ package org.reporterslab.archiver.controllers.setup
 	import org.reporterslab.archiver.events.ArchiverDBPlaceEvent;
 	import org.reporterslab.archiver.events.ArchiverDBStatusEvent;
 	import org.reporterslab.archiver.events.ArchiverDBUserEvent;
+	import org.reporterslab.archiver.events.ArchiverEntityEvent;
+	import org.reporterslab.archiver.events.ArchiverPlaceEvent;
 	import org.reporterslab.archiver.events.ArchiverSearchEvent;
 	import org.reporterslab.archiver.events.ArchiverStatusEvent;
 	import org.reporterslab.archiver.events.ArchiverTwitterEvent;
 	import org.reporterslab.archiver.events.ArchiverUpdaterEvent;
+	import org.reporterslab.archiver.events.ArchiverUserEvent;
 	import org.robotlegs.mvcs.Command;
 	
 	public class ConfigureControllerCommand extends Command
@@ -50,8 +56,10 @@ package org.reporterslab.archiver.controllers.setup
 			
 			//commands triggered from view interactions.
 			commandMap.mapEvent(ArchiverStatusEvent.STATUS_SELECTED, SelectStatusCommand, ArchiverStatusEvent);
+			commandMap.mapEvent(ArchiverUserEvent.USER_SELECTED, SelectUserCommand, ArchiverUserEvent);
+			commandMap.mapEvent(ArchiverPlaceEvent.PLACE_SELECTED, SelectPlaceCommand, ArchiverPlaceEvent);
+			commandMap.mapEvent(ArchiverEntityEvent.ENTITY_SELECTED, SelectEntityCommand, ArchiverEntityEvent);
 			commandMap.mapEvent(ArchiverSearchEvent.SEARCH, SearchCommand, ArchiverSearchEvent);
-			
 			
 			//Configure the Service
 			dispatch(new ArchiverConfigurationEvent(ArchiverConfigurationEvent.CONFIGURE_DATABASE));

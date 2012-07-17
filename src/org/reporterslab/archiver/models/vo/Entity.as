@@ -1,6 +1,8 @@
 package org.reporterslab.archiver.models.vo
 {
 	import com.dborisenko.api.twitter.data.TwitterEntity;
+	
+	import mx.collections.ArrayCollection;
 
 	
 	/**
@@ -40,6 +42,24 @@ package org.reporterslab.archiver.models.vo
 		[Bindable] public var startIndex:int;
 		[Bindable] public var endIndex:int;
 		
+		private var _statuses:Vector.<Status>;
+		[Bindable] public var statusesAC:ArrayCollection;
+		
+		
+		public function set statuses(value:Vector.<Status>):void
+		{
+			this._statuses = value;
+			this.statusesAC = new ArrayCollection();
+			for each(var s:Status in statuses){
+				statusesAC.addItem(s);
+			}
+		}
+		public function get statuses():Vector.<Status>
+		{
+			return _statuses;
+		}
+		
+
 		
 		public function Entity()
 		{

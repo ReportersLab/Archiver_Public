@@ -18,9 +18,11 @@ package org.reporterslab.archiver.events
 		public static const STATUS_SELECTED:String = "ModelstatusSelected";
 		public static const USER_SELECTED:String = "ModeluserSelected";
 		public static const PLACE_SELECTED:String = "ModelplaceSelected";
+		public static const ENTITY_SELECTED:String = "ModelentitySelected";
 		
 		public static const USERS_SEARCHED:String = "ModelusersSearched";
 		public static const PLACES_SEARCHED:String = "ModelplacesSearched";
+		
 		
 		public var objects:ArrayCollection;
 		public var object:Object;

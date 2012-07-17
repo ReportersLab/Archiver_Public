@@ -2,6 +2,7 @@ package org.reporterslab.archiver.views.mediators
 {
 	import flash.events.Event;
 	
+	import org.reporterslab.archiver.events.ArchiverModelEvent;
 	import org.reporterslab.archiver.events.ArchiverTwitterEvent;
 	import org.reporterslab.archiver.models.ArchiverModel;
 	import org.robotlegs.mvcs.Mediator;
@@ -19,8 +20,16 @@ package org.reporterslab.archiver.views.mediators
 		override public function onRegister():void
 		{
 			eventMap.mapListener(view, Event.EXITING, dispatch);
+			eventMap.mapListener(eventDispatcher, ArchiverModelEvent.ENTITY_SELECTED, onItemSelected, Event);
+			eventMap.mapListener(eventDispatcher, ArchiverModelEvent.PLACE_SELECTED, onItemSelected, Event);
+			eventMap.mapListener(eventDispatcher, ArchiverModelEvent.USER_SELECTED, onItemSelected, Event);
+			eventMap.mapListener(eventDispatcher, ArchiverModelEvent.STATUS_SELECTED, onItemSelected, Event);
 		}
 		
-		
+		public function onItemSelected(event:Event):void
+		{
+			view.currentState = "details";
+			view.navButtons.selectedIndex = 4;
+		}
 	}
 }

@@ -2,6 +2,8 @@ package org.reporterslab.archiver.models.vo
 {
 	import com.dborisenko.api.twitter.data.TwitterEntity;
 	import com.dborisenko.api.twitter.data.TwitterStatus;
+	
+	import mx.collections.ArrayCollection;
 
 	public class Status
 	{
@@ -48,6 +50,7 @@ package org.reporterslab.archiver.models.vo
 		[Bindable] public var hashtags:Vector.<Entity> = null;
 		[Bindable] public var userMentions:Vector.<Entity> = null;
 		[Bindable] public var entities:Vector.<Entity> = null; // This would be a collection of the 3 above.
+		[Bindable] public var entitiesAC:ArrayCollection = null;
 		
 		[Bindable] public var annotations:Object = null; // no idea what this is.
 		[Bindable] public var isMention:Boolean = false;
@@ -184,7 +187,26 @@ package org.reporterslab.archiver.models.vo
 		}
 		
 		
-		
+		public function addEntities(entities:Array):void
+		{
+			urls = new Vector.<Entity>();
+			hashtags = new Vector.<Entity>();
+			userMentions = new Vector.<Entity>();
+			this.entities = new Vector.<Entity>();
+			entitiesAC = new ArrayCollection();
+			
+			for each(var e:Entity in entities){
+				if(e.type == Entity.ENTITY_TYPE_HASHTAG){
+					hashtags.push(e);	
+				}else if(e.type == Entity.ENTITY_TYPE_MENTION){
+					userMentions.push(e);
+				}else{
+					urls.push(e);
+				}
+				this.entities.push(e);
+				entitiesAC.addItem(e);
+			}
+		}
 		
 		
 		

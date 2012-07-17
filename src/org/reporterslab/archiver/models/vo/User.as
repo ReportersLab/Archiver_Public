@@ -1,6 +1,8 @@
 package org.reporterslab.archiver.models.vo
 {
 	import com.dborisenko.api.twitter.data.TwitterUser;
+	
+	import mx.collections.ArrayCollection;
 
 	public class User
 	{
@@ -52,6 +54,24 @@ package org.reporterslab.archiver.models.vo
 		
 		[Bindable] public var statusId:String;
 		[Bindable] public var status:Status;
+		//so if we want to laod the statuses for this user...
+		private var _statuses:Vector.<Status>;
+		[Bindable] public var statusesAC:ArrayCollection;
+		
+		
+		public function set statuses(value:Vector.<Status>):void
+		{
+			this._statuses = value;
+			this.statusesAC = new ArrayCollection();
+			for each(var s:Status in statuses){
+				statusesAC.addItem(s);
+			}
+		}
+		public function get statuses():Vector.<Status>
+		{
+			return _statuses;
+		}
+		
 		
 		public function User()
 		{

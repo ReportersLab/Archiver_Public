@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="org.reporterslab.archiver.views.components.*">
+	<fx:Declarations>
+		<s:DateTimeFormatter id="dateFormatter" />
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import flashx.textLayout.conversion.TextConverter;
+			import flashx.textLayout.elements.TextFlow;
+			
+			import org.reporterslab.archiver.models.vo.Status;
+			
+			private var _status:Status;
+			[Bindable] public var flow:TextFlow;
+			
+			[Bindable]
+			public function set status(value:Status):void
+			{
+				this._status = value;
+				
+				if(_status){
+					var urlExp:RegExp = /(\b(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/ig
+					var linkedText:String = status.text.replace(urlExp, "<a href='$1' target='_blank'>$1</a>"); 
+					flow = TextConverter.importToFlow(linkedText, TextConverter.TEXT_FIELD_HTML_FORMAT);
+				}
+			}
+			public function get status():Status
+			{
+				return _status;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:HGroup width="100%" height="100%">
+		<s:VGroup width="470" height="100%">
+			<s:RichEditableText id="statusText" textFlow="{flow}" width="450" editable="false" focusEnabled="false" fontSize="16" />
+			<s:Label id="date" text="{dateFormatter.format(status.createdAt)}" />
+			<s:Label text="Retweets: {status.retweetCount}" />
+			<components:EntityList id="entityList" width="100%" height="400" entitiesAC="{status.entitiesAC}" />
+			<s:Label text="Favorited: {status.favorited}" />
+		</s:VGroup>
+		<s:VGroup width="450" height="100%">
+			<s:HGroup width="100%">
+				<s:Image width="128" height="128" source="{status.user.profileImageUrl}" />
+				<s:VGroup  width="100%">
+					<s:Label fontSize="24" text="{status.user.name} ({status.user.screenName})" />
+					<s:RichText text="{status.user.description}" width="100%" />
+				</s:VGroup>
+			</s:HGroup>
+			<components:StatusList width="100%" height="100%" live="false" statuses="{status.user.statusesAC}" />
+		</s:VGroup>
+	</s:HGroup>
+	
+</s:Group>

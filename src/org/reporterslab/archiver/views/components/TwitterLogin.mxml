@@ -46,7 +46,7 @@
 			
 			protected function logoutButton_clickHandler(event:MouseEvent):void
 			{
-				dispatchEvent(new ArchiverTwitterEvent(ArchiverTwitterEvent.LOGOUT, codeInput.text));
+				dispatchEvent(new ArchiverTwitterEvent(ArchiverTwitterEvent.LOGOUT));
 			}
 			
 			protected function loginButton_clickHandler(event:MouseEvent):void

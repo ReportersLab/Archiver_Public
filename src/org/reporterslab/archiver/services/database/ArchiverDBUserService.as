@@ -92,8 +92,6 @@ package org.reporterslab.archiver.services.database
 		
 		
 		
-		
-		
 //================================== UTILS ========================================================
 		
 		protected function genUserVector(data:Object):Vector.<User>

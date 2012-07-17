@@ -30,7 +30,7 @@ package org.reporterslab.archiver.services.database
 		
 //========================== FOR FLESHING OUT STATUSES WITH PLACE DETAILS =================================
 		
-		public function loadUserForStatus(status:Status):void
+		public function loadPlaceForStatus(status:Status):void
 		{
 			//no user, we can't do anything. Shouldn't really happen.
 			if(status.placeId == -1)
@@ -49,6 +49,9 @@ package org.reporterslab.archiver.services.database
 		
 		private function onPlaceForStatusLoaded(result:SQLResult):void
 		{
+			if(!result.data)
+				return;
+			
 			var place:Place = result.data[0] as Place; // should only be one.
 			var statuses:Vector.<Status> = placeIdsToStatuses[place.id];
 			for each(var status:Status in statuses){

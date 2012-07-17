@@ -8,7 +8,9 @@ package org.reporterslab.archiver.services.database
 	
 	import org.reporterslab.archiver.events.ArchiverDBStatusEvent;
 	import org.reporterslab.archiver.models.vo.Entity;
+	import org.reporterslab.archiver.models.vo.Place;
 	import org.reporterslab.archiver.models.vo.Status;
+	import org.reporterslab.archiver.models.vo.User;
 	import org.robotlegs.mvcs.Actor;
 	
 	
@@ -40,6 +42,11 @@ package org.reporterslab.archiver.services.database
 		public var entityService:ArchiverDBEntityService;
 		
 		private var _savingStatuses:Vector.<Status>
+		
+		
+		//for loading statuses for a user or a place
+		protected var userIdsToUser:Object = {};
+		protected var placeIdsToPlace:Object = {};
 		
 		public function ArchiverDBStatusService()
 		{
@@ -199,9 +206,64 @@ package org.reporterslab.archiver.services.database
 		
 
 		
+//=========================================== LOADING STATUSES FOR A USER ==================================================
+
+		public function loadStatusesForUser(user:User):void
+		{
+			userIdsToUser[user.id] = user;
+			var params:Object = {userId:user.id};
+			var query:String = SELECT_STATUSES_FOR_USER_SQL;
+			sqlRunner.execute(query, params, onLoadStatusesForUser, Status, onLoadStatusesForUserError);
+		}
 		
+		protected function onLoadStatusesForUser(result:SQLResult):void
+		{
+			var user:User;
+			var statuses:Vector.<Status> = genResultVector(result.data, false);
+			if(statuses.length > 0){
+				user = userIdsToUser[statuses[0].userId];	
+			}
+			for each(var s:Status in statuses){
+				s.user = user;
+			}
+			
+			user.statuses = statuses;
+		}
 		
+		protected function onLoadStatusesForUserError(error:SQLError):void
+		{
+			trace("Loading Statuses For User Error");
+			trace(error);
+		}
 		
+//=========================================== LOADING STATUSES FOR A PLACE =================================================
+		
+		public function loadStatusesForPlace(place:Place):void
+		{
+			placeIdsToPlace[place.id] = place;
+			var params:Object = {placeId:place.id};
+			var query:String = SELECT_STATUSES_FOR_PLACE_SQL;
+			sqlRunner.execute(query, params, onLoadStatusesForPlace, Status, onLoadStatusesForPlaceError);
+		}
+		
+		protected function onLoadStatusesForPlace(result:SQLResult):void
+		{
+			var place:Place;
+			var statuses:Vector.<Status> = genResultVector(result.data);
+			if(statuses.length > 0){
+				place = placeIdsToPlace[statuses[0].placeId];
+			}
+			for each(var s:Status in statuses){
+				s.place = place;
+			}
+			place.statuses = statuses;
+		}
+		
+		protected function onLoadStatusesForPlaceError(error:SQLError):void
+		{
+			trace("Loading Statuses For Place Error.");
+			trace(error);
+		}
 		
 //================================================= SEARCHING  ==============================================================		
 	
@@ -228,8 +290,9 @@ package org.reporterslab.archiver.services.database
 		
 		
 		
+//================================================= UTILS ==================================================================
 		
-		private function genResultVector(data:Object):Vector.<Status>
+		private function genResultVector(data:Object, addUser:Boolean = true):Vector.<Status>
 		{
 			var statuses:Vector.<Status> = new Vector.<Status>();
 			
@@ -241,12 +304,33 @@ package org.reporterslab.archiver.services.database
 			
 			//flesh out statuses with related data.... ????? Can't decide if this is sane or not.
 			//alternative is to load only small pieces of whate we need and then flesh out on demand. That's a little harder.
-			for each(var s:Status in statuses){
-				this.userService.loadUserForStatus(s);
+			if(addUser){
+				for each(var s:Status in statuses){
+					this.userService.loadUserForStatus(s);
+				}
 			}
-
 			return statuses;
 		}
+
+		
+		public function fleshOutStatus(status:Status):Status
+		{
+			if((status.userId != -1) && (status.user == null)){
+				userService.loadUserForStatus(status);
+			}
+			
+			if((status.placeId != -1) && (status.place == null)){
+				placeService.loadPlaceForStatus(status);
+			}
+			
+			if((status.entities == null )){
+				entityService.loadEntitiesForStatus(status);
+			}
+			
+			return status;
+		}
+		
+		
 		
 //================================================== STATEMENT RETRIEVAL ====================================================		
 		

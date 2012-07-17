@@ -41,6 +41,8 @@ package org.reporterslab.archiver.services.remote.twitter
 		private var _maxId:String;
 		private var _statuses:ArrayCollection;
 		private var _api:TwitterAPI;
+		private var _callCount:int = 0;
+		
 		
 		/**
 		 * 
@@ -74,6 +76,7 @@ package org.reporterslab.archiver.services.remote.twitter
 		
 		protected function onLoadHomeTimeline(event:TwitterEvent):void
 		{
+			_callCount++;
 			_operation.removeEventListener(TwitterEvent.COMPLETE, onLoadHomeTimeline);
 			trace("Catch Up Progress.");
 			if(event.success){
@@ -95,13 +98,14 @@ package org.reporterslab.archiver.services.remote.twitter
 					
 					//if this is the last bit of data Twitter will give us, we're done and can return.
 					if(
-						((_maxId == newMaxId) && (_maxId != null)) 
+						   ((_maxId == newMaxId) && (_maxId != null)) 
 						|| (ac.length == 0)
+						|| (_callCount > 5)
 					){
 						notifyListeners();
 					//otherwise we're not done and need to get more.
 					}else{
-						var prevId:Number = (Number(newMaxId) -1);
+						var prevId:Number = (parseFloat(newMaxId) -1);
 						_maxId = prevId == -1 ? null : prevId.toString();
 						_operation = getOperation();
 						_operation.addEventListener(TwitterEvent.COMPLETE, onLoadHomeTimeline);

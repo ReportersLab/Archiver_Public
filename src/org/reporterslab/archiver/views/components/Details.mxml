@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300" xmlns:details="org.reporterslab.archiver.views.components.details.*">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<s:states>
+		<s:State name="status" />
+		<s:State name="user" />
+		<s:State name="place" />
+	</s:states>
+	
+	<fx:Script>
+		<![CDATA[
+			import org.reporterslab.archiver.models.vo.Place;
+			import org.reporterslab.archiver.models.vo.Status;
+			import org.reporterslab.archiver.models.vo.User;
+			
+			private var _status:Status;
+			private var _user:User;
+			private var _place:Place;
+			
+			[Bindable]
+			public function set status(value:Status):void
+			{
+				this._status = value;
+				this.currentState = "status";
+			}
+			public function get status():Status
+			{
+				return _status;
+			}
+			
+			
+			[Bindable]
+			public function set user(value:User):void
+			{
+				this._user = value;
+				this.currentState = "user";
+			}
+			public function get user():User
+			{
+				return _user;
+			}
+			
+			[Bindable]
+			public function set place(value:Place):void
+			{
+				this._place = value;
+				this.currentState = "place";
+			}
+			public function get place():Place
+			{
+				return _place;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<details:StatusDetails id="statusDetails" width="100%" height="100%" status="{status}" includeIn="status" />
+	<details:UserDetails id="userDetails" width="100%" height="100%" user="{user}" includeIn="user" />
+	<details:PlaceDetails id="placeDetails" width="100%" height="100%" place="{place}" includeIn="place" />
+	
+</s:Group>

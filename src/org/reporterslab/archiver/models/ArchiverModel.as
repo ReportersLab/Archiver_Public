@@ -6,6 +6,7 @@ package org.reporterslab.archiver.models
 	import mx.collections.SortField;
 	
 	import org.reporterslab.archiver.events.ArchiverModelEvent;
+	import org.reporterslab.archiver.models.vo.Entity;
 	import org.reporterslab.archiver.models.vo.Place;
 	import org.reporterslab.archiver.models.vo.Status;
 	import org.reporterslab.archiver.models.vo.User;
@@ -23,6 +24,8 @@ package org.reporterslab.archiver.models
 		
 		private var _selectedPlace:Place;
 		private var _searchedPlaces:ArrayCollection;
+		
+		private var _selectedEntity:Entity;
 		
 		
 		/**
@@ -80,6 +83,18 @@ package org.reporterslab.archiver.models
 			dispatch(new ArchiverModelEvent(ArchiverModelEvent.USER_SELECTED, null, this.selectedUser));
 		}
 		
+		
+		//and an entity
+		public function set selectedEntity(value:Entity):void
+		{
+			this._selectedEntity = value;
+			dispatch(new ArchiverModelEvent(ArchiverModelEvent.ENTITY_SELECTED, null, this.selectedEntity));
+		}
+		
+		public function get selectedEntity():Entity
+		{
+			return this._selectedEntity;
+		}
 		
 		/**
 		 * The latest search results. I feel like searching for data is different enough from just loading new data that

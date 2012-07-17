@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			
+			import org.reporterslab.archiver.events.ArchiverEntityEvent;
+			import org.reporterslab.archiver.models.vo.Entity;
+			
+			import spark.events.IndexChangeEvent;
+			
+			[Event(name="entitySelected",type="org.reporterslab.archiver.events.ArchiverEntityEvent")]
+			
+			private var _entities:Vector.<Entity>;
+			[Bindable] public var entitiesAC:ArrayCollection;
+			
+			public function set entities(value:Vector.<Entity>):void
+			{
+				this._entities = value;
+				this.entitiesAC = new ArrayCollection();
+				for each(var e:Entity in _entities){
+					entitiesAC.addItem(e);
+				}
+			}
+			public function get entities():Vector.<Entity>
+			{
+				return _entities;
+			}
+			
+			public function get selectedItem():Entity
+			{
+				return list.selectedItem as Entity;
+			}
+			
+			public function set selectedItem(value:Entity):void
+			{
+				if(entitiesAC.contains(value))
+					list.selectedItem = value;
+			}
+			
+			protected function list_changeHandler(event:IndexChangeEvent):void
+			{
+				dispatchEvent(new ArchiverEntityEvent(ArchiverEntityEvent.ENTITY_SELECTED, selectedItem));
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:List id="list" width="100%" height="100%" horizontalScrollPolicy="off" borderVisible="false" dataProvider="{entitiesAC}" 
+			itemRenderer="org.reporterslab.archiver.views.renderers.EntityListRenderer" change="list_changeHandler(event)">
+		<s:layout>
+			<s:VerticalLayout gap="10" useVirtualLayout="true" />
+		</s:layout>
+	</s:List>
+</s:Group>
