@@ -11,6 +11,7 @@
 			import flashx.textLayout.conversion.TextConverter;
 			import flashx.textLayout.elements.TextFlow;
 			
+			import org.reporterslab.archiver.events.ArchiverUserEvent;
 			import org.reporterslab.archiver.models.vo.Status;
 			
 			private var _status:Status;
@@ -32,6 +33,11 @@
 				return _status;
 			}
 			
+			protected function userGroup_clickHandler(event:MouseEvent):void
+			{
+				dispatchEvent(new ArchiverUserEvent(ArchiverUserEvent.USER_SELECTED, status.user));
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -44,7 +50,7 @@
 			<s:Label text="Favorited: {status.favorited}" />
 		</s:VGroup>
 		<s:VGroup width="450" height="100%">
-			<s:HGroup width="100%">
+			<s:HGroup id="userGroup" width="100%" click="userGroup_clickHandler(event)" >
 				<s:Image width="78" height="78" source="{status.user.profileImageUrl}" />
 				<s:VGroup  width="100%">
 					<s:Label fontSize="24" text="{status.user.name} ({status.user.screenName})" />

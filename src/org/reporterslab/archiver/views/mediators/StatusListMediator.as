@@ -2,6 +2,7 @@ package org.reporterslab.archiver.views.mediators
 {
 	import org.reporterslab.archiver.events.ArchiverModelEvent;
 	import org.reporterslab.archiver.events.ArchiverStatusEvent;
+	import org.reporterslab.archiver.events.ArchiverUserEvent;
 	import org.reporterslab.archiver.models.ArchiverModel;
 	import org.reporterslab.archiver.models.vo.Status;
 	import org.reporterslab.archiver.views.components.StatusList;
@@ -19,10 +20,11 @@ package org.reporterslab.archiver.views.mediators
 		
 		override public function onRegister():void
 		{
-			eventMap.mapListener(eventDispatcher, ArchiverModelEvent.STATUSES_ADDED, onStatusesAdded);
-			eventMap.mapListener(eventDispatcher, ArchiverModelEvent.STATUSES_CHANGED, onStatusesChanged);
-			eventMap.mapListener(eventDispatcher, ArchiverModelEvent.STATUS_SELECTED, onStatusSelected);
-			eventMap.mapListener(view, ArchiverStatusEvent.STATUS_SELECTED, dispatch);
+			eventMap.mapListener(eventDispatcher, ArchiverModelEvent.STATUSES_ADDED, onStatusesAdded, ArchiverModelEvent);
+			eventMap.mapListener(eventDispatcher, ArchiverModelEvent.STATUSES_CHANGED, onStatusesChanged, ArchiverModelEvent);
+			eventMap.mapListener(eventDispatcher, ArchiverModelEvent.STATUS_SELECTED, onStatusSelected, ArchiverModelEvent);
+			eventMap.mapListener(view, ArchiverStatusEvent.STATUS_SELECTED, dispatch, ArchiverStatusEvent);
+			eventMap.mapListener(view, ArchiverUserEvent.USER_SELECTED, dispatch, ArchiverUserEvent);
 		}
 		
 		private function onStatusesAdded(event:ArchiverModelEvent):void
