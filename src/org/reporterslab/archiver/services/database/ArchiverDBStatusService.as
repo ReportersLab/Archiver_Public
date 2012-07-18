@@ -47,6 +47,7 @@ package org.reporterslab.archiver.services.database
 		//for loading statuses for a user or a place
 		protected var userIdsToUser:Object = {};
 		protected var placeIdsToPlace:Object = {};
+		protected var currentEntity:Entity;
 		
 		public function ArchiverDBStatusService()
 		{
@@ -222,12 +223,13 @@ package org.reporterslab.archiver.services.database
 			var statuses:Vector.<Status> = genResultVector(result.data, false);
 			if(statuses.length > 0){
 				user = userIdsToUser[statuses[0].userId];	
+				
+				for each(var s:Status in statuses){
+					s.user = user;
+				}
+				
+				user.statuses = statuses;
 			}
-			for each(var s:Status in statuses){
-				s.user = user;
-			}
-			
-			user.statuses = statuses;
 		}
 		
 		protected function onLoadStatusesForUserError(error:SQLError):void
@@ -252,11 +254,12 @@ package org.reporterslab.archiver.services.database
 			var statuses:Vector.<Status> = genResultVector(result.data);
 			if(statuses.length > 0){
 				place = placeIdsToPlace[statuses[0].placeId];
+			
+				for each(var s:Status in statuses){
+					s.place = place;
+				}
+				place.statuses = statuses;
 			}
-			for each(var s:Status in statuses){
-				s.place = place;
-			}
-			place.statuses = statuses;
 		}
 		
 		protected function onLoadStatusesForPlaceError(error:SQLError):void
@@ -264,6 +267,41 @@ package org.reporterslab.archiver.services.database
 			trace("Loading Statuses For Place Error.");
 			trace(error);
 		}
+
+		
+//=======================================  LOADING STATUSES FOR AN ENTITY ===================================================
+		public function loadStatusesForEntity(entity:Entity):void
+		{
+			currentEntity = entity;
+			var sql:String = SEARCH_STATUSES_SQL;
+			var query:String = "";
+			var params:Object = {};
+			if(entity.type == Entity.ENTITY_TYPE_HASHTAG){
+				query = entity.hashText;
+			}else if(entity.type == Entity.ENTITY_TYPE_MENTION){
+				query = entity.screenName;
+			}else if(entity.type == Entity.ENTITY_TYPE_URL){
+				query = entity.url; // should be the T.Co url.
+			}
+			params['query'] = "%" + query + "%";
+			sqlRunner.execute(sql, params, onLoadStatusesForEntity, Status, onLoadStatusesForEntityError);
+		}
+		
+		protected function onLoadStatusesForEntity(result:SQLResult):void
+		{
+			var entity:Entity = currentEntity;
+			var statuses:Vector.<Status> = genResultVector(result.data);
+			if(statuses.length > 0){
+				entity.statuses = statuses;
+			}
+		}
+		
+		protected function onLoadStatusesForEntityError(error:SQLError):void
+		{
+			trace("Error loading statuses for entity.");
+			trace(error);
+		}
+		
 		
 //================================================= SEARCHING  ==============================================================		
 	
@@ -430,6 +468,10 @@ package org.reporterslab.archiver.services.database
 		[Embed(source="sql/status/SelectStatusesForUser.sql", mimeType="application/octet-stream")]
 		private static const SelectStatusesForUserStatement:Class;
 		private static const SELECT_STATUSES_FOR_USER_SQL:String = new SelectStatusesForUserStatement();
+		
+		[Embed(source="sql/status/SelectStatusesForEntity.sql", mimeType="application/octet-stream")]
+		private static const SelectStatusesForEntityStatement:Class;
+		private static const SELECT_STATUSES_FOR_ENTITY_SQL:String = new SelectStatusesForEntityStatement();
 		
 		[Embed(source="sql/status/SearchStatuses.sql", mimeType="application/octet-stream")]
 		private static const SearchStatusesStatement:Class;

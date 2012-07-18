@@ -23,6 +23,7 @@ package org.reporterslab.archiver.views.mediators
 			eventMap.mapListener(eventDispatcher, ArchiverModelEvent.STATUS_SELECTED, onStatusSelected);
 			eventMap.mapListener(eventDispatcher, ArchiverModelEvent.PLACE_SELECTED, onPlaceSelected);
 			eventMap.mapListener(eventDispatcher, ArchiverModelEvent.USER_SELECTED, onUserSelected);
+			eventMap.mapListener(eventDispatcher, ArchiverModelEvent.ENTITY_SELECTED, onEntitySelected);
 		}
 		
 		private function onStatusSelected(event:ArchiverModelEvent):void
@@ -42,6 +43,12 @@ package org.reporterslab.archiver.views.mediators
 		{
 			view.user = model.selectedUser;
 			db.loadStatusesForUser(view.user);
+		}
+		
+		private function onEntitySelected(event:ArchiverModelEvent):void
+		{
+			view.entity = model.selectedEntity;
+			db.loadStatusesForEntity(view.entity);
 		}
 		
 	}

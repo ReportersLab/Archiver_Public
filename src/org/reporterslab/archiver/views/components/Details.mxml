@@ -10,10 +10,12 @@
 		<s:State name="status" />
 		<s:State name="user" />
 		<s:State name="place" />
+		<s:State name="entity" />
 	</s:states>
 	
 	<fx:Script>
 		<![CDATA[
+			import org.reporterslab.archiver.models.vo.Entity;
 			import org.reporterslab.archiver.models.vo.Place;
 			import org.reporterslab.archiver.models.vo.Status;
 			import org.reporterslab.archiver.models.vo.User;
@@ -21,6 +23,7 @@
 			private var _status:Status;
 			private var _user:User;
 			private var _place:Place;
+			private var _entity:Entity;
 			
 			[Bindable]
 			public function set status(value:Status):void
@@ -56,11 +59,26 @@
 				return _place;
 			}
 			
+			
+			[Bindable]
+			public function set entity(value:Entity):void
+			{
+				this._entity = value;
+				this.currentState = "entity";
+			}
+			
+			public function get entity():Entity
+			{
+				return _entity;
+			}
+			
+			
 		]]>
 	</fx:Script>
 	
 	<details:StatusDetails id="statusDetails" width="100%" height="100%" status="{status}" includeIn="status" />
 	<details:UserDetails id="userDetails" width="100%" height="100%" user="{user}" includeIn="user" />
 	<details:PlaceDetails id="placeDetails" width="100%" height="100%" place="{place}" includeIn="place" />
+	<details:EntityDetails id="entityDetails" width="100%" height="100%" entity="{entity}" includeIn="entity" />
 	
 </s:Group>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300">
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300" xmlns:components="org.reporterslab.archiver.views.components.*">
 	<fx:Declarations>
 	</fx:Declarations>
 	
@@ -9,7 +9,30 @@
 		<![CDATA[
 			import org.reporterslab.archiver.models.vo.User;
 			
-			[Bindable] public var user:User;
+			private var _user:User;
+			[Bindable]
+			public function set user(value:User):void
+			{
+				this._user = value;
+			}
+			public function get user():User
+			{
+				return this._user;
+			}
 		]]>
 	</fx:Script>
+	
+	
+	<s:HGroup width="100%" height="100%">
+		<s:HGroup width="400">
+			<s:Image width="78" height="78" source="{user.profileImageUrl}" />
+			<s:VGroup  width="100%">
+				<s:Label fontSize="24" text="{user.name} ({user.screenName})" />
+				<s:RichText text="{user.description}" width="100%" />
+			</s:VGroup>
+		</s:HGroup>
+		<components:StatusList width="450" height="100%" live="false" statuses="{user.statusesAC}" />
+	</s:HGroup>
+	
+	
 </s:Group>

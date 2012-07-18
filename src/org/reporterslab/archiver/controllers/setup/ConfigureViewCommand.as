@@ -8,6 +8,7 @@ package org.reporterslab.archiver.controllers.setup
 	import org.reporterslab.archiver.views.components.StatusList;
 	import org.reporterslab.archiver.views.components.TwitterLogin;
 	import org.reporterslab.archiver.views.components.UserList;
+	import org.reporterslab.archiver.views.components.details.EntityDetails;
 	import org.reporterslab.archiver.views.components.details.PlaceDetails;
 	import org.reporterslab.archiver.views.components.details.StatusDetails;
 	import org.reporterslab.archiver.views.components.details.UserDetails;
@@ -19,6 +20,7 @@ package org.reporterslab.archiver.controllers.setup
 	import org.reporterslab.archiver.views.mediators.StatusListMediator;
 	import org.reporterslab.archiver.views.mediators.TwitterLoginMediator;
 	import org.reporterslab.archiver.views.mediators.UserListMediator;
+	import org.reporterslab.archiver.views.mediators.details.EntityDetailsMediator;
 	import org.reporterslab.archiver.views.mediators.details.PlaceDetailsMediator;
 	import org.reporterslab.archiver.views.mediators.details.StatusDetailsMediator;
 	import org.reporterslab.archiver.views.mediators.details.UserDetailsMediator;
@@ -48,6 +50,7 @@ package org.reporterslab.archiver.controllers.setup
 			mediatorMap.mapView(StatusDetails, StatusDetailsMediator);
 			mediatorMap.mapView(UserDetails, UserDetailsMediator);
 			mediatorMap.mapView(PlaceDetails, PlaceDetailsMediator);
+			mediatorMap.mapView(EntityDetails, EntityDetailsMediator);
 			
 		}
 		

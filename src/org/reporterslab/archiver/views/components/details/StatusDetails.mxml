@@ -37,7 +37,7 @@
 	
 	<s:HGroup width="100%" height="100%">
 		<s:VGroup width="470" height="100%">
-			<s:RichEditableText id="statusText" textFlow="{flow}" width="450" editable="false" focusEnabled="false" fontSize="16" />
+			<s:RichEditableText id="statusText" textFlow="{flow}" width="100%" editable="false" focusEnabled="false" fontSize="16" />
 			<s:Label id="date" text="{dateFormatter.format(status.createdAt)}" />
 			<s:Label text="Retweets: {status.retweetCount}" />
 			<components:EntityList id="entityList" width="100%" height="400" entitiesAC="{status.entitiesAC}" />
@@ -45,7 +45,7 @@
 		</s:VGroup>
 		<s:VGroup width="450" height="100%">
 			<s:HGroup width="100%">
-				<s:Image width="128" height="128" source="{status.user.profileImageUrl}" />
+				<s:Image width="78" height="78" source="{status.user.profileImageUrl}" />
 				<s:VGroup  width="100%">
 					<s:Label fontSize="24" text="{status.user.name} ({status.user.screenName})" />
 					<s:RichText text="{status.user.description}" width="100%" />

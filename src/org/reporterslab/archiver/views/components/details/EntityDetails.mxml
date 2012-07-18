@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300" xmlns:components="org.reporterslab.archiver.views.components.*">
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	<s:states>
+		<s:State name="hashtag" />
+		<s:State name="mention" />
+		<s:State name="url" />
+	</s:states>
+	
+	<fx:Script>
+		<![CDATA[
+			import org.reporterslab.archiver.models.vo.Entity;
+			
+			private var _entity:Entity;
+			
+			[Bindable]
+			public function set entity(value:Entity):void
+			{
+				this._entity = value;
+				
+				if(entity.type == Entity.ENTITY_TYPE_HASHTAG){
+					this.currentState = "hashtag";
+				}else if(entity.type == Entity.ENTITY_TYPE_MENTION){
+					this.currentState = "mention";
+				}else if(entity.type == Entity.ENTITY_TYPE_URL){
+					this.currentState = "url";
+				}
+			}
+			public function get entity():Entity
+			{
+				return this._entity;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	<s:HGroup width="100%" height="100%">
+		<s:Group width="250" height="100%">
+			<s:VGroup includeIn="hashtag">
+				<s:Label text="Hashtag: {entity.hashText}" />
+			</s:VGroup>
+			
+			<s:VGroup includeIn="mention">
+				<s:Label text="Mention: {entity.name}" />
+				<s:Label text="Screen: {entity.screenName}" />
+			</s:VGroup>
+			
+			<s:VGroup includeIn="url">
+				<s:RichText text="Expanded URL: {entity.expandedURL}" width="100%" />
+				<s:RichText text="Display URL: {entity.displayURL}" width="100%" />
+				<s:RichText text="URL: {entity.url}" width="100%" />
+			</s:VGroup>
+		</s:Group>
+		<components:StatusList id="statusList" width="450" height="100%" statuses="{entity.statusesAC}" live="false" />
+	</s:HGroup>
+	
+</s:Group>
