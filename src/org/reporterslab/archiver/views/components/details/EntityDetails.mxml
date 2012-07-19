@@ -9,6 +9,7 @@
 		<s:State name="hashtag" />
 		<s:State name="mention" />
 		<s:State name="url" />
+		<s:State name="media" />
 	</s:states>
 	
 	<fx:Script>
@@ -16,6 +17,8 @@
 			import org.reporterslab.archiver.models.vo.Entity;
 			
 			private var _entity:Entity;
+			[Bindable] public var mediaWidth:int;
+			[Bindable] public var mediaHeight:int;
 			
 			[Bindable]
 			public function set entity(value:Entity):void
@@ -28,6 +31,18 @@
 					this.currentState = "mention";
 				}else if(entity.type == Entity.ENTITY_TYPE_URL){
 					this.currentState = "url";
+				}else if(entity.type == Entity.ENTITY_TYPE_MEDIA){
+					this.currentState = "media";
+					
+					var sizes:Object = entity.mediaSizes;
+					if(sizes is String){
+						sizes = JSON.parse(sizes as String);
+						mediaWidth = sizes['medium']['w'];
+						mediaHeight = sizes['medium']['h'];
+					}
+					
+					
+					
 				}
 			}
 			public function get entity():Entity
@@ -40,7 +55,7 @@
 	
 	
 	<s:HGroup width="100%" height="100%">
-		<s:Group width="300" height="100%">
+		<s:Group width="250" height="100%">
 			<s:VGroup includeIn="hashtag" width="100%">
 				<s:RichText text="Hashtag: {entity.hashText}" width="95%" />
 			</s:VGroup>
@@ -50,13 +65,18 @@
 				<s:RichText text="Screen: {entity.screenName}" width="95%" />
 			</s:VGroup>
 			
-			<s:VGroup includeIn="url" width="100%">
+			<s:VGroup includeIn="url,media" width="100%">
 				<s:RichText text="Expanded URL: {entity.expandedURL}" width="95%" />
 				<s:RichText text="Display URL: {entity.displayURL}" width="95%" />
 				<s:RichText text="URL: {entity.url}" width="95%" />
 			</s:VGroup>
+			
 		</s:Group>
-		<components:StatusList id="statusList" width="450" height="100%" statuses="{entity.statusesAC}" live="false" />
+		<components:StatusList id="statusList" width="300" height="100%" statuses="{entity.statusesAC}" live="false" />
+		<s:VGroup includeIn="media" width="100%">
+			<s:RichText text="Media URL: {entity.mediaURL}" width="95%" />
+			<s:Image source="{entity.mediaURL}" width="{mediaWidth}" height="{mediaHeight}" />
+		</s:VGroup>
 	</s:HGroup>
 	
 </s:Group>

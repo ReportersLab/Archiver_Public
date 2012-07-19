@@ -19,6 +19,7 @@ package org.reporterslab.archiver.models.vo
 		public static const ENTITY_TYPE_URL:String = "url";
 		public static const ENTITY_TYPE_HASHTAG:String = "hashtag";
 		public static const ENTITY_TYPE_MENTION:String = "usermention";
+		public static const ENTITY_TYPE_MEDIA:String = "media";
 		
 		
 		[Bindable] public var id:String = null;
@@ -36,6 +37,12 @@ package org.reporterslab.archiver.models.vo
 		[Bindable] public var name:String;
 		[Bindable] public var mentionId:String; // int also available.
 		[Bindable] public var screenName:String;
+		//media
+		[Bindable] public var mediaId:String;
+		[Bindable] public var mediaURL:String;
+		[Bindable] public var mediaURLHttps:String;
+		[Bindable] public var mediaSizes:Object;
+		[Bindable] public var mediaType:String;
 		// general
 		[Bindable] public var indices:Array;
 		//derived
@@ -82,7 +89,11 @@ package org.reporterslab.archiver.models.vo
 			this.indices = entity.indices;
 			this.startIndex = entity.startIndex;
 			this.endIndex = entity.endIndex;
-			
+			this.mediaId = entity.mediaId;
+			this.mediaURL = entity.mediaURL;
+			this.mediaURLHttps = entity.mediaURLHttps;
+			this.mediaSizes = entity.mediaSizes;
+			this.mediaType = entity.mediaType;
 			return this;
 		}
 		
@@ -102,7 +113,11 @@ package org.reporterslab.archiver.models.vo
 			params['startIndex'] = this.startIndex;
 			params['endIndex'] = this.endIndex;
 			params['id'] = this.id;
-			
+			params['mediaId'] = this.mediaId;
+			params['mediaURL'] = this.mediaURL;
+			params['mediaURLHttps'] = this.mediaURLHttps;
+			params['mediaSizes'] = this.mediaSizes is String ? this.mediaSizes : JSON.stringify(this.mediaSizes);
+			params['mediaType'] = this.mediaType;
 			//we need to make sure the ID is unique for this entity. Twitter doesn't send an ID withi it.
 			if(this.id == null){
 				if(this.twitterStatusId != null){

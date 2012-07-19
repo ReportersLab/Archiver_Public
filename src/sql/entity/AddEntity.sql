@@ -8,6 +8,11 @@ INSERT INTO Entity
 	name,
 	mentionId,
 	screenName,
+	mediaId,
+	mediaURL,
+	mediaURLHttps,
+	mediaSizes,
+	mediaType,
 	startIndex,
 	endIndex,
 	ownerId,
@@ -23,8 +28,14 @@ VALUES
 	:name,
 	:mentionId,
 	:screenName,
+	:mediaId,
+	:mediaURL,
+	:mediaURLHttps,
+	:mediaSizes,
+	:mediaType,
 	:startIndex,
 	:endIndex,
 	:ownerId,
 	:twitterStatusId
 );
+

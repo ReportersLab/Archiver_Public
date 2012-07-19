@@ -361,7 +361,7 @@ package org.reporterslab.archiver.services.database
 				placeService.loadPlaceForStatus(status);
 			}
 			
-			if((status.entities == null )){
+			if((status.entities == null) || (status.entities.length == 0)){
 				entityService.loadEntitiesForStatus(status);
 			}
 			

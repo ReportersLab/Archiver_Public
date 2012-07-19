@@ -49,6 +49,7 @@ package org.reporterslab.archiver.models.vo
 		[Bindable] public var urls:Vector.<Entity> = null;
 		[Bindable] public var hashtags:Vector.<Entity> = null;
 		[Bindable] public var userMentions:Vector.<Entity> = null;
+		[Bindable] public var media:Vector.<Entity> = null;
 		[Bindable] public var entities:Vector.<Entity> = null; // This would be a collection of the 3 above.
 		[Bindable] public var entitiesAC:ArrayCollection = null;
 		
@@ -132,6 +133,15 @@ package org.reporterslab.archiver.models.vo
 				}
 			}
 			
+			if(status.media){
+				this.media = new Vector.<Entity>();
+				for each(te in status.media){
+					var m:Entity = new Entity();
+					m.parseTwitterEntity(te, this);
+					this.media.push(m);
+				}
+			}
+			
 			if(status.entities){
 				this.entities = new Vector.<Entity>();
 				for each(te in status.entities){
@@ -192,6 +202,7 @@ package org.reporterslab.archiver.models.vo
 			urls = new Vector.<Entity>();
 			hashtags = new Vector.<Entity>();
 			userMentions = new Vector.<Entity>();
+			media = new Vector.<Entity>();
 			this.entities = new Vector.<Entity>();
 			entitiesAC = new ArrayCollection();
 			
@@ -200,6 +211,8 @@ package org.reporterslab.archiver.models.vo
 					hashtags.push(e);	
 				}else if(e.type == Entity.ENTITY_TYPE_MENTION){
 					userMentions.push(e);
+				}else if(e.type == Entity.ENTITY_TYPE_MEDIA){
+					media.push(e);
 				}else{
 					urls.push(e);
 				}

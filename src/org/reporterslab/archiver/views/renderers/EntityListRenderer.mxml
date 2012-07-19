@@ -9,6 +9,7 @@
 		<s:State name="hashtag" />
 		<s:State name="mention" />
 		<s:State name="url" />
+		<s:State name="media" />
 	</s:states>
 	
 	<fx:Script>
@@ -16,6 +17,8 @@
 			import org.reporterslab.archiver.models.vo.Entity;
 			
 			[Bindable] public var entity:Entity;
+			[Bindable] public var mediaWidth:int;
+			[Bindable] public var mediaHeight:int;
 			
 			override public function set data(value:Object):void
 			{
@@ -30,6 +33,15 @@
 					this.currentState = "mention";
 				}else if(entity.type == Entity.ENTITY_TYPE_URL){
 					this.currentState = "url";
+				}else if(entity.type == Entity.ENTITY_TYPE_MEDIA){
+					this.currentState = "media";
+					var sizes:Object = entity.mediaSizes;
+					if(sizes is String){
+						sizes = JSON.parse(sizes as String);
+						mediaWidth = sizes['small']['w'];
+						mediaHeight = sizes['small']['h'];
+					}
+					
 				}
 			}
 			
@@ -47,5 +59,10 @@
 	<s:VGroup width="100%" includeIn="url">
 		<s:RichText text="{entity.expandedURL}" width="100%" />
 	</s:VGroup>
-	
+
+	<s:VGroup width="100%" includeIn="media">
+		<s:RichText text="MEDIA: {entity.mediaURL}" width="100%" />
+		<s:Image width="{mediaWidth}" height="{mediaHeight}" source="{entity.mediaURL}:small" />
+	</s:VGroup>
+
 </s:ItemRenderer>

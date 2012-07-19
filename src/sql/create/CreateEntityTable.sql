@@ -8,7 +8,12 @@ CREATE TABLE "Entity" (
 	"displayURL" VARCHAR, 
 	"hashText" VARCHAR, 
 	"name" VARCHAR, 
-	"mentionId" VARCHAR, 
+	"mentionId" VARCHAR,
+	"mediaId" VARCHAR,
+	"mediaURL" VARCHAR,
+	"mediaURLHttps" VARCHAR,
+	"mediaType" VARCHAR,
+	"mediaSizes" VARCHAR,  
 	"screenName" VARCHAR, 
 	"startIndex" INTEGER, 
 	"endIndex" INTEGER
