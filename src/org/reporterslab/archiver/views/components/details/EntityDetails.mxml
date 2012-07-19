@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300" xmlns:components="org.reporterslab.archiver.views.components.*">
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" xmlns:components="org.reporterslab.archiver.views.components.*">
 	<fx:Declarations>
 	</fx:Declarations>
 	
@@ -40,20 +40,20 @@
 	
 	
 	<s:HGroup width="100%" height="100%">
-		<s:Group width="250" height="100%">
-			<s:VGroup includeIn="hashtag">
-				<s:Label text="Hashtag: {entity.hashText}" />
+		<s:Group width="300" height="100%">
+			<s:VGroup includeIn="hashtag" width="100%">
+				<s:RichText text="Hashtag: {entity.hashText}" width="95%" />
 			</s:VGroup>
 			
-			<s:VGroup includeIn="mention">
-				<s:Label text="Mention: {entity.name}" />
-				<s:Label text="Screen: {entity.screenName}" />
+			<s:VGroup includeIn="mention" width="100%">
+				<s:RichText text="Mention: {entity.name}" width="95%" />
+				<s:RichText text="Screen: {entity.screenName}" width="95%" />
 			</s:VGroup>
 			
-			<s:VGroup includeIn="url">
-				<s:RichText text="Expanded URL: {entity.expandedURL}" width="100%" />
-				<s:RichText text="Display URL: {entity.displayURL}" width="100%" />
-				<s:RichText text="URL: {entity.url}" width="100%" />
+			<s:VGroup includeIn="url" width="100%">
+				<s:RichText text="Expanded URL: {entity.expandedURL}" width="95%" />
+				<s:RichText text="Display URL: {entity.displayURL}" width="95%" />
+				<s:RichText text="URL: {entity.url}" width="95%" />
 			</s:VGroup>
 		</s:Group>
 		<components:StatusList id="statusList" width="450" height="100%" statuses="{entity.statusesAC}" live="false" />

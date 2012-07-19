@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300" xmlns:components="org.reporterslab.archiver.views.components.*">
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" xmlns:components="org.reporterslab.archiver.views.components.*">
 	<fx:Declarations>
 	</fx:Declarations>
 	
@@ -27,7 +27,7 @@
 		<s:HGroup width="400">
 			<s:Image width="78" height="78" source="{user.profileImageUrl}" />
 			<s:VGroup  width="100%">
-				<s:Label fontSize="24" text="{user.name} ({user.screenName})" />
+				<s:RichText fontSize="24" text="{user.name} ({user.screenName})" width="95%" />
 				<s:RichText text="{user.description}" width="100%" />
 			</s:VGroup>
 		</s:HGroup>

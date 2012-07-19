@@ -2,7 +2,7 @@
 <s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
 				xmlns:s="library://ns.adobe.com/flex/spark" 
 				xmlns:mx="library://ns.adobe.com/flex/mx" 
-				autoDrawBackground="true">
+				autoDrawBackground="true" width="100%">
 	
 	
 	<s:states>
@@ -37,11 +37,11 @@
 	</fx:Script>
 	
 	<s:VGroup width="100%" includeIn="hashtag">
-		<s:Label text="Hashtag: {entity.hashText}" />
+		<s:RichText text="Hashtag: {entity.hashText}" width="100%" />
 	</s:VGroup>
 	
 	<s:VGroup width="100%" includeIn="mention">
-		<s:Label text="Mention: {entity.name}" />
+		<s:RichText text="Mention: {entity.name}" width="100%" />
 	</s:VGroup>
 	
 	<s:VGroup width="100%" includeIn="url">

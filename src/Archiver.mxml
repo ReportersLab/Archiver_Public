@@ -60,7 +60,7 @@
 	
 	<s:Group width="100%" height="100%" top="35" bottom="10" left="10" right="10">
 		<components:Details id="details" width="100%" height="100%" x.details="0" x="-3000" />
-		<components:StatusList id="statusList" width="450" height="100%" x.live="0" x="-3000" />
+		<components:StatusList id="statusList" width="350" height="100%" x.live="0" x="-3000" />
 		<components:SearchPanel id="searchPanel" width="100%" height="100%" x.search="0" x="-3000" />
 		<components:TwitterLogin id="twitter" width="100%" height="100%" x.twitter="0" x="-3000" />		
 	</s:Group>
