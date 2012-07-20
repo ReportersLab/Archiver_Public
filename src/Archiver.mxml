@@ -16,6 +16,8 @@
 		</s:ArrayCollection>
 	</fx:Declarations>
 	
+	<fx:Style source="assets/main.css" />
+	
 	<s:states>
 		<s:State name="default" />
 		<s:State name="live" />
@@ -26,9 +28,15 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import flashx.textLayout.elements.Configuration;
+			import flashx.textLayout.elements.TextFlow;
+			import flashx.textLayout.formats.TextDecoration;
+			import flashx.textLayout.formats.TextLayoutFormat;
+			
 			import mx.events.FlexEvent;
 			
 			import spark.events.IndexChangeEvent;
+			
 			
 			private function creationCompleteHandler(event: FlexEvent): void
 			{
@@ -37,6 +45,7 @@
 				nativeWindow.x = (Capabilities.screenResolutionX - nativeWindow.width) / 2;
 				nativeWindow.y = (Capabilities.screenResolutionY - nativeWindow.height) / 2;
 				this.currentState = "live";
+				initStyles();
 			}
 			
 			
@@ -46,6 +55,31 @@
 					return;
 				this.currentState = navButtons.selectedItem.value;
 			}
+			
+			
+			protected function initStyles():void
+			{
+				
+				var cfg:Configuration = TextFlow.defaultConfiguration;
+				
+				var normalTLF:TextLayoutFormat = new TextLayoutFormat(cfg.defaultLinkNormalFormat);
+				normalTLF.color = 0x778E1E;
+				normalTLF.textDecoration = TextDecoration.NONE;
+				
+				var hoverTLF:TextLayoutFormat = new TextLayoutFormat(cfg.defaultLinkHoverFormat);
+				hoverTLF.color = 0xFFCC00;
+				hoverTLF.textDecoration = TextDecoration.NONE;
+				
+				var activeTLF:TextLayoutFormat = new TextLayoutFormat(cfg.defaultLinkActiveFormat);
+				activeTLF.color = 0x778E1E;
+				
+				cfg.defaultLinkNormalFormat = normalTLF;
+				cfg.defaultLinkHoverFormat = hoverTLF;
+				cfg.defaultLinkActiveFormat = activeTLF;
+				TextFlow.defaultConfiguration = cfg;
+			}
+			
+			
 			
 		]]>
 	</fx:Script>

@@ -1,0 +1,76 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+s|WindowedApplication
+{
+	fontFamily:Arial;
+}
+
+@font-face 
+{ 
+	src: url("assets/fonts/LeagueGothic/LG.ttf"); 
+	fontFamily: LeagueGothic; 
+	fontStyle: normal; 
+	fontWeight: normal; 
+	embedAsCFF:true; 
+	advancedAntiAliasing: true; 
+}
+
+
+.anchor{
+	color:#FF0000;
+}
+
+.label
+{
+	fontWeight:bold;
+	textAlign:right;
+}
+
+.value
+{
+	
+}
+
+.headerOne
+{
+	fontFamily: LeagueGothic;
+	fontSize: 28px;
+	color: #000000;
+}
+
+.headerTwo
+{
+	fontSize:20px;
+	color:#000000;
+}
+
+.userDescription
+{
+	fontSize:14px;
+}
+
+
+.statusDetailText
+{
+	fontSize:18px;
+}
+
+.statusUser
+{
+	fontWeight:bold;	
+}
+
+.statusDate
+{	
+	color:#333333;
+}
+
+
+
+
+
+
+
+

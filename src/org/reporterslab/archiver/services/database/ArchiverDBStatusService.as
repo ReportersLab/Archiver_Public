@@ -47,6 +47,7 @@ package org.reporterslab.archiver.services.database
 		//for loading statuses for a user or a place
 		protected var userIdsToUser:Object = {};
 		protected var placeIdsToPlace:Object = {};
+		protected var statusIdsToStatus:Object = {};
 		protected var currentEntity:Entity;
 		
 		public function ArchiverDBStatusService()
@@ -69,26 +70,7 @@ package org.reporterslab.archiver.services.database
 			var statements:Vector.<QueuedStatement> = new Vector.<QueuedStatement>();
 			
 			for each(var status:Status in statuses){
-				//first add / update the status.
-				statements.push(this.getInsertOrUpdateStatement(status));
-				//then add / update the user -- this should always exist, but let's be sure.
-				if(status.user){
-					statements.push(userService.getInsertOrUpdateStatement(status.user));
-				}
-				//and the place. Much more likely to be null
-				if(status.place){
-					statements.push(placeService.getInsertOrUpdateStatement(status.place));
-				}
-				
-				//and all of the entities
-				for each (var entity:Entity in status.entities){
-					//adds the entities.
-					statements.push(entityService.getInsertOrUpdateStatement(entity));
-					//at this point the status, place, and user are all there. So we can get the real status ID to add to that entity.
-					statements.push(entityService.getUpdateTwitterStatement(entity));
-				}
-				//and finally, update the status itself with the proper place and user id
-				statements.push(this.getUpdateTwitterStatement(status));
+				genSaveStatements(status, statements);
 			}
 			trace("Number of Statuses: " + statuses.length);
 			trace("Statements to Execute: " + statements.length);
@@ -99,6 +81,33 @@ package org.reporterslab.archiver.services.database
 			if(statements.length > 0){
 				sqlRunner.executeModify(statements, onSaveStatuses, onSaveStatusesError, onSaveStatusesProgress);
 			}
+		}
+		
+		protected function genSaveStatements(status:Status, statements:Vector.<QueuedStatement>):void{
+			//first add / update the status.
+			statements.push(this.getInsertOrUpdateStatement(status));
+			//then add / update the user -- this should always exist, but let's be sure.
+			if(status.user){
+				statements.push(userService.getInsertOrUpdateStatement(status.user));
+			}
+			//and the place. Much more likely to be null
+			if(status.place){
+				statements.push(placeService.getInsertOrUpdateStatement(status.place));
+			}
+			
+			//and all of the entities
+			for each (var entity:Entity in status.entities){
+				//adds the entities.
+				statements.push(entityService.getInsertOrUpdateStatement(entity));
+				//at this point the status, place, and user are all there. So we can get the real status ID to add to that entity.
+				statements.push(entityService.getUpdateTwitterStatement(entity));
+			}
+			//if there's a retweet, save it.
+			if(status.retweetedStatus){
+				genSaveStatements(status.retweetedStatus, statements);
+			}
+			//and finally, update the status itself with the proper place and user id
+			statements.push(this.getUpdateTwitterStatement(status));
 		}
 		
 		/**
@@ -325,7 +334,36 @@ package org.reporterslab.archiver.services.database
 		}
 		
 		
+
+//=============================================== LOADING RETWEETS ========================================================
+		public function loadRetweet(status:Status):void
+		{
+			var inClause:String = "('" + status.retweetedStatusTwitterId + "')";
+			var query:String = DYNAMIC_SELECT_STATUS_SQL;
+			query = query.replace(":values", inClause);
+			query = query.replace(":field", "twitterId");
+			statusIdsToStatus[status.retweetedStatusTwitterId] = status;
+			sqlRunner.execute(query, null, onLoadRetweet, Status, onLoadRetweetError);
+		}
 		
+		protected function onLoadRetweet(result:SQLResult):void
+		{
+			if(result.data.length == 0)
+				return;
+			var retweet:Status = result.data[0] as Status;
+			var status:Status = statusIdsToStatus[retweet.twitterId];
+			if(!status)
+				return;
+			status.retweetedStatus = retweet;
+			this.fleshOutStatus(retweet);
+			statusIdsToStatus[retweet.twitterId] = null;
+		}
+		
+		protected function onLoadRetweetError(error:SQLError):void
+		{
+			trace("Error loading Retweet");
+			trace(error);
+		}
 		
 		
 //================================================= UTILS ==================================================================
@@ -363,6 +401,10 @@ package org.reporterslab.archiver.services.database
 			
 			if((status.entities == null) || (status.entities.length == 0)){
 				entityService.loadEntitiesForStatus(status);
+			}
+			
+			if(status.retweetedStatusTwitterId){
+				loadRetweet(status);
 			}
 			
 			return status;

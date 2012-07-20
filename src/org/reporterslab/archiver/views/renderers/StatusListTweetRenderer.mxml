@@ -27,9 +27,6 @@
 				super.data = value;
 				if(data){
 					this.status = value as Status;
-					var urlExp:RegExp = /(\b(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/ig
-					var linkedText:String = status.text.replace(urlExp, "<a href='$1' target='_blank'>$1</a>"); 
-					flow = TextConverter.importToFlow(linkedText, TextConverter.TEXT_FIELD_HTML_FORMAT);
 				}
 			}
 			
@@ -41,7 +38,7 @@
 		<s:Image id="avatar" width="48" height="48" source="{status.user.profileImageUrl}" />
 		<s:VGroup width="100%">
 			<s:Label id="userName" text="\@{status.user.screenName} ({status.user.name})" fontWeight="bold" />
-			<s:RichEditableText id="text" textFlow="{flow}" width="95%" editable="false" focusEnabled="false" />
+			<s:RichEditableText id="text" textFlow="{status.flow}" width="95%" editable="false" focusEnabled="false" />
 			<s:Label id="date" text="{dateFormatter.format(status.createdAt)}" />
 		</s:VGroup>
 	</s:HGroup>

@@ -3,6 +3,10 @@ package org.reporterslab.archiver.models.vo
 	import com.dborisenko.api.twitter.data.TwitterEntity;
 	import com.dborisenko.api.twitter.data.TwitterStatus;
 	
+	import flashx.textLayout.conversion.TextConverter;
+	import flashx.textLayout.elements.FlowElement;
+	import flashx.textLayout.elements.TextFlow;
+	
 	import mx.collections.ArrayCollection;
 
 	public class Status
@@ -14,10 +18,10 @@ package org.reporterslab.archiver.models.vo
 		
 		[Bindable] public var statusType:String; // Twitter, Twitter Search, Facebook(?), RSS(?), etc. 
 		
+		private var _text:String;
 		//generic
 		[Bindable] public var createdAt:Date;
 		[Bindable] public var id:int = -1;
-		[Bindable] public var text:String;
 		[Bindable] public var source:String; // as in, what posted the status. In Twitter this may be something like "Web" or "Instagram"
 		
 		[Bindable] public var user:User; // the system user id
@@ -59,6 +63,23 @@ package org.reporterslab.archiver.models.vo
 		[Bindable] public var retweetedStatus:Status;
 		[Bindable] public var retweetedStatusTwitterId:String;
 		[Bindable] public var retweetedStatusId:int = -1;
+		
+		
+		[Bindable] public var flow:TextFlow;
+		
+		[Bindable]
+		public function get text():String
+		{
+			return _text;
+		}
+		public function set text(value:String):void
+		{
+			_text = value;
+			var urlExp:RegExp = /(\b(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/ig
+			var linkedText:String = text.replace(urlExp, "<a href='$1' target='_blank' styleName='link' class='link'>$1</a>"); 
+			var newFlow:TextFlow = TextConverter.importToFlow(linkedText, TextConverter.TEXT_FIELD_HTML_FORMAT);
+			flow = newFlow;
+		}
 		
 		
 		public function Status()

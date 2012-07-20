@@ -6,6 +6,10 @@
 		<s:DateTimeFormatter id="dateFormatter" />
 	</fx:Declarations>
 	
+	<s:states>
+		<s:State name="default" />
+		<s:State name="retweet" />
+	</s:states>
 	<fx:Script>
 		<![CDATA[
 			import flashx.textLayout.conversion.TextConverter;
@@ -15,17 +19,18 @@
 			import org.reporterslab.archiver.models.vo.Status;
 			
 			private var _status:Status;
-			[Bindable] public var flow:TextFlow;
 			
 			[Bindable]
 			public function set status(value:Status):void
 			{
 				this._status = value;
 				
-				if(_status){
-					var urlExp:RegExp = /(\b(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/ig
-					var linkedText:String = status.text.replace(urlExp, "<a href='$1' target='_blank'>$1</a>"); 
-					flow = TextConverter.importToFlow(linkedText, TextConverter.TEXT_FIELD_HTML_FORMAT);
+				if(status){
+					if(status.retweetedStatusTwitterId != null){
+						this.currentState = "retweet";
+					}else{
+						this.currentState = "default";
+					}
 				}
 			}
 			public function get status():Status
@@ -43,20 +48,59 @@
 	
 	<s:HGroup width="100%" height="100%">
 		<s:VGroup width="470" height="100%">
-			<s:RichEditableText id="statusText" textFlow="{flow}" width="100%" editable="false" focusEnabled="false" fontSize="16" />
-			<s:Label id="date" text="{dateFormatter.format(status.createdAt)}" />
-			<s:Label text="Retweets: {status.retweetCount}" />
+			<s:Label text="STATUS" styleName="headerOne" />
+			<s:Line width="100%" height="2" alpha="1">
+				<s:stroke>
+					<s:SolidColorStroke alpha="1" color="0x000000" weight="2" />
+				</s:stroke>	
+			</s:Line>
+			<s:RichEditableText id="statusText" textFlow="{status.flow}" width="100%" editable="false" focusEnabled="false" styleName="statusDetailText" />
+			<s:Label id="date" text="{dateFormatter.format(status.createdAt)}" styleName="statusDate" />
+			<s:VGroup width="100%" includeIn="retweet">
+				<s:Label text="RETWEET" styleName="headerOne" />
+				<s:HGroup width="100%">
+					<s:Image id="avatar" width="48" height="48" source="{status.retweetedStatus.user.profileImageUrl}" />
+					<s:VGroup width="100%">
+						<s:Label text="\@{status.retweetedStatus.user.screenName} ({status.user.name})" styleName="statusUser" />
+						<s:RichEditableText id="text" textFlow="{status.retweetedStatus.flow}" width="95%" editable="false" focusEnabled="false" />
+						<s:Label text="{dateFormatter.format(status.retweetedStatus.createdAt)}" styleName="statusDate" />
+					</s:VGroup>
+				</s:HGroup>
+			</s:VGroup>
+			<s:HGroup width="100%">
+				<s:Label text="Retweets:" styleName="label" width="100" />
+				<s:Label text="{status.retweetCount}" styleName="value" />	
+			</s:HGroup>
+			<s:HGroup width="100%">
+				<s:Label text="Favorited:" styleName="label" width="100" />
+				<s:Label text="{status.favorited}" styleName="value" />	
+			</s:HGroup>
+			<s:HGroup width="100%">
+				<s:Label text="NSFW:" styleName="label" width="100" />
+				<s:Label text="{status.possiblySensitive}" styleName="value" />	
+			</s:HGroup>
 			<components:EntityList id="entityList" width="100%" height="400" entitiesAC="{status.entitiesAC}" />
-			<s:Label text="Favorited: {status.favorited}" />
 		</s:VGroup>
+		
 		<s:VGroup width="450" height="100%">
+			<s:Label text="USER" styleName="headerOne" />
+			<s:Line width="100%" height="2" alpha="1">
+				<s:stroke>
+					<s:SolidColorStroke alpha="1" color="0x000000" weight="1" />
+				</s:stroke>	
+			</s:Line>
 			<s:HGroup id="userGroup" width="100%" click="userGroup_clickHandler(event)" >
 				<s:Image width="78" height="78" source="{status.user.profileImageUrl}" />
 				<s:VGroup  width="100%">
-					<s:Label fontSize="24" text="{status.user.name} ({status.user.screenName})" />
-					<s:RichText text="{status.user.description}" width="100%" />
+					<s:Label text="{status.user.name} ({status.user.screenName})" styleName="headerTwo" />
+					<s:RichText text="{status.user.description}" width="100%" styleName="userDescription" />
 				</s:VGroup>
 			</s:HGroup>
+			<s:Line width="100%" height="2" alpha="1">
+				<s:stroke>
+					<s:SolidColorStroke alpha="1" color="0x000000" weight="1" />
+				</s:stroke>	
+			</s:Line>
 			<components:StatusList width="100%" height="100%" live="false" statuses="{status.user.statusesAC}" />
 		</s:VGroup>
 	</s:HGroup>
