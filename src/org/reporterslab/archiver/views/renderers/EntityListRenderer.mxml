@@ -19,6 +19,8 @@
 			[Bindable] public var entity:Entity;
 			[Bindable] public var mediaWidth:int;
 			[Bindable] public var mediaHeight:int;
+			[Bindable] public var labelText:String;
+			[Bindable] public var entityValue:String;
 			
 			override public function set data(value:Object):void
 			{
@@ -29,12 +31,20 @@
 				
 				if(entity.type == Entity.ENTITY_TYPE_HASHTAG){
 					this.currentState = "hashtag";
+					this.labelText = "HASHTAG";
+					this.entityValue = entity.hashText;
 				}else if(entity.type == Entity.ENTITY_TYPE_MENTION){
 					this.currentState = "mention";
+					this.labelText = "MENTION";
+					this.entityValue = entity.name + ' (' + entity.screenName + ')';
 				}else if(entity.type == Entity.ENTITY_TYPE_URL){
 					this.currentState = "url";
+					this.labelText = "URL";
+					this.entityValue = entity.expandedURL;
 				}else if(entity.type == Entity.ENTITY_TYPE_MEDIA){
 					this.currentState = "media";
+					this.labelText = "MEDIA";
+					this.entityValue = entity.expandedURL;
 					var sizes:Object = entity.mediaSizes;
 					if(sizes is String){
 						sizes = JSON.parse(sizes as String);
@@ -47,22 +57,15 @@
 			
 		]]>
 	</fx:Script>
-	
-	<s:VGroup width="100%" includeIn="hashtag">
-		<s:RichText text="Hashtag: {entity.hashText}" width="100%" />
+	<s:VGroup width="100%">
+		<s:Label text="{labelText}" styleName="headerSix" />
+		<s:RichText text="{entityValue}" width="100%" />
+		<s:Image width="{mediaWidth}" height="{mediaHeight}" source="{entity.mediaURL}:small" includeIn="media" />
+		<s:Line width="100%" height="1" alpha="1">
+			<s:stroke>
+				<s:SolidColorStroke alpha="1" color="0x666666" weight="1" />
+			</s:stroke>	
+		</s:Line>
 	</s:VGroup>
 	
-	<s:VGroup width="100%" includeIn="mention">
-		<s:RichText text="Mention: {entity.name}" width="100%" />
-	</s:VGroup>
-	
-	<s:VGroup width="100%" includeIn="url">
-		<s:RichText text="{entity.expandedURL}" width="100%" />
-	</s:VGroup>
-
-	<s:VGroup width="100%" includeIn="media">
-		<s:RichText text="MEDIA: {entity.mediaURL}" width="100%" />
-		<s:Image width="{mediaWidth}" height="{mediaHeight}" source="{entity.mediaURL}:small" />
-	</s:VGroup>
-
 </s:ItemRenderer>

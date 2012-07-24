@@ -3,6 +3,8 @@ package org.reporterslab.archiver.models.vo
 	import com.dborisenko.api.twitter.data.TwitterUser;
 	
 	import mx.collections.ArrayCollection;
+	import mx.collections.Sort;
+	import mx.collections.SortField;
 
 	public class User
 	{
@@ -57,6 +59,7 @@ package org.reporterslab.archiver.models.vo
 		//so if we want to laod the statuses for this user...
 		private var _statuses:Vector.<Status>;
 		[Bindable] public var statusesAC:ArrayCollection;
+		[Bindable] public var chartDataAC:ArrayCollection = new ArrayCollection();
 		
 		
 		public function set statuses(value:Vector.<Status>):void
@@ -66,6 +69,7 @@ package org.reporterslab.archiver.models.vo
 			for each(var s:Status in statuses){
 				statusesAC.addItem(s);
 			}
+			genChartData();
 		}
 		public function get statuses():Vector.<Status>
 		{
@@ -176,6 +180,33 @@ package org.reporterslab.archiver.models.vo
 			params['statusId'] = this.status != null ? this.status.id : null;
 			return params;
 			
+		}
+		
+		
+		
+		public function genChartData():void
+		{
+			var dateHash:Object = {};
+			chartDataAC = new ArrayCollection();
+			for each (var s:Status in statusesAC){
+				var key:String = s.createdAt.month + "-" + s.createdAt.date + "-" + s.createdAt.fullYear;
+				var dateData:Object = dateHash[key];
+				if(!dateData){
+					dateData = {date:key, fullDate:new Date(s.createdAt.fullYear, s.createdAt.month, s.createdAt.date), statuses:0};
+					dateHash[key] = dateData;
+				}
+				dateData['statuses']++;
+			}
+			
+			for each(var item:Object in dateHash){
+				chartDataAC.addItem(item);
+			}
+			
+			var sortField:SortField = new SortField("fullDate", false, true);
+			var sort:Sort = new Sort();
+			sort.fields = [sortField];
+			chartDataAC.sort = sort;
+			chartDataAC.refresh();
 		}
 		
 		

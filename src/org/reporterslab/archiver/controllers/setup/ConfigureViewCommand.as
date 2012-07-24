@@ -2,12 +2,12 @@ package org.reporterslab.archiver.controllers.setup
 {
 	import org.reporterslab.archiver.events.ArchiverConfigurationEvent;
 	import org.reporterslab.archiver.views.components.Details;
-	import org.reporterslab.archiver.views.components.EntityList;
-	import org.reporterslab.archiver.views.components.PlaceList;
+	import org.reporterslab.archiver.views.components.lists.EntityList;
+	import org.reporterslab.archiver.views.components.lists.PlaceList;
 	import org.reporterslab.archiver.views.components.SearchPanel;
-	import org.reporterslab.archiver.views.components.StatusList;
+	import org.reporterslab.archiver.views.components.lists.StatusList;
 	import org.reporterslab.archiver.views.components.TwitterLogin;
-	import org.reporterslab.archiver.views.components.UserList;
+	import org.reporterslab.archiver.views.components.lists.UserList;
 	import org.reporterslab.archiver.views.components.details.EntityDetails;
 	import org.reporterslab.archiver.views.components.details.PlaceDetails;
 	import org.reporterslab.archiver.views.components.details.StatusDetails;

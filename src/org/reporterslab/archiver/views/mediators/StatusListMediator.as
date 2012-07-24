@@ -5,7 +5,7 @@ package org.reporterslab.archiver.views.mediators
 	import org.reporterslab.archiver.events.ArchiverUserEvent;
 	import org.reporterslab.archiver.models.ArchiverModel;
 	import org.reporterslab.archiver.models.vo.Status;
-	import org.reporterslab.archiver.views.components.StatusList;
+	import org.reporterslab.archiver.views.components.lists.StatusList;
 	import org.robotlegs.mvcs.Mediator;
 	
 	public class StatusListMediator extends Mediator

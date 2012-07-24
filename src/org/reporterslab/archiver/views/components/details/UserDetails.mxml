@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" xmlns:components="org.reporterslab.archiver.views.components.*">
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" xmlns:components="org.reporterslab.archiver.views.components.*" xmlns:lists="org.reporterslab.archiver.views.components.lists.*">
 	<fx:Declarations>
 	</fx:Declarations>
 	
 	<fx:Script>
 		<![CDATA[
+			import mx.charts.ChartItem;
+			import mx.charts.events.ChartItemEvent;
+			
 			import org.reporterslab.archiver.models.vo.User;
 			
 			private var _user:User;
@@ -19,19 +22,39 @@
 			{
 				return this._user;
 			}
+			
+			protected function chart_itemClickHandler(event:ChartItemEvent):void
+			{
+				var item:Object = event.hitData.item;
+				userStatuses.doDateSearch(item['fullDate']);
+			}
+			
 		]]>
 	</fx:Script>
 	
 	
 	<s:HGroup width="100%" height="100%">
-		<s:HGroup width="400">
+		<s:HGroup width="25%">
 			<s:Image width="78" height="78" source="{user.profileImageUrl}" />
 			<s:VGroup  width="100%">
 				<s:RichText fontSize="24" text="{user.name} ({user.screenName})" width="95%" />
 				<s:RichText text="{user.description}" width="100%" />
 			</s:VGroup>
 		</s:HGroup>
-		<components:StatusList width="450" height="100%" live="false" statuses="{user.statusesAC}" />
+		<lists:StatusList id="userStatuses" width="30%" height="100%" live="false" statuses="{user.statusesAC}" searchable="true" />
+		<s:VGroup width="45%">
+			<mx:ColumnChart id="chart" width="100%" height="100%" dataProvider="{user.chartDataAC}" showDataTips="true" itemClick="chart_itemClickHandler(event)">
+				<mx:horizontalAxis>
+					<mx:DateTimeAxis dataUnits="days" displayName="Date" title="Date" />
+				</mx:horizontalAxis>
+				<mx:verticalAxis>
+					<mx:LinearAxis baseAtZero="true" displayName="Number of Statuses" title="Number of Statuses" interval="1" />
+				</mx:verticalAxis>
+				<mx:series>
+					<mx:ColumnSeries dataProvider="{user.chartDataAC}" xField="fullDate" yField="statuses"  />
+				</mx:series>
+			</mx:ColumnChart>
+		</s:VGroup>
 	</s:HGroup>
 	
 	

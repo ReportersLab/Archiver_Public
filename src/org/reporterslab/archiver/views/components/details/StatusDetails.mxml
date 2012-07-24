@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"  width="100%"
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="org.reporterslab.archiver.views.components.*">
+		 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="org.reporterslab.archiver.views.components.*" xmlns:lists="org.reporterslab.archiver.views.components.lists.*">
 	<fx:Declarations>
 		<s:DateTimeFormatter id="dateFormatter" />
 	</fx:Declarations>
@@ -15,9 +15,11 @@
 			import flashx.textLayout.conversion.TextConverter;
 			import flashx.textLayout.elements.TextFlow;
 			
+			import mx.charts.events.ChartItemEvent;
+			
 			import org.reporterslab.archiver.events.ArchiverUserEvent;
 			import org.reporterslab.archiver.models.vo.Status;
-			
+			//import mx.charts.renderers.CircleItemRenderer
 			private var _status:Status;
 			
 			[Bindable]
@@ -43,11 +45,17 @@
 				dispatchEvent(new ArchiverUserEvent(ArchiverUserEvent.USER_SELECTED, status.user));
 			}
 			
+			protected function chart_itemClickHandler(event:ChartItemEvent):void
+			{
+				var item:Object = event.hitData.item;
+				userStatuses.doDateSearch(item['fullDate']);
+			}
+			
 		]]>
 	</fx:Script>
 	
-	<s:HGroup width="100%" height="100%">
-		<s:VGroup width="470" height="100%">
+	<s:HGroup width="100%" height="100%" gap="15">
+		<s:VGroup width="25%" height="100%">
 			<s:Label text="STATUS" styleName="headerOne" />
 			<s:Line width="100%" height="2" alpha="1">
 				<s:stroke>
@@ -56,17 +64,6 @@
 			</s:Line>
 			<s:RichEditableText id="statusText" textFlow="{status.flow}" width="100%" editable="false" focusEnabled="false" styleName="statusDetailText" />
 			<s:Label id="date" text="{dateFormatter.format(status.createdAt)}" styleName="statusDate" />
-			<s:VGroup width="100%" includeIn="retweet">
-				<s:Label text="RETWEET" styleName="headerOne" />
-				<s:HGroup width="100%">
-					<s:Image id="avatar" width="48" height="48" source="{status.retweetedStatus.user.profileImageUrl}" />
-					<s:VGroup width="100%">
-						<s:Label text="\@{status.retweetedStatus.user.screenName} ({status.user.name})" styleName="statusUser" />
-						<s:RichEditableText id="text" textFlow="{status.retweetedStatus.flow}" width="95%" editable="false" focusEnabled="false" />
-						<s:Label text="{dateFormatter.format(status.retweetedStatus.createdAt)}" styleName="statusDate" />
-					</s:VGroup>
-				</s:HGroup>
-			</s:VGroup>
 			<s:HGroup width="100%">
 				<s:Label text="Retweets:" styleName="label" width="100" />
 				<s:Label text="{status.retweetCount}" styleName="value" />	
@@ -79,14 +76,43 @@
 				<s:Label text="NSFW:" styleName="label" width="100" />
 				<s:Label text="{status.possiblySensitive}" styleName="value" />	
 			</s:HGroup>
-			<components:EntityList id="entityList" width="100%" height="400" entitiesAC="{status.entitiesAC}" />
+			<s:VGroup width="100%" includeIn="retweet">
+				<s:Label text="RETWEET" styleName="headerOne" />
+				<s:Line width="100%" height="2" alpha="1">
+					<s:stroke>
+						<s:SolidColorStroke alpha="1" color="0x000000" weight="2" />
+					</s:stroke>	
+				</s:Line>
+				<s:HGroup width="100%">
+					<s:Image id="retweetAvatar" width="48" height="48" source="{status.retweetedStatus.user.profileImageUrl}" />
+					<s:VGroup width="100%">
+						<s:Label id="retweetUser" text="\@{status.retweetedStatus.user.screenName} ({status.retweetedStatus.user.name})" styleName="statusUser" />
+						<s:RichEditableText id="retweetText" textFlow="{status.retweetedStatus.flow}" width="95%" editable="false" focusEnabled="false" />
+						<s:Label id="retweetDate" text="{dateFormatter.format(status.retweetedStatus.createdAt)}" styleName="statusDate" />
+						<s:HGroup width="100%">
+							<s:Label text="Retweets:" styleName="label" width="100" />
+							<s:Label text="{status.retweetedStatus.retweetCount}" styleName="value" />	
+						</s:HGroup>
+					</s:VGroup>
+				</s:HGroup>
+			</s:VGroup>
+			
+			<s:VGroup visible="{status.entitiesAC != null}" includeInLayout="{status.entitiesAC != null}" width="100%">
+				<s:Label text="ENTITIES" styleName="headerOne" />
+				<s:Line width="100%" height="2" alpha="1">
+					<s:stroke>
+						<s:SolidColorStroke alpha="1" color="0x000000" weight="2" />
+					</s:stroke>	
+				</s:Line>
+				<lists:EntityList id="entityList" width="100%" height="300" entitiesAC="{status.entitiesAC}" />
+			</s:VGroup>	
 		</s:VGroup>
 		
-		<s:VGroup width="450" height="100%">
+		<s:VGroup width="30%" height="100%">
 			<s:Label text="USER" styleName="headerOne" />
 			<s:Line width="100%" height="2" alpha="1">
 				<s:stroke>
-					<s:SolidColorStroke alpha="1" color="0x000000" weight="1" />
+					<s:SolidColorStroke alpha="1" color="0x000000" weight="2" />
 				</s:stroke>	
 			</s:Line>
 			<s:HGroup id="userGroup" width="100%" click="userGroup_clickHandler(event)" >
@@ -98,10 +124,24 @@
 			</s:HGroup>
 			<s:Line width="100%" height="2" alpha="1">
 				<s:stroke>
-					<s:SolidColorStroke alpha="1" color="0x000000" weight="1" />
+					<s:SolidColorStroke alpha="1" color="0x000000" weight="2" />
 				</s:stroke>	
 			</s:Line>
-			<components:StatusList width="100%" height="100%" live="false" statuses="{status.user.statusesAC}" />
+			<lists:StatusList id="userStatuses" width="100%" height="100%" live="false" statuses="{status.user.statusesAC}" searchable="true" />
+		</s:VGroup>
+		
+		<s:VGroup width="45%">
+			<mx:ColumnChart id="chart" width="100%" height="100%" dataProvider="{status.user.chartDataAC}" showDataTips="true" itemClick="chart_itemClickHandler(event)">
+				<mx:horizontalAxis>
+					<mx:DateTimeAxis dataUnits="days" displayName="Date" title="Date" />
+				</mx:horizontalAxis>
+				<mx:verticalAxis>
+					<mx:LinearAxis baseAtZero="true" displayName="Number of Statuses" title="Number of Statuses" interval="1" />
+				</mx:verticalAxis>
+				<mx:series>
+					<mx:ColumnSeries dataProvider="{status.user.chartDataAC}" xField="fullDate" yField="statuses"  />
+				</mx:series>
+			</mx:ColumnChart>
 		</s:VGroup>
 	</s:HGroup>
 	

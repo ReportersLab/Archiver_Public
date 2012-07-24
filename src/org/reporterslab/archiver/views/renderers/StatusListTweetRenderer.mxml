@@ -34,6 +34,10 @@
 	</fx:Script>
 	
 	
+	<s:layout>
+		<s:VerticalLayout />
+	</s:layout>
+	
 	<s:HGroup width="100%">
 		<s:Image id="avatar" width="48" height="48" source="{status.user.profileImageUrl}" />
 		<s:VGroup width="100%">
@@ -42,5 +46,10 @@
 			<s:Label id="date" text="{dateFormatter.format(status.createdAt)}" />
 		</s:VGroup>
 	</s:HGroup>
+	<s:Line width="100%" height="1" alpha="1">
+		<s:stroke>
+			<s:SolidColorStroke alpha="1" color="0x666666" weight="1" />
+		</s:stroke>	
+	</s:Line>
 	
 </s:ItemRenderer>

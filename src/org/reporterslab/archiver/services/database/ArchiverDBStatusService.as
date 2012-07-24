@@ -289,7 +289,7 @@ package org.reporterslab.archiver.services.database
 				query = entity.hashText;
 			}else if(entity.type == Entity.ENTITY_TYPE_MENTION){
 				query = entity.screenName;
-			}else if(entity.type == Entity.ENTITY_TYPE_URL){
+			}else if((entity.type == Entity.ENTITY_TYPE_URL) || (entity.type == Entity.ENTITY_TYPE_MEDIA)){
 				query = entity.url; // should be the T.Co url.
 			}
 			params['query'] = "%" + query + "%";
@@ -348,7 +348,7 @@ package org.reporterslab.archiver.services.database
 		
 		protected function onLoadRetweet(result:SQLResult):void
 		{
-			if(result.data.length == 0)
+			if(!result.data || (result.data.length == 0))
 				return;
 			var retweet:Status = result.data[0] as Status;
 			var status:Status = statusIdsToStatus[retweet.twitterId];
@@ -380,11 +380,14 @@ package org.reporterslab.archiver.services.database
 			
 			//flesh out statuses with related data.... ????? Can't decide if this is sane or not.
 			//alternative is to load only small pieces of whate we need and then flesh out on demand. That's a little harder.
+			
 			if(addUser){
 				for each(var s:Status in statuses){
 					this.userService.loadUserForStatus(s);
+					//fleshOutStatus(s);
 				}
 			}
+			
 			return statuses;
 		}
 
@@ -403,7 +406,7 @@ package org.reporterslab.archiver.services.database
 				entityService.loadEntitiesForStatus(status);
 			}
 			
-			if(status.retweetedStatusTwitterId){
+			if(status.retweetedStatusTwitterId && (status.retweetedStatus == null)){
 				loadRetweet(status);
 			}
 			

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" xmlns:components="org.reporterslab.archiver.views.components.*">
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" xmlns:components="org.reporterslab.archiver.views.components.*" xmlns:lists="org.reporterslab.archiver.views.components.lists.*">
 	<fx:Declarations>
 	</fx:Declarations>
 	
@@ -14,26 +14,39 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import flashx.textLayout.conversion.TextConverter;
+			import flashx.textLayout.elements.TextFlow;
+			
 			import org.reporterslab.archiver.models.vo.Entity;
 			
 			private var _entity:Entity;
 			[Bindable] public var mediaWidth:int;
 			[Bindable] public var mediaHeight:int;
+			[Bindable] public var labelText:String;
+			[Bindable] public var flow:TextFlow;
 			
 			[Bindable]
 			public function set entity(value:Entity):void
 			{
 				this._entity = value;
-				
+				var flowText:String = "";
 				if(entity.type == Entity.ENTITY_TYPE_HASHTAG){
 					this.currentState = "hashtag";
+					this.labelText = "HASHTAG";
+					flowText = "<a href='https://twitter.com/#!/search/#" + entity.hashText + "' target='_blank'>#" + entity.hashText + "</a>";
 				}else if(entity.type == Entity.ENTITY_TYPE_MENTION){
 					this.currentState = "mention";
+					this.labelText = "MENTION";
+					flowText = "<b>" + entity.name + "</b><br />";
+					flowText += '<a href="http://www.twitter.com/' + entity.screenName + '" target="_blank">' + entity.screenName + "</a>";
 				}else if(entity.type == Entity.ENTITY_TYPE_URL){
 					this.currentState = "url";
+					this.labelText = "URL";
+					flowText = '<a href="'+ entity.expandedURL + '" target="_blank">' + entity.expandedURL + "</a>";
 				}else if(entity.type == Entity.ENTITY_TYPE_MEDIA){
 					this.currentState = "media";
-					
+					this.labelText = "MEDIA";
+					flowText = '<a href="'+ entity.expandedURL + '" target="_blank">' + entity.expandedURL + "</a>";
 					var sizes:Object = entity.mediaSizes;
 					if(sizes is String){
 						sizes = JSON.parse(sizes as String);
@@ -41,10 +54,13 @@
 						mediaHeight = sizes['medium']['h'];
 					}
 					
-					
-					
 				}
+				
+				var newFlow:TextFlow = TextConverter.importToFlow(flowText, TextConverter.TEXT_FIELD_HTML_FORMAT);
+				flow = newFlow;
+				
 			}
+			
 			public function get entity():Entity
 			{
 				return this._entity;
@@ -54,29 +70,16 @@
 	</fx:Script>
 	
 	
-	<s:HGroup width="100%" height="100%">
-		<s:Group width="250" height="100%">
-			<s:VGroup includeIn="hashtag" width="100%">
-				<s:RichText text="Hashtag: {entity.hashText}" width="95%" />
+	<s:HGroup width="100%" height="100%" gap="15">
+		<s:VGroup width="450" height="100%" gap="10">
+			<s:Label text="{labelText}" styleName="headerTwo" width="100%" />
+			<s:RichEditableText width="100%" textFlow="{flow}" editable="false" focusEnabled="false" />
+			<s:VGroup includeIn="media" width="100%">
+				<s:RichText text="Media URL: {entity.mediaURL}" width="100%" />
+				<s:Image source="{entity.mediaURL}" width="{mediaWidth}" height="{mediaHeight}" />
 			</s:VGroup>
-			
-			<s:VGroup includeIn="mention" width="100%">
-				<s:RichText text="Mention: {entity.name}" width="95%" />
-				<s:RichText text="Screen: {entity.screenName}" width="95%" />
-			</s:VGroup>
-			
-			<s:VGroup includeIn="url,media" width="100%">
-				<s:RichText text="Expanded URL: {entity.expandedURL}" width="95%" />
-				<s:RichText text="Display URL: {entity.displayURL}" width="95%" />
-				<s:RichText text="URL: {entity.url}" width="95%" />
-			</s:VGroup>
-			
-		</s:Group>
-		<components:StatusList id="statusList" width="300" height="100%" statuses="{entity.statusesAC}" live="false" />
-		<s:VGroup includeIn="media" width="100%">
-			<s:RichText text="Media URL: {entity.mediaURL}" width="95%" />
-			<s:Image source="{entity.mediaURL}" width="{mediaWidth}" height="{mediaHeight}" />
 		</s:VGroup>
+		<lists:StatusList id="statusList" width="400" height="100%" statuses="{entity.statusesAC}" live="false" searchable="true" />
 	</s:HGroup>
 	
 </s:Group>

@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
-		 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="org.reporterslab.archiver.views.components.*">
+		 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="org.reporterslab.archiver.views.components.*" xmlns:lists="org.reporterslab.archiver.views.components.lists.*">
 	<s:layout>
 		<s:BasicLayout/>
 	</s:layout>
-	<fx:Declarations></fx:Declarations>
+	<fx:Declarations>
+		<s:Power id="power" exponent="3" />
+	</fx:Declarations>
+	
+	<s:states>
+		<s:State name="default" />
+		<s:State name="searched" />
+	</s:states>
+	
+	<s:transitions>
+		<s:Transition fromState="default" toState="searched" autoReverse="true">
+			<s:Sequence duration="1000">
+				<s:Resize duration="500" target="{searchContainer}" easer="{power}" />
+				<s:AddAction target="{resultsContainer}" />
+				<s:Fade target="{resultsContainer}" duration="500" alphaFrom="0" alphaTo="1" />
+			</s:Sequence>
+		</s:Transition>
+	</s:transitions>
 	
 	<fx:Script>
 		<![CDATA[
@@ -27,6 +44,7 @@
 			
 			protected function searchTextInput_changeHandler(event:TextOperationEvent):void
 			{
+				this.currentState = "searched";
 				var query:String = searchTextInput.text;
 				dispatchEvent(new ArchiverSearchEvent(ArchiverSearchEvent.SEARCH, query));
 			}
@@ -35,21 +53,21 @@
 	</fx:Script>
 	
 	<s:VGroup width="100%" height="100%">
-		<s:HGroup width="100%">
-			<s:TextInput id="searchTextInput" prompt="Search your database" width="600" change="searchTextInput_changeHandler(event)" horizontalCenter="0" />
+		<s:HGroup id="searchContainer" width="100%" height.default="100%" height.searched="50" horizontalAlign="center" horizontalCenter="0" verticalAlign="middle">
+			<s:TextInput id="searchTextInput" prompt="Search your database" width="300" change="searchTextInput_changeHandler(event)" horizontalCenter="0" />
 		</s:HGroup>
-		<s:HGroup width="100%" height="100%">
-			<s:VGroup width="460" height="100%">
+		<s:HGroup id="resultsContainer" width="100%" height="100%" includeIn="searched" alpha="0" alpha.searched="1" gap="15">
+			<s:VGroup width="40%" height="100%">
 				<s:Label fontWeight="bold" text="{statuses.length}{statuses.length == 200 ? '+' : ''} statuses returned." />
-				<components:StatusList id="statusList" width="100%" height="100%" live="false" statuses="{statuses}" />
+				<lists:StatusList id="statusList" width="100%" height="100%" live="false" statuses="{statuses}" />
 			</s:VGroup>
-			<s:VGroup width="330" height="100%">
+			<s:VGroup width="35%" height="100%">
 				<s:Label fontWeight="bold" text="{users.length}{users.length == 200 ? '+' : ''} users returned." />
-				<components:UserList id="userList" width="100%" height="100%" users="{users}" />
+				<lists:UserList id="userList" width="100%" height="100%" users="{users}" />
 			</s:VGroup>
-			<s:VGroup width="330" height="100%">
+			<s:VGroup width="25%" height="100%">
 				<s:Label fontWeight="bold" text="{places.length}{places.length == 200 ? '+' : ''} places returned." />
-				<components:PlaceList id="placeList" width="100%" height="100%" places="{places}" />
+				<lists:PlaceList id="placeList" width="100%" height="100%" places="{places}" />
 			</s:VGroup>		
 		</s:HGroup>
 	</s:VGroup>

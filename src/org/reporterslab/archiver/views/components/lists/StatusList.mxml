@@ -3,14 +3,21 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx">
 	<s:layout>
-		<s:VerticalLayout/>
+		<s:VerticalLayout gap="15" />
 	</s:layout>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
 	
+	<s:states>
+		<s:State name="default" />
+		<s:State name="searchable" />
+	</s:states>
+	
 	<fx:Script>
 		<![CDATA[
+			import flash.net.dns.AAAARecord;
+			
 			import mx.collections.ArrayCollection;
 			import mx.controls.listClasses.ListItemRenderer;
 			
@@ -19,22 +26,37 @@
 			import org.reporterslab.archiver.views.renderers.StatusListTweetRenderer;
 			
 			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
 			import spark.skins.spark.DefaultItemRenderer;
 			
 			
 			[Event(name="statusEventStatusSelected",type="org.reporterslab.archiver.events.ArchiverStatusEvent")]
 			
-			
+			private var _searchText:String;
 			//holds the statuses.
+			private var _statuses:ArrayCollection = new ArrayCollection();
 			[Bindable]
-			public var statuses:ArrayCollection = new ArrayCollection();
+			public function set statuses(value:ArrayCollection):void
+			{
+				_statuses = value;
+				if(filterText)
+					filterText.text = "";
+				if(searchable)
+					doTextSearch(filterText.text.toLowerCase());
+			}
+			public function get statuses():ArrayCollection
+			{
+				return _statuses;
+			}
+			
 			
 			//if we're showing live statuses or not. this may not be best practice,
 			//essentially I want to use the same view for both Search and realtime updates. In a search situation I want to
 			//ignore the model updates, but the mediator will blithely go ahead and update. It needs to check the view to see
 			//if it should or not.
 			public var live:Boolean = true;
-			
+			private var _searchable:Boolean = false;
+			private var _dateKey:String = "";
 			
 			/**
 			 * Tests the status item to see how to render. This may not be necessary, as we may want to just render all statuses
@@ -76,9 +98,60 @@
 					list.selectedItem = value;
 			}
 			
+			public function set searchable(value:Boolean):void
+			{
+				this._searchable = value;
+				if(value == true){
+					this.currentState = "searchable";	
+				}else{
+					this.currentState = "";
+				}
+			}
+			
+			public function get searchable():Boolean
+			{
+				return this._searchable;
+			}
+			
 			protected function list_changeHandler(event:IndexChangeEvent):void
 			{
 				dispatchEvent(new ArchiverStatusEvent(ArchiverStatusEvent.STATUS_SELECTED, selectedItem));
+			}
+			
+			protected function filterText_changeHandler(event:TextOperationEvent):void
+			{
+				doTextSearch(filterText.text.toLowerCase());
+			}
+			
+			//=============================== SEARCHING =======================================
+			public function doTextSearch(text:String):void
+			{
+				_searchText = text
+				statuses.filterFunction = statusesSearchFilter;
+				statuses.refresh();
+			}
+			
+			public function doDateSearch(date:Date):void
+			{
+				_dateKey = date.month + '-' + date.date + '-' + date.fullYear;
+				statuses.filterFunction = statusesDateFilter;
+				statuses.refresh();
+			}
+			
+			//================================ FILTERS =======================================
+			private function statusesSearchFilter(s:Status):Boolean
+			{
+				if((_searchText == "") ||(_searchText == null))
+					return true;
+				return (s.text.toLowerCase().indexOf(_searchText) != -1);
+			}
+			
+			private function statusesDateFilter(s:Status):Boolean
+			{
+				if(_dateKey == '')
+					return true;
+				var key:String = s.createdAt.month + '-' + s.createdAt.date + '-' + s.createdAt.fullYear;
+				return key == _dateKey;
 			}
 			
 		]]>
@@ -92,6 +165,16 @@
 			<s:VerticalLayout gap="10" useVirtualLayout="true" />
 		</s:layout>
 	</s:List>
+	<s:HGroup width="100%" height="60" includeIn="searchable">
+		<s:Line width="100%" height="2" alpha="1">
+			<s:stroke>
+				<s:SolidColorStroke alpha="1" color="0x000000" weight="2" />
+			</s:stroke>	
+		</s:Line>
+		<s:Label text="FILTER" styleName="headerSix" />
+		<s:TextInput id="filterText" prompt="search status text" width="100%" change="filterText_changeHandler(event)" />
+	</s:HGroup>
+	<s:Label fontWeight="bold" text="{statuses.length} status{statuses.length > 1 ? 'es' : ''}" includeIn="searchable" />
 </s:Group>
 
 

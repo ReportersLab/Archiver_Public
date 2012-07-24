@@ -2,7 +2,7 @@ package org.reporterslab.archiver.views.mediators
 {
 	import org.reporterslab.archiver.events.ArchiverEntityEvent;
 	import org.reporterslab.archiver.models.ArchiverModel;
-	import org.reporterslab.archiver.views.components.EntityList;
+	import org.reporterslab.archiver.views.components.lists.EntityList;
 	import org.robotlegs.mvcs.Mediator;
 	
 	public class EntityListMediator extends Mediator

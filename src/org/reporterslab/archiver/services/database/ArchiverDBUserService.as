@@ -70,6 +70,10 @@ package org.reporterslab.archiver.services.database
 		
 		public function search(query:String):void
 		{
+			//remove @ sign if it's in there.
+			if(query.indexOf('@') == 0){
+				query = query.substr(1);
+			}
 			query = "%" + query + "%";
 			var params:Object = {'query':query};
 			

@@ -18,6 +18,13 @@ s|WindowedApplication
 }
 
 
+s|RichText
+{
+	fontSize:12px;
+	fontWeight:normal;
+	fontFamily:Arial;
+}
+
 .anchor{
 	color:#FF0000;
 }
@@ -38,12 +45,20 @@ s|WindowedApplication
 	fontFamily: LeagueGothic;
 	fontSize: 28px;
 	color: #000000;
+	paddingTop:15px;
 }
 
 .headerTwo
 {
 	fontSize:20px;
 	color:#000000;
+}
+
+.headerSix
+{
+	fontWeight:bold;
+    fontSize:10px;
+	color:#333333;
 }
 
 .userDescription

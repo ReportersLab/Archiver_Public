@@ -2,7 +2,7 @@ package org.reporterslab.archiver.views.mediators
 {
 	import org.reporterslab.archiver.events.ArchiverPlaceEvent;
 	import org.reporterslab.archiver.models.ArchiverModel;
-	import org.reporterslab.archiver.views.components.PlaceList;
+	import org.reporterslab.archiver.views.components.lists.PlaceList;
 	import org.robotlegs.mvcs.Mediator;
 	
 	public class PlaceListMediator extends Mediator

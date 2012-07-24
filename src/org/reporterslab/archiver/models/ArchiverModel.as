@@ -176,6 +176,12 @@ package org.reporterslab.archiver.models
 			}
 			//sort them again, just to be sure everything is in order.
 			sortStatuses();
+			//remove everything over 500.
+			if(_statuses.length >= 500){
+				for(var i:int = 500; i < _statuses.length; i++){
+					_statuses.removeItemAt(i);
+				}
+			}
 			//and tell our listeners.
 			dispatch(new ArchiverModelEvent(ArchiverModelEvent.STATUSES_ADDED, newStatuses));
 		}

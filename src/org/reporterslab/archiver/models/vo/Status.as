@@ -15,6 +15,9 @@ package org.reporterslab.archiver.models.vo
 		public static const TYPE_TWITTER:String = "twitter";
 		public static const TYPE_TWITTER_SEARCH:String = "twitterSearch";
 		
+		public static const USER_REG_EXP:RegExp = /(^|\s)@(\w+)/ig;
+		public static const HASH_REG_EXP:RegExp = /(^|\s)#(\w*[a-zA-Z_]+\w*)/ig;
+		public static const URL_REG_EXP:RegExp = /(\b(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/ig;
 		
 		[Bindable] public var statusType:String; // Twitter, Twitter Search, Facebook(?), RSS(?), etc. 
 		
@@ -60,7 +63,7 @@ package org.reporterslab.archiver.models.vo
 		[Bindable] public var annotations:Object = null; // no idea what this is.
 		[Bindable] public var isMention:Boolean = false;
 		//if this is a retweet, there's an entire other status here. Probably save it as just the ID and link two.
-		[Bindable] public var retweetedStatus:Status;
+		[Bindable] public var retweetedStatus:Status = null;
 		[Bindable] public var retweetedStatusTwitterId:String;
 		[Bindable] public var retweetedStatusId:int = -1;
 		
@@ -75,8 +78,9 @@ package org.reporterslab.archiver.models.vo
 		public function set text(value:String):void
 		{
 			_text = value;
-			var urlExp:RegExp = /(\b(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$]))/ig
-			var linkedText:String = text.replace(urlExp, "<a href='$1' target='_blank' styleName='link' class='link'>$1</a>"); 
+			var linkedText:String = text.replace(URL_REG_EXP, "<a href='$1' target='_blank' styleName='link' class='link'>$1</a>"); 
+			linkedText = linkedText.replace(HASH_REG_EXP, "$1<a href='http://twitter.com/#!/search/#$2' target='_blank' styleName='link' class='link'>#$2</a>");
+			linkedText = linkedText.replace(USER_REG_EXP, "$1<a href='http://twitter.com/$2' target='_blank' styleName='link' class='link'>@$2</a>");
 			var newFlow:TextFlow = TextConverter.importToFlow(linkedText, TextConverter.TEXT_FIELD_HTML_FORMAT);
 			flow = newFlow;
 		}

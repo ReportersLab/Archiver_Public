@@ -5,14 +5,13 @@
 					   xmlns:archiver="org.reporterslab.archiver.*"
 					   xmlns:components="org.reporterslab.archiver.views.components.*"
 					   width="1200" height="800" horizontalCenter="0" verticalCenter="0"
-					   creationComplete="creationCompleteHandler(event)">
+					   creationComplete="creationCompleteHandler(event)" xmlns:lists="org.reporterslab.archiver.views.components.lists.*">
 	<fx:Declarations>
 		<archiver:ArchiverContext contextView="{this}" />
 		<s:ArrayCollection id="viewOptions">
-			<fx:Object name="Live" value="live" />
-			<fx:Object name="Search" value="search" />
-			<fx:Object name="Manage Twitter" value="twitter" />
-			<fx:Object name="Details" value="details" />
+			<fx:Object name="Search" value="live" view="{liveContainer}" />
+			<fx:Object name="Manage Twitter" value="twitter" view="{twitter}" />
+			<fx:Object name="Details" value="details" view="{details}" />
 		</s:ArrayCollection>
 	</fx:Declarations>
 	
@@ -26,6 +25,16 @@
 		<s:State name="details" />
 	</s:states>
 	
+	<s:transitions>
+		<s:Transition fromState="*" toState="*">
+			<s:Sequence duration="1000">
+				<s:AddAction target="{inView}" />
+				<s:Move target="{outView}" duration="500" />
+				<s:Move target="{inView}" duration="500" />
+			</s:Sequence>
+		</s:Transition>
+	</s:transitions>
+	
 	<fx:Script>
 		<![CDATA[
 			import flashx.textLayout.elements.Configuration;
@@ -33,18 +42,22 @@
 			import flashx.textLayout.formats.TextDecoration;
 			import flashx.textLayout.formats.TextLayoutFormat;
 			
+			import mx.core.UIComponent;
 			import mx.events.FlexEvent;
 			
 			import spark.events.IndexChangeEvent;
 			
+			[Bindable] private var outView:UIComponent;
+			[Bindable] private var inView:UIComponent;
 			
 			private function creationCompleteHandler(event: FlexEvent): void
 			{
-				nativeWindow.width = Capabilities.screenResolutionX - 100;
-				nativeWindow.height = Capabilities.screenResolutionY - 100;
-				nativeWindow.x = (Capabilities.screenResolutionX - nativeWindow.width) / 2;
+				nativeWindow.width = Capabilities.screenResolutionX - 150;
+				nativeWindow.height = Capabilities.screenResolutionY - 150;
+				nativeWindow.x = ((Capabilities.screenResolutionX - nativeWindow.width) / 2) + 30;
 				nativeWindow.y = (Capabilities.screenResolutionY - nativeWindow.height) / 2;
 				this.currentState = "live";
+				outView = inView = liveContainer;
 				initStyles();
 			}
 			
@@ -53,6 +66,8 @@
 			{
 				if(navButtons.selectedItem == null)
 					return;
+				outView = inView;
+				inView = navButtons.selectedItem.view;
 				this.currentState = navButtons.selectedItem.value;
 			}
 			
@@ -93,9 +108,11 @@
 	
 	
 	<s:Group width="100%" height="100%" top="35" bottom="10" left="10" right="10">
+		<s:HGroup id="liveContainer" width="100%" height="100%" x.live="0" x="-3000" gap="25">
+			<lists:StatusList id="statusList" width="350" height="100%" />
+			<components:SearchPanel id="searchPanel" width="100%" height="100%" />
+		</s:HGroup>
 		<components:Details id="details" width="100%" height="100%" x.details="0" x="-3000" />
-		<components:StatusList id="statusList" width="350" height="100%" x.live="0" x="-3000" />
-		<components:SearchPanel id="searchPanel" width="100%" height="100%" x.search="0" x="-3000" />
 		<components:TwitterLogin id="twitter" width="100%" height="100%" x.twitter="0" x="-3000" />		
 	</s:Group>
 	

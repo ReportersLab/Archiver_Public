@@ -44,6 +44,8 @@ package org.reporterslab.archiver.services.database
 				return
 			}
 			var status:Status = statusIdsToStatus[entities[0].ownerId];
+			if(!status)
+				return; //something went weird.
 			status.addEntities(entities);
 			statusIdsToStatus[entities[0].ownerId] = null;			
 		}
