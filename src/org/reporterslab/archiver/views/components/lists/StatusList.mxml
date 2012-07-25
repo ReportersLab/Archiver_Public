@@ -165,15 +165,17 @@
 			<s:VerticalLayout gap="10" useVirtualLayout="true" />
 		</s:layout>
 	</s:List>
-	<s:HGroup width="100%" height="60" includeIn="searchable">
+	<s:VGroup width="100%" height="60" includeIn="searchable">
 		<s:Line width="100%" height="2" alpha="1">
 			<s:stroke>
 				<s:SolidColorStroke alpha="1" color="0x000000" weight="2" />
 			</s:stroke>	
 		</s:Line>
-		<s:Label text="FILTER" styleName="headerSix" />
-		<s:TextInput id="filterText" prompt="search status text" width="100%" change="filterText_changeHandler(event)" />
-	</s:HGroup>
+		<s:HGroup width="100%">
+			<s:Label text="FILTER" styleName="headerSix" />
+			<s:TextInput id="filterText" prompt="search status text" width="100%" change="filterText_changeHandler(event)" />
+		</s:HGroup>
+	</s:VGroup>
 	<s:Label fontWeight="bold" text="{statuses.length} status{statuses.length > 1 ? 'es' : ''}" includeIn="searchable" />
 </s:Group>
 

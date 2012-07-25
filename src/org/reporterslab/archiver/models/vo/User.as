@@ -210,5 +210,49 @@ package org.reporterslab.archiver.models.vo
 		}
 		
 		
+		
+		public function fromSQL(data:Object):void
+		{
+			this.id = data.User_id;
+			this.twitterId = data.User_twitterId;
+			this.name = data.User_name;
+			this.screenName = data.User_screenName;
+			this.location = data.User_location;
+			this.description = data.User_description;
+			this.profileImageUrl = data.User_profileImageUrl;
+			this.url = data.User_url;
+			this.isProtected = data.User_isProtected;
+			this.friendCount = data.User_friendsCount;
+			this.followersCount = data.User_followersCount;
+			this.createdAt = data.User_createdAt;
+			this.favouritesCount = data.User_favouritesCount;
+			this.utcOffset = data.User_utcOffset;
+			this.timeZone = data.User_timeZone;
+			this.notifications = data.User_notifications;
+			this.statusesCount = data.User_statusesCount;
+			this.profileBackgroundColor = data.User_profileBackgroundColor;
+			this.profileTextColor = data.User_profileTextColor;
+			this.profileLinkColor = data.User_profileLinkColor;
+			this.profileSidebarFillColor = data.User_profileSidebarFillColor;
+			this.profileSidebarBorderColor = data.User_profileSidebarBorderColor;
+			this.profileBackgroundImageUrl = data.User_profileBackgroundImageUrl;
+			this.profileBackgroundTile = data.User_profileBackgroundTile;
+			this.profileUseBackgroundImage = data.User_profileUseBackgroundImage;
+			this.defaultProfileImage = data.User_defaultProfileImage;
+			this.isTranslator = data.User_isTranslator;
+			this.followRequestSent = data.User_followRequestSent;
+			this.contributorsEnabled = data.User_contributorsEnabled;
+			this.defaultProfile = data.User_defaultProfile;
+			this.listedCount = data.User_listedCount;
+			this.language = data.User_language;
+			this.geoEnabled = data.User_geoEnabled;
+			this.verified = data.User_verified;
+			this.showAllInlineMedia = data.User_showAllInlineMedia;
+			this.following = data.User_following;
+			this.follower = data.User_isFollower;
+			this.blocked = data.User_isBlocked;
+		}
+		
+		
 	}
 }

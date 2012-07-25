@@ -188,18 +188,18 @@ package org.reporterslab.archiver.services.database
 			}
 			inClause = inClause.substr(0, inClause.length - 1) + ")"; // remove last comma.
 			query = query.replace(":values", inClause);
-			query = query.replace(":field", "twitterId");
-			sqlRunner.execute(query, null, onLoadStatuses, Status, onLoadStatusesError);
+			query = query.replace(":field", "Status.twitterId");
+			sqlRunner.execute(query, null, onLoadStatuses, null, onLoadStatusesError);
 		}
 		
 		public function loadAllStatuses():void
 		{
-			sqlRunner.execute(SELECT_ALL_STATUSES_SQL, null, onLoadStatuses, Status, onLoadStatusesError);
+			sqlRunner.execute(SELECT_ALL_STATUSES_SQL, null, onLoadStatuses, null, onLoadStatusesError);
 		}
 		
 		public function loadRecentStatuses():void
 		{
-			sqlRunner.execute(SELECT_RECENT_STATUSES_SQL, null, onLoadStatuses, Status, onLoadStatusesError);
+			sqlRunner.execute(SELECT_RECENT_STATUSES_SQL, null, onLoadStatuses, null, onLoadStatusesError);
 		}
 		
 		protected function onLoadStatuses(result:SQLResult):void
@@ -223,7 +223,7 @@ package org.reporterslab.archiver.services.database
 			userIdsToUser[user.id] = user;
 			var params:Object = {userId:user.id};
 			var query:String = SELECT_STATUSES_FOR_USER_SQL;
-			sqlRunner.execute(query, params, onLoadStatusesForUser, Status, onLoadStatusesForUserError);
+			sqlRunner.execute(query, params, onLoadStatusesForUser, null, onLoadStatusesForUserError);
 		}
 		
 		protected function onLoadStatusesForUser(result:SQLResult):void
@@ -254,7 +254,7 @@ package org.reporterslab.archiver.services.database
 			placeIdsToPlace[place.id] = place;
 			var params:Object = {placeId:place.id};
 			var query:String = SELECT_STATUSES_FOR_PLACE_SQL;
-			sqlRunner.execute(query, params, onLoadStatusesForPlace, Status, onLoadStatusesForPlaceError);
+			sqlRunner.execute(query, params, onLoadStatusesForPlace, null, onLoadStatusesForPlaceError);
 		}
 		
 		protected function onLoadStatusesForPlace(result:SQLResult):void
@@ -293,7 +293,8 @@ package org.reporterslab.archiver.services.database
 				query = entity.url; // should be the T.Co url.
 			}
 			params['query'] = "%" + query + "%";
-			sqlRunner.execute(sql, params, onLoadStatusesForEntity, Status, onLoadStatusesForEntityError);
+			
+			sqlRunner.execute(sql, params, onLoadStatusesForEntity, null, onLoadStatusesForEntityError);
 		}
 		
 		protected function onLoadStatusesForEntity(result:SQLResult):void
@@ -318,7 +319,7 @@ package org.reporterslab.archiver.services.database
 		{
 			query = "%" + query + "%"; // add wildcards.
 			var params:Object = {'query': query};
-			sqlRunner.execute(SEARCH_STATUSES_SQL, params, onSearch, Status, onSearchError);
+			sqlRunner.execute(SEARCH_STATUSES_SQL, params, onSearch, null, onSearchError);
 		}
 
 		protected function onSearch(result:SQLResult):void
@@ -341,16 +342,19 @@ package org.reporterslab.archiver.services.database
 			var inClause:String = "('" + status.retweetedStatusTwitterId + "')";
 			var query:String = DYNAMIC_SELECT_STATUS_SQL;
 			query = query.replace(":values", inClause);
-			query = query.replace(":field", "twitterId");
+			query = query.replace(":field", "Status.twitterId");
 			statusIdsToStatus[status.retweetedStatusTwitterId] = status;
-			sqlRunner.execute(query, null, onLoadRetweet, Status, onLoadRetweetError);
+			sqlRunner.execute(query, null, onLoadRetweet, null, onLoadRetweetError);
 		}
 		
 		protected function onLoadRetweet(result:SQLResult):void
 		{
 			if(!result.data || (result.data.length == 0))
 				return;
-			var retweet:Status = result.data[0] as Status;
+			
+			
+			var retweet:Status = new Status();
+			retweet.fromSQL(result.data[0]);
 			var status:Status = statusIdsToStatus[retweet.twitterId];
 			if(!status)
 				return;
@@ -372,36 +376,44 @@ package org.reporterslab.archiver.services.database
 		{
 			var statuses:Vector.<Status> = new Vector.<Status>();
 			
-			if(data is Array)
-				statuses = Vector.<Status>(data as Array);
+			if(data is Array){
+				for each(var item:Object in data){
+					var s:Status = new Status();
+					s.fromSQL(item);
+					statuses.push(s);
+				}
+			}
 			
-			if(data is Status)
-				statuses.push(data as Status);
-			
+			if(data is Status){
+				var single:Status = new Status();
+				single.fromSQL(data);
+				statuses.push(single);
+			}
+			/*
 			//flesh out statuses with related data.... ????? Can't decide if this is sane or not.
 			//alternative is to load only small pieces of whate we need and then flesh out on demand. That's a little harder.
-			
 			if(addUser){
-				for each(var s:Status in statuses){
+				for each(s in statuses){
 					this.userService.loadUserForStatus(s);
 					//fleshOutStatus(s);
 				}
 			}
-			
+			*/
 			return statuses;
 		}
 
 		
 		public function fleshOutStatus(status:Status):Status
 		{
+			/*
 			if((status.userId != -1) && (status.user == null)){
 				userService.loadUserForStatus(status);
 			}
+			*/
 			
 			if((status.placeId != -1) && (status.place == null)){
 				placeService.loadPlaceForStatus(status);
 			}
-			
 			if((status.entities == null) || (status.entities.length == 0)){
 				entityService.loadEntitiesForStatus(status);
 			}
@@ -513,10 +525,6 @@ package org.reporterslab.archiver.services.database
 		[Embed(source="sql/status/SelectStatusesForUser.sql", mimeType="application/octet-stream")]
 		private static const SelectStatusesForUserStatement:Class;
 		private static const SELECT_STATUSES_FOR_USER_SQL:String = new SelectStatusesForUserStatement();
-		
-		[Embed(source="sql/status/SelectStatusesForEntity.sql", mimeType="application/octet-stream")]
-		private static const SelectStatusesForEntityStatement:Class;
-		private static const SELECT_STATUSES_FOR_ENTITY_SQL:String = new SelectStatusesForEntityStatement();
 		
 		[Embed(source="sql/status/SearchStatuses.sql", mimeType="application/octet-stream")]
 		private static const SearchStatusesStatement:Class;

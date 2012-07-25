@@ -75,5 +75,21 @@ package org.reporterslab.archiver.models.vo
 			return params;	
 		}
 		
+		
+		public function fromSQL(data:Object):void
+		{
+			id = data.Place_id;
+			name = data.Place_name;
+			countryCode = data.Place_countryCode;
+			country = data.Place_country;
+			attributes = data.Place_attributes;
+			url = data.Place_url;
+			twitterId = data.Place_twitterId;
+			boundingBox = data.Place_boundingBox; // contains coords and types. Not sure what's available here. Docs are laaaame.
+			fullName = data.Place_fullName;
+			type = data.Place_type;		
+		}
+		
+		
 	}
 }

@@ -247,7 +247,40 @@ package org.reporterslab.archiver.models.vo
 		}
 		
 		
-		
+		public function fromSQL(data:Object):void
+		{
+			this.id = data.Status_id;
+			this.coordinates = data.Status_coordinates;
+			this.favorited = data.Status_favorited;
+			this.createdAt = data.Status_createdAt;
+			this.truncated = data.Status_truncated;
+			this.text = data.Status_text;
+			this.annotations = data.Status_annotations;
+			this.contributors = data.Status_contributors;
+			this.twitterId = data.Status_twitterId;
+			this.geo = JSON.parse(data.Status_geo); 
+			this.inReplyToUserId = data.Status_inReplyToUserId;
+			this.inReplyToScreenName = data.Status_inReplyToScreenName;
+			
+			this.source = data.Status_source;
+			this.inReplyToStatusId = data.Status_inReplyToStatusId;
+			this.retweeted = data.Status_retweeted;
+			this.retweetCount = data.Status_retweetCount;
+			this.possiblySensitive = data.Status_possiblySensitive;
+			this.statusType = data.Status_statusType;
+			
+			this.userId = data.Status_userId;
+			this.placeId = data.Status_placeId;
+			
+			this.user = new User();
+			this.user.fromSQL(data);
+			
+			if(data['Place_id']){
+				this.place = new Place();
+				this.place.fromSQL(data);
+			}
+			
+		}
 		
 		
 		
