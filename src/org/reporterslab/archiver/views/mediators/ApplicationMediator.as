@@ -24,12 +24,19 @@ package org.reporterslab.archiver.views.mediators
 			eventMap.mapListener(eventDispatcher, ArchiverModelEvent.PLACE_SELECTED, onItemSelected, Event);
 			eventMap.mapListener(eventDispatcher, ArchiverModelEvent.USER_SELECTED, onItemSelected, Event);
 			eventMap.mapListener(eventDispatcher, ArchiverModelEvent.STATUS_SELECTED, onItemSelected, Event);
+			eventMap.mapListener(eventDispatcher, ArchiverTwitterEvent.USER_AUTHORIZED, onUserAuthorized, ArchiverTwitterEvent);
 		}
 		
 		public function onItemSelected(event:Event):void
 		{
 			view.currentState = "details";
-			view.navButtons.selectedIndex = 4;
+			view.navButtons.selectedIndex = 2;
+		}
+		
+		public function onUserAuthorized(event:ArchiverTwitterEvent):void
+		{
+			this.view.currentState = "live";
+			view.navButtons.selectedIndex = 0;
 		}
 	}
 }

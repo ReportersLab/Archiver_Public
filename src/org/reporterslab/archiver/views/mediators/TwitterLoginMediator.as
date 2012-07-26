@@ -47,6 +47,7 @@ package org.reporterslab.archiver.views.mediators
 		{
 			trace("user authorized");
 			view.currentState = "authorized";
+			view.webView.hide();
 		}
 		
 		private function onLogin(event:ArchiverTwitterEvent):void
@@ -54,13 +55,16 @@ package org.reporterslab.archiver.views.mediators
 			trace("Login clicked");
 			twitterService.authorizeUser(view.code);
 			view.currentState = "authorizing";
+			view.webView.hide();
 		}
 		
 		private function onLogout(event:ArchiverTwitterEvent):void
 		{
 			trace("logout clicked");
 			view.currentState = "login";
+			twitterService.logout();
 			twitterService.requestAuthURL();
+			view.webView.show();
 		}
 		
 	}

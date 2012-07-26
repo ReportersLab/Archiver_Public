@@ -36,6 +36,7 @@
 			public function set url(value:String):void
 			{
 				webView.url = value;
+				webView.show();
 				this.currentState = "authorize";
 			}
 			

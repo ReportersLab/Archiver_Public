@@ -68,6 +68,21 @@
 					return;
 				outView = inView;
 				inView = navButtons.selectedItem.view;
+				
+				if (inView is TwitterLogin){
+					try{
+						(inView as TwitterLogin).webView.show();
+					}catch(e:Error){
+						//it was null, do nothing.
+					}
+				}else if (outView is TwitterLogin){
+					try{
+						(outView as TwitterLogin).webView.hide();
+					}catch(e:Error){
+						//it was null, do nothing.
+					}
+				}
+				
 				this.currentState = navButtons.selectedItem.value;
 			}
 			
