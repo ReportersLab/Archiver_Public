@@ -7,11 +7,16 @@
 	</s:layout>
 	<fx:Declarations>
 		<s:Power id="power" exponent="3" />
+		<s:ArrayCollection id="viewOptions">
+			<fx:Object name="Search Your Database" value="default" />
+			<fx:Object name="Monitor Twitter Searches" value="terms" />
+		</s:ArrayCollection>
 	</fx:Declarations>
 	
 	<s:states>
 		<s:State name="default" />
 		<s:State name="searched" />
+		<s:State name="terms" />
 	</s:states>
 	
 	<s:transitions>
@@ -30,7 +35,9 @@
 			import mx.events.FlexEvent;
 			
 			import org.reporterslab.archiver.events.ArchiverSearchEvent;
+			import org.reporterslab.archiver.events.ArchiverTwitterEvent;
 			
+			import spark.events.IndexChangeEvent;
 			import spark.events.TextOperationEvent;
 			
 			
@@ -42,6 +49,9 @@
 			
 			[Bindable]
 			public var places:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			public var twitterTerms:ArrayCollection = new ArrayCollection();
 			
 			protected function searchTextInput_changeHandler(event:TextOperationEvent):void
 			{
@@ -57,28 +67,57 @@
 				dispatchEvent(new ArchiverSearchEvent(ArchiverSearchEvent.SEARCH, query));
 			}
 			
+			protected function navButtons_changeHandler(event:IndexChangeEvent):void
+			{
+				var item:Object = navButtons.selectedItem;
+				this.currentState = item['value'];
+			}
+			
+			protected function termTextInput_enterHandler(event:FlexEvent):void
+			{
+				dispatchEvent(new ArchiverTwitterEvent(ArchiverTwitterEvent.ADD_SEARCH_TERM, termTextInput.text));
+			}
+			
+			protected function termsList_changeHandler(event:IndexChangeEvent):void
+			{
+				dispatchEvent(new ArchiverTwitterEvent(ArchiverTwitterEvent.DELETE_SEARCH_TERM, termsList.selectedItem));
+			}
+			
 		]]>
 	</fx:Script>
-	
-	<s:VGroup width="100%" height="100%">
-		<s:HGroup id="searchContainer" width="100%" height.default="100%" height.searched="50" horizontalAlign="center" horizontalCenter="0" verticalAlign="middle">
-			<s:TextInput id="searchTextInput" prompt="Search your database (hit enter to search)" width="300" 
-						 change="searchTextInput_changeHandler(event)" horizontalCenter="0" enter="searchTextInput_enterHandler(event)" />
-		</s:HGroup>
-		<s:HGroup id="resultsContainer" width="100%" height="100%" includeIn="searched" alpha="0" alpha.searched="1" gap="15">
-			<s:VGroup width="40%" height="100%">
-				<s:Label fontWeight="bold" text="{statuses.length}{statuses.length == 200 ? '+' : ''} statuses returned." />
-				<lists:StatusList id="statusList" width="100%" height="100%" live="false" statuses="{statuses}" />
-			</s:VGroup>
-			<s:VGroup width="35%" height="100%">
-				<s:Label fontWeight="bold" text="{users.length}{users.length == 200 ? '+' : ''} users returned." />
-				<lists:UserList id="userList" width="100%" height="100%" users="{users}" />
-			</s:VGroup>
-			<s:VGroup width="25%" height="100%">
-				<s:Label fontWeight="bold" text="{places.length}{places.length == 200 ? '+' : ''} places returned." />
-				<lists:PlaceList id="placeList" width="100%" height="100%" places="{places}" />
-			</s:VGroup>		
-		</s:HGroup>
+	<s:VGroup width="100%" height="100%" horizontalAlign="center">
+		
+		
+		<s:VGroup width="100%" height="100%" includeIn="default, searched">
+			<s:HGroup id="searchContainer" width="100%" height.default="100%" height.searched="50" horizontalAlign="center" horizontalCenter="0" verticalAlign="middle">
+				<s:TextInput id="searchTextInput" prompt="Search your database (hit enter to search)" width="300" 
+							 change="searchTextInput_changeHandler(event)" horizontalCenter="0" enter="searchTextInput_enterHandler(event)" />
+			</s:HGroup>
+			<s:HGroup id="resultsContainer" width="100%" height="100%" includeIn="searched" alpha="0" alpha.searched="1" gap="15">
+				<s:VGroup width="40%" height="100%">
+					<s:Label fontWeight="bold" text="{statuses.length}{statuses.length == 200 ? '+' : ''} statuses returned." />
+					<lists:StatusList id="statusList" width="100%" height="100%" live="false" statuses="{statuses}" />
+				</s:VGroup>
+				<s:VGroup width="35%" height="100%">
+					<s:Label fontWeight="bold" text="{users.length}{users.length == 200 ? '+' : ''} users returned." />
+					<lists:UserList id="userList" width="100%" height="100%" users="{users}" />
+				</s:VGroup>
+				<s:VGroup width="25%" height="100%">
+					<s:Label fontWeight="bold" text="{places.length}{places.length == 200 ? '+' : ''} places returned." />
+					<lists:PlaceList id="placeList" width="100%" height="100%" places="{places}" />
+				</s:VGroup>		
+			</s:HGroup>
+		</s:VGroup>
+		
+		<s:VGroup width="100%" height="100%" includeIn="terms" horizontalAlign="center">
+			<s:TextInput id="termTextInput" prompt="Search your database (hit enter to search)" width="300" horizontalCenter="0" 
+						   enter="termTextInput_enterHandler(event)" />
+			<s:List id="termsList" width="60%" dataProvider="{twitterTerms}" horizontalCenter="0" height="100%"
+					itemRenderer="org.reporterslab.archiver.views.renderers.SearchTermRenderer" change="termsList_changeHandler(event)"/>
+		</s:VGroup>
+		
+		<s:ButtonBar id="navButtons" dataProvider="{viewOptions}" labelField="name" selectedIndex="0"
+					 horizontalCenter="0" top="5" change="navButtons_changeHandler(event)" />
 	</s:VGroup>
 	
 </s:Group>

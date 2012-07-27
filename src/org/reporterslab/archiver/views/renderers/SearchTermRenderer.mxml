@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				autoDrawBackground="true">
+	
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import org.reporterslab.archiver.events.ArchiverTwitterEvent;
+			
+			override public function set data(value:Object):void
+			{
+				super.data = value;
+			}
+			
+			protected function deleteButton_clickHandler(event:MouseEvent):void
+			{
+				dispatchEvent(new ArchiverTwitterEvent(ArchiverTwitterEvent.DELETE_SEARCH_TERM, data));
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:VGroup width="100%">
+		<s:Label text="{data}" fontSize="24" />
+	</s:VGroup>
+	
+</s:ItemRenderer>

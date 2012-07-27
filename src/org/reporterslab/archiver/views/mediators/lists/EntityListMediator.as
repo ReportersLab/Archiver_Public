@@ -1,4 +1,4 @@
-package org.reporterslab.archiver.views.mediators
+package org.reporterslab.archiver.views.mediators.lists
 {
 	import org.reporterslab.archiver.events.ArchiverEntityEvent;
 	import org.reporterslab.archiver.models.ArchiverModel;

@@ -52,6 +52,7 @@ package org.reporterslab.archiver.services.remote
 		private var _emptyStreamCount:uint = 0;
 		
 		public var latestData:ArrayCollection;
+		[Bindable] public var searchTerms:ArrayCollection;
 		
 		
 		public function get authorized():Boolean
@@ -185,8 +186,16 @@ package org.reporterslab.archiver.services.remote
 				_stream.closeStream();
 			}
 			_isStreaming = true;
+			var terms:Array;
+			this.searchTerms = getSearchTerms();
+			if(searchTerms){
+				terms = searchTerms.toArray();
+			}
+			if(terms.length == 0)
+				terms = null;
 			//_stream = new UserStream(); // all defaults.
-			_stream = new UserStream(null, true, "followings", null);
+			//new UserStream(delimited, stallWarnings, withType, replies, follow, track, locations)
+			_stream = new UserStream(null, true, "followings", null, null, terms);
 			_stream.addEventListener(TwitterStreamingEvent.PROGRESS, onStreamingData);
 			_stream.addEventListener(TwitterStreamingEvent.STREAM_ERROR, onStreamingError);
 			_api.post(_stream);
@@ -244,7 +253,8 @@ package org.reporterslab.archiver.services.remote
 			_streamRestartTimer.addEventListener(TimerEvent.TIMER, onStreamRestartTimer);
 			_streamRestartTimer.start();
 		}
-		
+
+//============================================ LOGIN / LOGOUT ===============================================================
 		/**
 		 * Here is where we would run the OAUTH process. First we'd have to test if we hvae a User's Token in the
 		 * Encrypted Data Store. If not, then we'd dispatch an event eventually telling the View to do a login
@@ -363,8 +373,34 @@ package org.reporterslab.archiver.services.remote
 			_authorized = false;
 			EncryptedLocalStore.removeItem("twitterAccessToken");
 		}
+	
 		
+//=========================================== ADDING / REMOVING SEARCH TERMS FROM STREAM ==============================
 		
+		public function addSearchTermToStream(term:String):void
+		{
+			if(this.searchTerms == null)
+				this.searchTerms = this.getSearchTerms();
+			if(this.searchTerms.contains(term))
+				return;
+			
+			this.searchTerms.addItem(term);
+			this.storeSearchTerms();
+			this.startStream();
+		}
+		
+		public function removeSearchTermFromStream(term:String):void
+		{
+			if(this.searchTerms == null)
+				this.searchTerms = this.getSearchTerms();
+			if(!this.searchTerms.contains(term))
+				return;
+			this.searchTerms.removeItemAt(this.searchTerms.getItemIndex(term));
+			this.storeSearchTerms();
+			this.startStream();
+		}
+
+//=========================================== LOCAL STORAGE ===========================================================
 		/**
 		 * Takes a Twitter API result and saves the latest Id to the local store for later use.
 		 * 
@@ -422,6 +458,27 @@ package org.reporterslab.archiver.services.remote
 			return accessToken;
 				
 		}
+		
+		
+		protected function storeSearchTerms():void
+		{
+			var ac:ArrayCollection = this.searchTerms;
+			var bytes:ByteArray = new ByteArray();
+			bytes.writeObject(ac);
+			EncryptedLocalStore.setItem("twitterSearchTerms", bytes);
+		}
+		
+		public function getSearchTerms():ArrayCollection
+		{
+			var ac:ArrayCollection = new ArrayCollection();
+			var bytes:ByteArray = EncryptedLocalStore.getItem("twitterSearchTerms");
+			if(bytes){
+				ac = bytes.readObject() as ArrayCollection;
+			}
+			return ac;
+		}
+		
+		
 		
 		/**
 		 * Closes the stream

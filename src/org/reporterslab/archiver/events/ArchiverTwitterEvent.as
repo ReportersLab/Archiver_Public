@@ -12,6 +12,10 @@ package org.reporterslab.archiver.events
 		public static const USER_AUTHORIZED:String = "twitterUserAuthorized";
 		//fired when there's an error. Urgh.
 		public static const KEY_ERROR:String = "twitterLoginError";
+		//For adding a search term to monitor.
+		public static const ADD_SEARCH_TERM:String = "twitterAddSearchTerm";
+		//and deleting
+		public static const DELETE_SEARCH_TERM:String = "twitterDeleteSearchTerm";
 		
 		//From the View
 		public static const LOGIN:String = "twitterLogin";

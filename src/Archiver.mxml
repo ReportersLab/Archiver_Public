@@ -37,6 +37,7 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import flashx.textLayout.compose.TextLineRecycler;
 			import flashx.textLayout.elements.Configuration;
 			import flashx.textLayout.elements.TextFlow;
 			import flashx.textLayout.formats.TextDecoration;
@@ -89,7 +90,6 @@
 			
 			protected function initStyles():void
 			{
-				
 				var cfg:Configuration = TextFlow.defaultConfiguration;
 				
 				var normalTLF:TextLayoutFormat = new TextLayoutFormat(cfg.defaultLinkNormalFormat);
@@ -107,6 +107,7 @@
 				cfg.defaultLinkHoverFormat = hoverTLF;
 				cfg.defaultLinkActiveFormat = activeTLF;
 				TextFlow.defaultConfiguration = cfg;
+				
 			}
 			
 			
@@ -119,7 +120,8 @@
 	</s:layout>
 	
 	
-	<s:ButtonBar id="navButtons" dataProvider="{viewOptions}" labelField="name" horizontalCenter="0" top="5" change="navButtons_changeHandler(event)" />
+	<s:ButtonBar id="navButtons" dataProvider="{viewOptions}" labelField="name" selectedIndex="0"
+				 horizontalCenter="0" top="5" change="navButtons_changeHandler(event)" />
 	
 	
 	<s:Group width="100%" height="100%" top="35" bottom="10" left="10" right="10">

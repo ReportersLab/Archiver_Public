@@ -3,6 +3,8 @@ package org.reporterslab.archiver.models.vo
 	import com.dborisenko.api.twitter.data.TwitterEntity;
 	import com.dborisenko.api.twitter.data.TwitterStatus;
 	
+	import flash.text.TextField;
+	
 	import flashx.textLayout.conversion.TextConverter;
 	import flashx.textLayout.elements.FlowElement;
 	import flashx.textLayout.elements.TextFlow;
@@ -67,8 +69,22 @@ package org.reporterslab.archiver.models.vo
 		[Bindable] public var retweetedStatusTwitterId:String;
 		[Bindable] public var retweetedStatusId:int = -1;
 		
+		private var _flow:TextFlow;
 		
-		[Bindable] public var flow:TextFlow;
+		
+		[Bindable]
+		public function get flow():TextFlow
+		{
+			var linkedText:String = text.replace(URL_REG_EXP, "<a href='$1' target='_blank' styleName='link' class='link'>$1</a>"); 
+			linkedText = linkedText.replace(HASH_REG_EXP, "$1<a href='http://twitter.com/#!/search/#$2' target='_blank' styleName='link' class='link'>#$2</a>");
+			linkedText = linkedText.replace(USER_REG_EXP, "$1<a href='http://twitter.com/$2' target='_blank' styleName='link' class='link'>@$2</a>");
+			var newFlow:TextFlow = TextConverter.importToFlow(linkedText, TextConverter.TEXT_FIELD_HTML_FORMAT);
+			return newFlow;
+		}
+		//to satisfy compiler warnings.
+		public function set flow(value:TextFlow):void{
+			_flow = value;
+		}
 		
 		[Bindable]
 		public function get text():String
@@ -78,11 +94,6 @@ package org.reporterslab.archiver.models.vo
 		public function set text(value:String):void
 		{
 			_text = value;
-			var linkedText:String = text.replace(URL_REG_EXP, "<a href='$1' target='_blank' styleName='link' class='link'>$1</a>"); 
-			linkedText = linkedText.replace(HASH_REG_EXP, "$1<a href='http://twitter.com/#!/search/#$2' target='_blank' styleName='link' class='link'>#$2</a>");
-			linkedText = linkedText.replace(USER_REG_EXP, "$1<a href='http://twitter.com/$2' target='_blank' styleName='link' class='link'>@$2</a>");
-			var newFlow:TextFlow = TextConverter.importToFlow(linkedText, TextConverter.TEXT_FIELD_HTML_FORMAT);
-			flow = newFlow;
 		}
 		
 		
