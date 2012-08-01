@@ -110,7 +110,7 @@
 		</s:VGroup>
 		
 		<s:VGroup width="100%" height="100%" includeIn="terms" horizontalAlign="center">
-			<s:TextInput id="termTextInput" prompt="Search your database (hit enter to search)" width="300" horizontalCenter="0" 
+			<s:TextInput id="termTextInput" prompt="Add Term to Monitor (hit enter to add. Example: #MLB)" width="300" horizontalCenter="0" 
 						   enter="termTextInput_enterHandler(event)" />
 			<s:List id="termsList" width="60%" dataProvider="{twitterTerms}" horizontalCenter="0" height="100%"
 					itemRenderer="org.reporterslab.archiver.views.renderers.SearchTermRenderer" change="termsList_changeHandler(event)"/>
