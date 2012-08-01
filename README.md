@@ -15,4 +15,6 @@ The "Monitor Twitter Terms" button on the search page will bring up a box to add
 
 That's all there is to it really. It's super-rough, but should give a general idea of what we were going for.
 
+The data is saved in your "Documents" or "My Documents" folder in another folder called "Archiver." It's a simple SQLite database, so you can open it in another application if you'd like.
+
 CS
