@@ -8,3 +8,5 @@ bin-release/
 .settings/
 .DS_Store
 .project
+
+src/org/reporterslab/archiver/services/remote/configs/TwitterConfigs.as
