@@ -1,7 +1,7 @@
 Archiver
 ========
 
-You can download the AIR file in the release folder. The AIR file will download AIR and install it if you don't have it already. Once installed you can launch the application like you would launch any application.
+You can download the Release build (including a Mac DMG and executable, as well as an AIR file that will work on PCs) here: http://media.reporterslab.org/archiver/Archiver.zip. The AIR file will download AIR and install it if you don't have it already. Once installed you can launch the application like you would launch any application.
 
 It's still buggy. When you launch the app the first thing you'll want to do is "manage twitter" and login with your account, that should be pretty straightforward. After that you may or may not get a system login box that appears talking about the Twitter Firehose (this will also appear after you've logged in and opened the app for a second time). CANCEL it. I'm not sure why it pops up, so I'm not sure how to fix it.
 
